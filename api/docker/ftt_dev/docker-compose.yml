@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: flapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "8765:5432"
