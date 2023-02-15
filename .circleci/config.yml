@@ -1,0 +1,23 @@
+version: 2.1
+executors:
+  # The api environment uses Testconatiners, thats why we need a machine executor
+  machine-ubuntu-executor:
+    machine: 
+      image: ubuntu-2204:2022.04.2
+    environment:
+      architecture: "amd64"
+      platform: "linux/amd64"
+
+jobs:
+  api:
+    executor: machine-ubuntu-executor
+    steps:
+      - checkout
+      - run: |
+          cd api
+          ./gradlew build
+
+workflows:
+  build-workflow:
+    jobs:
+      - api
