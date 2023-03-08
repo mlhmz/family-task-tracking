@@ -1,19 +1,20 @@
-import React, { StrictMode } from 'react';
-import keycloak from './keycloak';
-import Navigation from './components/Navigation';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Profile from './pages/Profile';
-import './App.css';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { KeycloakInitOptions } from 'keycloak-js';
+import { StrictMode } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import './App.css';
 import axiosInstance from './axios';
-import Dashboard from './pages/Dashboard';
+import { Navigation } from './components/Navigation';
+import keycloak from './keycloak';
+import { Dashboard } from './pages/Dashboard';
+import { Profile } from './pages/Profile';
 
 function App() {
   const initOptions: KeycloakInitOptions = {
     flow: 'implicit',
     onLoad: 'login-required',
-    silentCheckSsoRedirectUri: window.location.origin + '/silent_sso.html'
+    silentCheckSsoRedirectUri: window.location.origin + '/silent_sso.html',
   };
 
   return (
@@ -38,7 +39,8 @@ function App() {
               return await Promise.reject(error);
             }
           );
-        }}>
+        }}
+      >
         <StrictMode>
           <BrowserRouter>
             <Navigation />

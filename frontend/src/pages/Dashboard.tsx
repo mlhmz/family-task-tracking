@@ -1,10 +1,8 @@
-import React from 'react';
-
-function Dashboard(): any {
+export const Dashboard = () => {
   return (
     <div className="m-8 text-center">
       <h1 className="font-semibold text-4xl p-2">FTT</h1>
-      <p className="p-4 text-xl leading-relaxed text-gray-100">
+      <p className="pt-2 p-4 text-xl leading-relaxed text-gray-100">
         For me, it's the McChicken. The best fast food sandwich. I even ask for extra McChicken
         sauce packets and the staff is so friendly and more than willing to oblige. One time I asked
         for McChicken sauce packets and they gave me three. I said, "Wow, three for free!" and the
@@ -18,6 +16,4 @@ function Dashboard(): any {
       </p>
     </div>
   );
-}
-
-export default Dashboard;
+};

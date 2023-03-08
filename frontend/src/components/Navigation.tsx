@@ -1,9 +1,9 @@
-import React from 'react';
-import Logo from './Logo';
-import { NavLink } from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
+import { NavLink } from 'react-router-dom';
 
-function Navigation() {
+import { Logo } from './Logo';
+
+export const Navigation = () => {
   const { keycloak } = useKeycloak();
 
   function getNavLinkClasses(isActive: boolean) {
@@ -38,12 +38,11 @@ function Navigation() {
             } else {
               void keycloak.login();
             }
-          }}>
+          }}
+        >
           {keycloak.authenticated === false ? 'Login' : 'Logout'}
         </button>
       </div>
     </nav>
   );
-}
-
-export default Navigation;
+};

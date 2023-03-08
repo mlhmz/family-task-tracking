@@ -1,7 +1,6 @@
-import React from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 
-function Profile() {
+export const Profile = () => {
   const { keycloak } = useKeycloak();
 
   return (
@@ -10,6 +9,4 @@ function Profile() {
       <p>{keycloak.tokenParsed?.preferred_username}</p>
     </div>
   );
-}
-
-export default Profile;
+};
