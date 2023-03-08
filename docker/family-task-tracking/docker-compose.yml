@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+  kc-db:
+    image: postgres
+    restart: always
+    ports:
+      - "54320:5432"
+    environment:
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
+      POSTGRES_USER: '${POSTGRES_USER:-tasktracking}'
+      POSTGRES_DB: '${POSTGRES_DB:-tasktracking}'
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-tasktracking}", "-U", "${POSTGRES_USER:-tasktracking}" ]
+      retries: 3
+      timeout: 5s
+  dev-db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ftt
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.1
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      #      KEYCLOAK_LOGLEVEL: DEBUG
+      DB_VENDOR: POSTGRES
+      DB_ADDR: kc-db
+      DB_DATABASE: '${POSTGRES_DB:-tasktracking}'
+      DB_USER: '${POSTGRES_USER:-tasktracking}'
+      DB_SCHEMA: public
+      DB_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
+      PROXY_ADDRESS_FORWARDING: "true"
+    links:
+      - kc-db
+    depends_on:
+      - kc-db
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    command: start-dev
