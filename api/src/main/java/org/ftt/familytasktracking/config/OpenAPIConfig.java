@@ -1,4 +1,4 @@
-package org.ftt.familytasktracking.configs;
+package org.ftt.familytasktracking.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
