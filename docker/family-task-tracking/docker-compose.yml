@@ -27,6 +27,10 @@ services:
       - ./data/dev:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-tasktracking}", "-U", "${POSTGRES_USER:-tasktracking}" ]
+      retries: 3
+      timeout: 5s
   keycloak:
     image: quay.io/keycloak/keycloak:21.0.1
     environment:
