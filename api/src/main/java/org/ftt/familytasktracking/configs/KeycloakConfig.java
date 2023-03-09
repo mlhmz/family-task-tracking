@@ -1,4 +1,4 @@
-package org.ftt.familytasktracking.security;
+package org.ftt.familytasktracking.configs;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
