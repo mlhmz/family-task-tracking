@@ -40,6 +40,7 @@ public class Task {
 
     private LocalDateTime doneAt;
 
+    @Builder.Default
     private boolean done = false;
 
     @ManyToOne(targetEntity = Household.class, fetch = FetchType.EAGER, optional = false)

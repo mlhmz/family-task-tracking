@@ -34,6 +34,7 @@ public class Profile {
     private int points;
 
     @Column(nullable = false)
+    @Builder.Default
     private PermissionType permissionType = PermissionType.MEMBER;
 
     @Column(nullable = false)
