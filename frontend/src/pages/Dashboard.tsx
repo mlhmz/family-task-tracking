@@ -1,23 +1,24 @@
 import { useKeycloak } from '@react-keycloak/web';
-import { useCallback } from 'react';
+import { KeycloakProfile } from 'keycloak-js';
+import { useCallback, useState } from 'react';
 
 import { useAxios } from '../hooks/use-axios';
 
 export const Dashboard = () => {
   const { keycloak } = useKeycloak();
+  const [userProfile, setUserProfile] = useState<KeycloakProfile | null>(null);
 
   const axiosInstance = useAxios('https://localhost:8081');
   const callApi = useCallback(() => {
-    const userProfile = keycloak.loadUserProfile();
-    console.log(userProfile);
+    keycloak.loadUserProfile().then((profile) => setUserProfile(profile));
     !!axiosInstance.current &&
       axiosInstance.current.get('/hello').then((res) => console.log(res));
   }, [axiosInstance, keycloak]);
 
   return (
-    <div className='m-8 text-center'>
-      <h1 className='p-2 text-4xl font-semibold'>FTT</h1>
-      <p className='mb-20 p-4 text-xl leading-relaxed text-gray-100'>
+    <div className='container m-8 mx-auto text-center'>
+      <h1 className='p-2 text-4xl font-bold'>FTT</h1>
+      <p className='p-4 text-xl leading-relaxed'>
         For me, it's the McChicken. The best fast food sandwich. I even ask for
         extra McChicken sauce packets and the staff is so friendly and more than
         willing to oblige. One time I asked for McChicken sauce packets and they
@@ -34,13 +35,30 @@ export const Dashboard = () => {
       </p>
 
       <div>
-        <div>
+        <div className='my-6 text-xl text-purple-400'>
           User is {!keycloak?.authenticated ? 'NOT ' : ''} authenticated
         </div>
 
-        <button type='button' onClick={callApi}>
+        <button
+          type='button'
+          onClick={callApi}
+          className='rounded border border-purple-400 bg-transparent py-2 px-4 font-semibold text-purple-400 hover:border-transparent hover:bg-purple-400 hover:text-white'
+        >
           Call APIs
         </button>
+        <div>
+          <div className='flex flex-col '>
+            <span className='font-semibold'>
+              Username: {userProfile && userProfile.username}
+            </span>
+            <span className='font-semibold'>
+              Email: {userProfile && userProfile.email}
+            </span>
+            <span className='font-semibold'>
+              ID: {userProfile && userProfile.id}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
