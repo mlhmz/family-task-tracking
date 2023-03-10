@@ -11,27 +11,33 @@ export const Navigation = () => {
   }
 
   return (
-    <nav className="flex gap-4 w-full border-b border-grow-6 p-3 items-center bg-grow-6">
-      <NavLink className="ml-1" to="/">
+    <nav className='border-grow-6 bg-grow-6 flex w-full items-center gap-4 border-b p-3'>
+      <NavLink className='ml-1' to='/'>
         <Logo />
       </NavLink>
-      <ul className="text-xl flex gap-3">
+      <ul className='flex gap-3 text-xl'>
         <li>
-          <NavLink to="/" className={({ isActive }) => getNavLinkClasses(isActive)}>
+          <NavLink
+            to='/'
+            className={({ isActive }) => getNavLinkClasses(isActive)}
+          >
             Dashboard
           </NavLink>
         </li>
         <li>
-          <NavLink to="profile" className={({ isActive }) => getNavLinkClasses(isActive)}>
+          <NavLink
+            to='profile'
+            className={({ isActive }) => getNavLinkClasses(isActive)}
+          >
             Profile
           </NavLink>
         </li>
       </ul>
 
-      <div className="inline-flex justify-end w-full gap-5 mr-2">
+      <div className='mr-2 inline-flex w-full justify-end gap-5'>
         <button
-          type="button"
-          className="float-right text-grow-4 hover:text-grow-1"
+          type='button'
+          className='text-grow-4 hover:text-grow-1 float-right'
           onClick={() => {
             if (keycloak.authenticated === true) {
               void keycloak.logout();

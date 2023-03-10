@@ -21,8 +21,8 @@ function App() {
           <BrowserRouter>
             <Navigation />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path='/' element={<Dashboard />} />
+              <Route path='/profile' element={<Profile />} />
             </Routes>
           </BrowserRouter>
         </StrictMode>
