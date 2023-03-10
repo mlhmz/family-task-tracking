@@ -1,14 +1,15 @@
 package org.ftt.familytasktracking.dtos;
 
+import org.ftt.familytasktracking.enums.PermissionType;
+
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record ProfileDto (
     String uuid,
     String name,
     Integer points,
-    String permissionType,
+    PermissionType permissionType,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    UUID householdUuid
+    String householdUuid
 ) {}
