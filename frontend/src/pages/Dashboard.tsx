@@ -1,23 +1,24 @@
 import { useKeycloak } from '@react-keycloak/web';
-import { KeycloakProfile } from 'keycloak-js';
 import { useCallback, useState } from 'react';
 
 import { useAxios } from '../hooks/use-axios';
 
 export const Dashboard = () => {
   const { keycloak } = useKeycloak();
-  const [userProfile, setUserProfile] = useState<KeycloakProfile | null>(null);
+  const [apiResponse, setApiResponse] = useState<string | null>(null);
 
   const axiosInstance = useAxios('https://localhost:8081');
+
   const callApi = useCallback(() => {
-    keycloak.loadUserProfile().then((profile) => setUserProfile(profile));
-    !!axiosInstance.current &&
-      axiosInstance.current.get('/hello').then((res) => console.log(res));
-  }, [axiosInstance, keycloak]);
+    axiosInstance.current &&
+      axiosInstance.current
+        .get('/hello')
+        .then((res) => setApiResponse(res.data));
+  }, [axiosInstance]);
 
   return (
     <div className='container m-8 mx-auto text-center'>
-      <h1 className='p-2 text-4xl font-bold'>FTT</h1>
+      <h1 className='p-2 text-4xl font-bold text-purple-400'>FTT</h1>
       <p className='p-4 text-xl leading-relaxed'>
         For me, it's the McChicken. The best fast food sandwich. I even ask for
         extra McChicken sauce packets and the staff is so friendly and more than
@@ -39,25 +40,22 @@ export const Dashboard = () => {
           User is {!keycloak?.authenticated ? 'NOT ' : ''} authenticated
         </div>
 
-        <button
-          type='button'
-          onClick={callApi}
-          className='rounded border border-purple-400 bg-transparent py-2 px-4 font-semibold text-purple-400 hover:border-transparent hover:bg-purple-400 hover:text-white'
-        >
-          Call APIs
-        </button>
-        <div>
-          <div className='flex flex-col '>
-            <span className='font-semibold'>
-              Username: {userProfile && userProfile.username}
-            </span>
-            <span className='font-semibold'>
-              Email: {userProfile && userProfile.email}
-            </span>
-            <span className='font-semibold'>
-              ID: {userProfile && userProfile.id}
-            </span>
-          </div>
+        <div className='mb-6 flex justify-center gap-4'>
+          <button
+            type='button'
+            onClick={callApi}
+            className='rounded border border-purple-400 bg-transparent py-2 px-4 font-semibold text-purple-400 hover:border-transparent hover:bg-purple-400 hover:text-white'
+          >
+            Call API
+          </button>
+        </div>
+        <div className='flex flex-col'>
+          <h3 className='text-xl font-bold text-purple-400'>Api Response</h3>
+          {apiResponse && (
+            <pre className='font-semibold'>
+              {JSON.stringify(apiResponse, null, 2)}
+            </pre>
+          )}
         </div>
       </div>
     </div>
