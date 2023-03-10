@@ -1,9 +1,0 @@
-{
-  "semi": true,
-  "printWidth": 100,
-  "singleQuote": true,
-  "proseWrap": "always",
-  "importOrder": ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
-}
