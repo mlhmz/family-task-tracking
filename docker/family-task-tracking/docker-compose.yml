@@ -3,7 +3,7 @@ version: '3.1'
 services:
   kc-db:
     image: postgres
-    restart: always
+    restart: unless-stopped
     ports:
       - "54320:5432"
     environment:
@@ -28,22 +28,31 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-tasktracking}", "-U", "${POSTGRES_USER:-tasktracking}" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DEV_POSTGRES_DB:-tasktracking}", "-U", "${DEV_POSTGRES_USER:-tasktracking}" ]
       retries: 3
       timeout: 5s
   keycloak:
-    image: quay.io/keycloak/keycloak:21.0.1
+    image: quay.io/keycloak/keycloak:20.0.1
+    restart: unless-stopped
     environment:
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
+      KEYCLOAK_LOGLEVEL: DEBUG
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://kc-db:5432/tasktracking?characterEncoding=UTF-8
+      KC_DB_USERNAME: '${POSTGRES_USER:-tasktracking}'
+      KC_DB_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      #      KEYCLOAK_LOGLEVEL: DEBUG
-      DB_VENDOR: POSTGRES
-      DB_ADDR: kc-db
-      DB_DATABASE: '${POSTGRES_DB:-tasktracking}'
-      DB_USER: '${POSTGRES_USER:-tasktracking}'
-      DB_SCHEMA: public
-      DB_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
       PROXY_ADDRESS_FORWARDING: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ready" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
     links:
       - kc-db
     depends_on:
@@ -52,3 +61,22 @@ services:
       - '8080:8080'
       - '8443:8443'
     command: start-dev
+  api:
+    image: ftt/api:latest
+    restart: unless-stopped
+    environment:
+      DB_HOST: dev-db
+      DB_NAME: '${DEV_POSTGRES_DB:-tasktracking}'
+      DB_USERNAME: '${DEV_POSTGRES_USER:-tasktracking}'
+      DB_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
+      KC_URL: keycloak
+      KC_REALM: ftt
+      KC_RESOURCE: api
+    links:
+      - keycloak
+      - dev-db
+    depends_on:
+      - keycloak
+      - dev-db
+    ports:
+      - '8081:8080'
