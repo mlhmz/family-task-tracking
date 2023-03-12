@@ -1,8 +1,8 @@
-FROM eclipse-temurin:latest AS build-stage
+FROM gradle:latest AS build-stage
 RUN mkdir -p /ftt
 WORKDIR /ftt
 COPY . .
-RUN ./gradlew bootJar
+RUN gradle bootJar
 
 FROM eclipse-temurin:latest AS runtime
 COPY --from=build-stage /ftt/build/libs/*.jar ./ftt.jar
