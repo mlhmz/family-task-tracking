@@ -69,9 +69,10 @@ services:
       DB_NAME: '${DEV_POSTGRES_DB:-tasktracking}'
       DB_USERNAME: '${DEV_POSTGRES_USER:-tasktracking}'
       DB_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
-      KC_URL: keycloak
+      KC_URL: host.docker.internal
       KC_REALM: ftt
       KC_RESOURCE: api
+      KC_REALM_KEY:
     links:
       - keycloak
       - dev-db
@@ -80,3 +81,8 @@ services:
       - dev-db
     ports:
       - '8081:8080'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
