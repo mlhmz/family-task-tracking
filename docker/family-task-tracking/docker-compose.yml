@@ -69,10 +69,10 @@ services:
       DB_NAME: '${DEV_POSTGRES_DB:-tasktracking}'
       DB_USERNAME: '${DEV_POSTGRES_USER:-tasktracking}'
       DB_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
-      KC_URL: host.docker.internal
+      KC_ISSUER_HOST: http://localhost:8080
+      KC_JWK_HOST: http://keycloak:8080
       KC_REALM: ftt
       KC_RESOURCE: api
-      KC_REALM_KEY:
     links:
       - keycloak
       - dev-db
