@@ -100,8 +100,9 @@ public class WebSecurityConfig {
         }
 
         http.authorizeHttpRequests()
-                .requestMatchers("/actuator/health", "/actuator/health", "/swagger/**", "/swagger-ui**")
-                .permitAll().anyRequest().authenticated();
+                .requestMatchers("/actuator/health", "/swagger/**", "/swagger-ui/**", "/v3/api-docs/**")
+                .permitAll()
+                .anyRequest().authenticated();
 
         return http.build();
     }
