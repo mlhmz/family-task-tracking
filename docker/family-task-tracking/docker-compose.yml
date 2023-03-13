@@ -71,8 +71,7 @@ services:
       DB_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
       KC_ISSUER_HOST: http://localhost:8080
       KC_JWK_HOST: http://keycloak:8080
-      KC_REALM: ftt
-      KC_RESOURCE: api
+      KC_REALM: '${KC_REALM:-ftt}'
     links:
       - keycloak
       - dev-db
