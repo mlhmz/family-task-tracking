@@ -32,13 +32,12 @@ services:
       retries: 3
       timeout: 5s
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0.1
+    image: quay.io/keycloak/keycloak:21.0.1
     restart: unless-stopped
     environment:
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 8080
       KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
-      KEYCLOAK_LOGLEVEL: DEBUG
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://kc-db:5432/tasktracking?characterEncoding=UTF-8
       KC_DB_USERNAME: '${POSTGRES_USER:-tasktracking}'
@@ -62,7 +61,7 @@ services:
       - '8443:8443'
     command: start-dev
   api:
-    image: ftt/api:latest
+          image: ftt/api:latest
     restart: unless-stopped
     environment:
       DB_HOST: dev-db
