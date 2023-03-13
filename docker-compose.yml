@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: '${POSTGRES_USER:-tasktracking}'
       POSTGRES_DB: '${POSTGRES_DB:-tasktracking}'
     volumes:
-      - ./data/kc:/var/lib/postgresql/data
+      - kc-db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-tasktracking}", "-U", "${POSTGRES_USER:-tasktracking}" ]
       retries: 3
@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: '${DEV_POSTGRES_USER:-tasktracking}'
       POSTGRES_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
     volumes:
-      - ./data/dev:/var/lib/postgresql/data
+      - dev-db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -61,7 +61,7 @@ services:
       - '8443:8443'
     command: start-dev
   api:
-          image: ftt/api:latest
+    image: ftt/api:latest
     restart: unless-stopped
     environment:
       DB_HOST: dev-db
@@ -84,3 +84,7 @@ services:
       interval: 15s
       timeout: 2s
       retries: 15
+
+volumes:
+  kc-db-data:
+  dev-db-data:
