@@ -185,4 +185,7 @@ sketch
 .history
 .ionide
 
+# Keycloak DB, data-Folder
+docker/family-task-tracking/data
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode,react,java

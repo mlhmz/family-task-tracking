@@ -1,0 +1,92 @@
+version: '3.1'
+
+services:
+  kc-db:
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "54320:5432"
+    environment:
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
+      POSTGRES_USER: '${POSTGRES_USER:-tasktracking}'
+      POSTGRES_DB: '${POSTGRES_DB:-tasktracking}'
+    volumes:
+      - kc-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-tasktracking}", "-U", "${POSTGRES_USER:-tasktracking}" ]
+      retries: 3
+      timeout: 5s
+  dev-db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: '${DEV_POSTGRES_DB:-tasktracking}'
+      POSTGRES_USER: '${DEV_POSTGRES_USER:-tasktracking}'
+      POSTGRES_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DEV_POSTGRES_DB:-tasktracking}", "-U", "${DEV_POSTGRES_USER:-tasktracking}" ]
+      retries: 3
+      timeout: 5s
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.1
+    restart: unless-stopped
+    environment:
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://kc-db:5432/tasktracking?characterEncoding=UTF-8
+      KC_DB_USERNAME: '${POSTGRES_USER:-tasktracking}'
+      KC_DB_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      PROXY_ADDRESS_FORWARDING: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ready" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
+    links:
+      - kc-db
+    depends_on:
+      - kc-db
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    command: start-dev
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DB_HOST: dev-db
+      DB_NAME: '${DEV_POSTGRES_DB:-tasktracking}'
+      DB_USERNAME: '${DEV_POSTGRES_USER:-tasktracking}'
+      DB_PASSWORD: '${DEV_POSTGRES_PASSWORD:-tasktracking}'
+      KC_ISSUER_HOST: http://localhost:8080
+      KC_JWK_HOST: http://keycloak:8080
+      KC_REALM: '${KC_REALM:-ftt}'
+    links:
+      - keycloak
+      - dev-db
+    depends_on:
+      - keycloak
+      - dev-db
+    ports:
+      - '8081:8080'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
+
+volumes:
+  kc-db-data:
+  dev-db-data:
