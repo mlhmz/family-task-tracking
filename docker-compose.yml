@@ -61,7 +61,9 @@ services:
       - '8443:8443'
     command: start-dev
   api:
-    image: ftt/api:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       DB_HOST: dev-db
