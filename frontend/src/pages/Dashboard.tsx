@@ -7,12 +7,12 @@ export const Dashboard = () => {
   const { keycloak } = useKeycloak();
   const [apiResponse, setApiResponse] = useState<string | null>(null);
 
-  const axiosInstance = useAxios('https://localhost:8081');
+  const axiosInstance = useAxios('http://localhost:8081');
 
   const callApi = useCallback(() => {
     axiosInstance.current &&
       axiosInstance.current
-        .get('/hello')
+        .get('/hello/world')
         .then((res) => setApiResponse(res.data));
   }, [axiosInstance]);
 
