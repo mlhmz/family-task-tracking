@@ -17,16 +17,16 @@ Launch Compose in Root Directory
 $ docker compose up
 ```
 
-Installing frontend dependencies
+Installing frontend dependencies in frontend directory
 
 ```bash
 $ npm install
 ```
 
-Starting Frontend Dev Environment with Vite
+Starting Frontend Dev Environment with Vite in frontend directory
 
 ```bash
-$ npm run start
+$ npm run dev
 ```
 
 Navigate to Keycloak on 
