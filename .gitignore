@@ -188,4 +188,6 @@ sketch
 # Keycloak DB, data-Folder
 docker/family-task-tracking/data
 
+*.iml
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode,react,java
