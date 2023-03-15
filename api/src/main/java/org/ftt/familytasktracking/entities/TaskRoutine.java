@@ -4,8 +4,8 @@ import lombok.*;
 import org.ftt.familytasktracking.enums.IntervalType;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
