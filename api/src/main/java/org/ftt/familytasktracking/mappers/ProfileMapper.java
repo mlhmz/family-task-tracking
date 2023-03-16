@@ -28,6 +28,7 @@ public interface ProfileMapper {
      */
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "tasks", ignore = true)
+    @Mapping(target = "household", ignore = true)
     Profile mapProfileDtoToProfile(ProfileDto profileDto);
 
 }

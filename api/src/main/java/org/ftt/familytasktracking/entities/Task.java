@@ -45,4 +45,7 @@ public class Task {
 
     @ManyToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
     private Profile assignee;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    private Household household;
 }

@@ -30,5 +30,6 @@ public interface TaskMapper {
      * @return Mapped {@link Task}
      */
     @InheritInverseConfiguration
+    @Mapping(target = "household", ignore = true)
     Task mapTaskDtoToTask(TaskDto taskDto);
 }

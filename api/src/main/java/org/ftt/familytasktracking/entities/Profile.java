@@ -48,4 +48,7 @@ public class Profile {
 
     @OneToMany(mappedBy = "assignee", targetEntity = Task.class, fetch = FetchType.LAZY)
     private List<Task> tasks;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    private Household household;
 }
