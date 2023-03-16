@@ -10,6 +10,5 @@ public record ProfileDto (
     Integer points,
     PermissionType permissionType,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt,
-    String householdUuid
+    LocalDateTime updatedAt
 ) {}

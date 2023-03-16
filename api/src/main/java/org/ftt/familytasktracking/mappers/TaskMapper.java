@@ -2,6 +2,7 @@ package org.ftt.familytasktracking.mappers;
 
 import org.ftt.familytasktracking.dtos.TaskDto;
 import org.ftt.familytasktracking.entities.Task;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,23 +13,22 @@ import org.mapstruct.Mapping;
 public interface TaskMapper {
     /**
      * Maps a {@link Task}-Entity to a {@link TaskDto}.
-     * The assignee as well as the household will be mapped to special uuid fields
+     * The assignee will be mapped to special uuid fields
      *
      * @param task {@link Task} to map
      * @return Mapped {@link TaskDto}
      */
-    @Mapping(target = "householdUuid", source = "household.uuid")
     @Mapping(target = "assigneeUuid", source = "assignee.uuid")
     TaskDto mapTaskToTaskDto(Task task);
 
     /**
      * Maps a {@link TaskDto}-Entity to a {@link Task}.
-     * The assignee as well as the household will be ignored.
+     * <p>
+     * <b>IMPORTANT:</b> Only the uuid of the assignee will be mapped into the assignee object.
      *
      * @param taskDto {@link TaskDto} to map
      * @return Mapped {@link Task}
      */
-    @Mapping(target = "household", ignore = true)
-    @Mapping(target = "assignee", ignore = true)
+    @InheritInverseConfiguration
     Task mapTaskDtoToTask(TaskDto taskDto);
 }

@@ -1,7 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
 import org.ftt.familytasktracking.dtos.TaskRoutineDto;
-import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.TaskRoutine;
 import org.ftt.familytasktracking.enums.IntervalType;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,11 +32,7 @@ class TaskRoutineMapperTest {
                 .updatedAt(LocalDateTime.now())
                 .lastTaskCreationAt(LocalDateTime.now())
                 .activated(true)
-                .household(
-                        Household.builder()
-                            .uuid(UUID.randomUUID())
-                        .build()
-                ).build();
+                .build();
         TaskRoutineDto dto = taskRoutineMapper.mapTaskRoutineToTaskRoutineDto(taskRoutine);
         assertThat(dto.uuid()).isEqualTo(taskRoutine.getUuid().toString());
         assertThat(dto.name()).isEqualTo(taskRoutine.getName());
@@ -48,7 +43,6 @@ class TaskRoutineMapperTest {
         assertThat(dto.updatedAt()).isEqualTo(taskRoutine.getUpdatedAt());
         assertThat(dto.lastTaskCreationAt()).isEqualTo(taskRoutine.getLastTaskCreationAt());
         assertThat(dto.activated()).isEqualTo(taskRoutine.isActivated());
-        assertThat(dto.householdUuid()).isEqualTo(taskRoutine.getHousehold().getUuid().toString());
 
     }
 
@@ -57,7 +51,7 @@ class TaskRoutineMapperTest {
     void mapTaskRoutineDtoToTaskRoutine(IntervalType type) {
         TaskRoutineDto dto = new TaskRoutineDto(UUID.randomUUID().toString(), "Task 1",
                 "Test Description", 5, type, LocalDateTime.now(), LocalDateTime.now(),
-                LocalDateTime.now(), true, UUID.randomUUID().toString());
+                LocalDateTime.now(), true);
         TaskRoutine taskRoutine = taskRoutineMapper.mapTaskRoutineDtoToTaskRoutine(dto);
         assertThat(taskRoutine.getUuid()).hasToString(dto.uuid());
         assertThat(taskRoutine.getName()).isEqualTo(dto.name());
@@ -68,7 +62,5 @@ class TaskRoutineMapperTest {
         assertThat(taskRoutine.getUpdatedAt()).isEqualTo(dto.updatedAt());
         assertThat(taskRoutine.getLastTaskCreationAt()).isEqualTo(dto.lastTaskCreationAt());
         assertThat(taskRoutine.isActivated()).isEqualTo(dto.activated());
-        // The household shouldn't be mapped back, so just checking if its null is ok
-        assertThat(taskRoutine.getHousehold()).isNull();
     }
 }

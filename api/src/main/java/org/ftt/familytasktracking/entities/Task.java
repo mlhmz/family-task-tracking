@@ -1,11 +1,11 @@
 package org.ftt.familytasktracking.entities;
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -42,9 +42,6 @@ public class Task {
 
     @Builder.Default
     private boolean done = false;
-
-    @ManyToOne(targetEntity = Household.class, fetch = FetchType.EAGER, optional = false)
-    private Household household;
 
     @ManyToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
     private Profile assignee;

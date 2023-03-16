@@ -11,6 +11,5 @@ public record TaskDto (
     LocalDateTime expirationAt,
     LocalDateTime doneAt,
     boolean done,
-    String assigneeUuid,
-    String householdUuid
+    String assigneeUuid
 ) {}

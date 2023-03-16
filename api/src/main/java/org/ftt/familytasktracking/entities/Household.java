@@ -1,13 +1,13 @@
 package org.ftt.familytasktracking.entities;
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -38,11 +38,11 @@ public class Household {
     private LocalDateTime updatedAt;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TaskRoutine> taskRoutine;
+    private List<TaskRoutine> taskRoutines;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Profile> profile;
+    private List<Profile> profiles;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Task> task;
+    private List<Task> tasks;
 }

@@ -13,6 +13,5 @@ public record TaskRoutineDto (
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     LocalDateTime lastTaskCreationAt,
-    Boolean activated,
-    String householdUuid
+    Boolean activated
 ) {}

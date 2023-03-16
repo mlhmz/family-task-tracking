@@ -41,7 +41,4 @@ public class TaskRoutine {
     private LocalDateTime lastTaskCreationAt;
 
     private boolean activated;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    private Household household;
 }

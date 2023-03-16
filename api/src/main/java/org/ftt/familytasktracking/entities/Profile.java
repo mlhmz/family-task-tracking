@@ -1,14 +1,14 @@
 package org.ftt.familytasktracking.entities;
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.ftt.familytasktracking.enums.PermissionType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -46,9 +46,6 @@ public class Profile {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne(targetEntity = Household.class, fetch = FetchType.EAGER)
-    private Household household;
-
     @OneToMany(mappedBy = "assignee", targetEntity = Task.class, fetch = FetchType.LAZY)
-    private Set<Task> tasks;
+    private List<Task> tasks;
 }

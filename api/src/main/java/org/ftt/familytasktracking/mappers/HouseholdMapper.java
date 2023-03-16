@@ -26,5 +26,8 @@ public interface HouseholdMapper {
      * @return Mapped {@link Household}
      */
     @Mapping(target = "keycloakUserId", ignore = true)
+    @Mapping(target = "profiles", ignore = true)
+    @Mapping(target = "taskRoutines", ignore = true)
+    @Mapping(target = "tasks", ignore = true)
     Household mapHouseholdDtoToHousehold(HouseholdDto householdDto);
 }

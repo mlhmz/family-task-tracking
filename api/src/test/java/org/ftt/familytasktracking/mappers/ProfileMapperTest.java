@@ -1,7 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
 import org.ftt.familytasktracking.dtos.ProfileDto;
-import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.enums.PermissionType;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,7 @@ class ProfileMapperTest {
                 .password("1234")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .household(
-                        Household.builder()
-                                .uuid(UUID.randomUUID())
-                                .build()
-                ).build();
+                .build();
         ProfileDto profileDto = profileMapper.mapProfileToProfileDto(profile);
         assertThat(profileDto.uuid()).isEqualTo(profile.getUuid().toString());
         assertThat(profileDto.name()).isEqualTo(profile.getName());
@@ -44,13 +39,12 @@ class ProfileMapperTest {
         assertThat(profileDto.permissionType()).isEqualTo(profile.getPermissionType());
         assertThat(profileDto.createdAt()).isEqualTo(profile.getCreatedAt());
         assertThat(profileDto.updatedAt()).isEqualTo(profile.getUpdatedAt());
-        assertThat(profileDto.householdUuid()).isEqualTo(profile.getHousehold().getUuid().toString());
     }
 
     @Test
     void mapProfileDtoToProfile() {
         ProfileDto profileDto = new ProfileDto(UUID.randomUUID().toString(), "Test", 100, PermissionType.ADMIN,
-                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID().toString());
+                LocalDateTime.now(), LocalDateTime.now());
         Profile profile = profileMapper.mapProfileDtoToProfile(profileDto);
         assertThat(profile.getUuid()).hasToString(profileDto.uuid());
         assertThat(profile.getName()).isEqualTo(profileDto.name());
@@ -58,7 +52,6 @@ class ProfileMapperTest {
         assertThat(profile.getPermissionType()).isEqualTo(profileDto.permissionType());
         assertThat(profile.getCreatedAt()).isEqualTo(profileDto.createdAt());
         assertThat(profile.getUpdatedAt()).isEqualTo(profileDto.updatedAt());
-        assertThat(profile.getHousehold()).isNull();
         assertThat(profile.getTasks()).isNullOrEmpty();
     }
 }
