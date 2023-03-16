@@ -32,6 +32,12 @@ import java.util.stream.Stream;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
+    public static final String KC_ROLES_KEY = "roles";
+    public static final String KC_REALM_ACCESS_KEY = "realm_access";
+    public static final String KC_RESOURCE_ACCESS_KEY = "resource_access";
+    public static final String KC_SPRING_ADDONS_CONFIDENTIAL_KEY = "spring-addons-confidential";
+    public static final String KC_SPRING_ADDONS_PUBLIC = "spring-addons-public";
+
     public interface Jwt2AuthoritiesConverter extends Converter<Jwt, Collection<? extends GrantedAuthority>> {
     }
 
@@ -40,21 +46,21 @@ public class WebSecurityConfig {
     public Jwt2AuthoritiesConverter authoritiesConverter() {
         return jwt -> {
             final Map<String, Object> realmAccess =
-                    (Map<String, Object>) jwt.getClaims().getOrDefault("realm_access", Map.of());
+                    (Map<String, Object>) jwt.getClaims().getOrDefault(KC_REALM_ACCESS_KEY, Map.of());
             final Collection<String> realmRoles =
-                    (Collection<String>) realmAccess.getOrDefault("roles", List.of());
+                    (Collection<String>) realmAccess.getOrDefault(KC_ROLES_KEY, List.of());
 
             final Map<String, Object> resourceAccess =
-                    (Map<String, Object>) jwt.getClaims().getOrDefault("resource_access", Map.of());
+                    (Map<String, Object>) jwt.getClaims().getOrDefault(KC_RESOURCE_ACCESS_KEY, Map.of());
 
             final Map<String, Object> confidentialClientAccess =
-                    (Map<String, Object>) resourceAccess.getOrDefault("spring-addons-confidential", Map.of());
+                    (Map<String, Object>) resourceAccess.getOrDefault(KC_SPRING_ADDONS_CONFIDENTIAL_KEY, Map.of());
             final Collection<String> confidentialClientRoles =
-                    (Collection<String>) confidentialClientAccess.getOrDefault("roles", List.of());
+                    (Collection<String>) confidentialClientAccess.getOrDefault(KC_ROLES_KEY, List.of());
             final Map<String, Object> publicClientAccess =
-                    (Map<String, Object>) resourceAccess.getOrDefault("spring-addons-public", Map.of());
+                    (Map<String, Object>) resourceAccess.getOrDefault(KC_SPRING_ADDONS_PUBLIC, Map.of());
             final Collection<String> publicClientRoles =
-                    (Collection<String>) publicClientAccess.getOrDefault("roles", List.of());
+                    (Collection<String>) publicClientAccess.getOrDefault(KC_ROLES_KEY, List.of());
 
             return Stream.concat(
                     realmRoles.stream(),
