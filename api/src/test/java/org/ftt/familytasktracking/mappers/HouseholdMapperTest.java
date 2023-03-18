@@ -1,6 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
-import org.ftt.familytasktracking.dtos.HouseholdDto;
+import org.ftt.familytasktracking.dtos.HouseholdResponseDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +25,16 @@ class HouseholdMapperTest {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        HouseholdDto householdDto = householdMapper.mapHouseholdToHouseholdDto(household);
-        assertThat(householdDto.uuid()).isEqualTo(household.getUuid().toString());
-        assertThat(householdDto.householdName()).isEqualTo(household.getHouseholdName());
-        assertThat(householdDto.createdAt()).isEqualTo(household.getCreatedAt());
-        assertThat(householdDto.updatedAt()).isEqualTo(household.getUpdatedAt());
+        HouseholdResponseDto householdResponseDto = householdMapper.mapHouseholdToHouseholdDto(household);
+        assertThat(householdResponseDto.uuid()).isEqualTo(household.getUuid().toString());
+        assertThat(householdResponseDto.householdName()).isEqualTo(household.getHouseholdName());
+        assertThat(householdResponseDto.createdAt()).isEqualTo(household.getCreatedAt());
+        assertThat(householdResponseDto.updatedAt()).isEqualTo(household.getUpdatedAt());
     }
 
     @Test
     void mapHouseholdDtoToHousehold() {
-        HouseholdDto dto = new HouseholdDto(UUID.randomUUID().toString(), "Test",
+        HouseholdResponseDto dto = new HouseholdResponseDto(UUID.randomUUID().toString(), "Test",
                 LocalDateTime.now(), LocalDateTime.now());
         Household household = householdMapper.mapHouseholdDtoToHousehold(dto);
         assertThat(household.getUuid()).hasToString(dto.uuid());

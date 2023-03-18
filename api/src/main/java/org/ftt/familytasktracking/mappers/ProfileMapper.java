@@ -1,34 +1,34 @@
 package org.ftt.familytasktracking.mappers;
 
-import org.ftt.familytasktracking.dtos.ProfileDto;
+import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * Mapper for the {@link Profile} and {@link ProfileDto} Object.
+ * Mapper for the {@link Profile} and {@link ProfileResponseDto} Object.
  */
 @Mapper(componentModel = "spring")
 public interface ProfileMapper {
     /**
-     * Maps a {@link Profile}-Entity to a {@link ProfileDto}.
+     * Maps a {@link Profile}-Entity to a {@link ProfileResponseDto}.
      * The tasks field, as well as the password field will be ignored.
      *
      * @param profile {@link Profile} to map
-     * @return Mapped {@link ProfileDto}
+     * @return Mapped {@link ProfileResponseDto}
      */
-    ProfileDto mapProfileToProfileDto(Profile profile);
+    ProfileResponseDto mapProfileToProfileDto(Profile profile);
 
     /**
-     * Maps a {@link ProfileDto} to a {@link Profile}-Entity.
+     * Maps a {@link ProfileResponseDto} to a {@link Profile}-Entity.
      * The password as well as the tasks won't be mapped
      *
-     * @param profileDto {@link ProfileDto} to map
+     * @param profileResponseDto {@link ProfileResponseDto} to map
      * @return Mapped {@link Profile}
      */
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "tasks", ignore = true)
     @Mapping(target = "household", ignore = true)
-    Profile mapProfileDtoToProfile(ProfileDto profileDto);
+    Profile mapProfileDtoToProfile(ProfileResponseDto profileResponseDto);
 
 }

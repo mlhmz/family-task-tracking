@@ -4,7 +4,7 @@ import org.ftt.familytasktracking.enums.PermissionType;
 
 import java.time.LocalDateTime;
 
-public record ProfileDto (
+public record ProfileResponseDto(
     String uuid,
     String name,
     Integer points,

@@ -1,6 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
-import org.ftt.familytasktracking.dtos.TaskRoutineDto;
+import org.ftt.familytasktracking.dtos.TaskRoutineResponseDto;
 import org.ftt.familytasktracking.entities.TaskRoutine;
 import org.ftt.familytasktracking.enums.IntervalType;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +33,7 @@ class TaskRoutineMapperTest {
                 .lastTaskCreationAt(LocalDateTime.now())
                 .activated(true)
                 .build();
-        TaskRoutineDto dto = taskRoutineMapper.mapTaskRoutineToTaskRoutineDto(taskRoutine);
+        TaskRoutineResponseDto dto = taskRoutineMapper.mapTaskRoutineToTaskRoutineDto(taskRoutine);
         assertThat(dto.uuid()).isEqualTo(taskRoutine.getUuid().toString());
         assertThat(dto.name()).isEqualTo(taskRoutine.getName());
         assertThat(dto.description()).isEqualTo(taskRoutine.getDescription());
@@ -49,7 +49,7 @@ class TaskRoutineMapperTest {
     @ParameterizedTest
     @EnumSource(IntervalType.class)
     void mapTaskRoutineDtoToTaskRoutine(IntervalType type) {
-        TaskRoutineDto dto = new TaskRoutineDto(UUID.randomUUID().toString(), "Task 1",
+        TaskRoutineResponseDto dto = new TaskRoutineResponseDto(UUID.randomUUID().toString(), "Task 1",
                 "Test Description", 5, type, LocalDateTime.now(), LocalDateTime.now(),
                 LocalDateTime.now(), true);
         TaskRoutine taskRoutine = taskRoutineMapper.mapTaskRoutineDtoToTaskRoutine(dto);

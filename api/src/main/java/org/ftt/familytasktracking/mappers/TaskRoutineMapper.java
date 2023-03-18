@@ -1,30 +1,30 @@
 package org.ftt.familytasktracking.mappers;
 
 
-import org.ftt.familytasktracking.dtos.TaskRoutineDto;
+import org.ftt.familytasktracking.dtos.TaskRoutineResponseDto;
 import org.ftt.familytasktracking.entities.TaskRoutine;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * Mapper for the {@link TaskRoutine} and {@link TaskRoutineDto} Object.
+ * Mapper for the {@link TaskRoutine} and {@link TaskRoutineResponseDto} Object.
  */
 @Mapper(componentModel = "spring")
 public interface TaskRoutineMapper {
     /**
-     * Maps a {@link TaskRoutine} to a {@link TaskRoutineDto}-Entity
+     * Maps a {@link TaskRoutine} to a {@link TaskRoutineResponseDto}-Entity
      *
      * @param taskRoutine {@link TaskRoutine} to map
-     * @return Mapped {@link TaskRoutineDto}
+     * @return Mapped {@link TaskRoutineResponseDto}
      */
-    TaskRoutineDto mapTaskRoutineToTaskRoutineDto(TaskRoutine taskRoutine);
+    TaskRoutineResponseDto mapTaskRoutineToTaskRoutineDto(TaskRoutine taskRoutine);
 
     /**
-     * Maps a {@link TaskRoutineDto} to a {@link TaskRoutine}-Entity
+     * Maps a {@link TaskRoutineResponseDto} to a {@link TaskRoutine}-Entity
      *
-     * @param taskRoutineDto {@link TaskRoutineDto} to map
+     * @param taskRoutineResponseDto {@link TaskRoutineResponseDto} to map
      * @return Mapped {@link TaskRoutine}
      */
     @Mapping(target = "household", ignore = true)
-    TaskRoutine mapTaskRoutineDtoToTaskRoutine(TaskRoutineDto taskRoutineDto);
+    TaskRoutine mapTaskRoutineDtoToTaskRoutine(TaskRoutineResponseDto taskRoutineResponseDto);
 }

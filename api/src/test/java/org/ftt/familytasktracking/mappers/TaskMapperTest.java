@@ -1,6 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
-import org.ftt.familytasktracking.dtos.TaskDto;
+import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.entities.Task;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ class TaskMapperTest {
                 .doneAt(LocalDateTime.now())
                 .done(false)
                 .build();
-        TaskDto dto = taskMapper.mapTaskToTaskDto(task);
+        TaskResponseDto dto = taskMapper.mapTaskToTaskDto(task);
         assertThat(dto.uuid()).isEqualTo(task.getUuid().toString());
         assertThat(dto.name()).isEqualTo(task.getName());
         assertThat(dto.description()).isEqualTo(task.getDescription());
@@ -42,7 +42,7 @@ class TaskMapperTest {
 
     @Test
     void mapTaskDtoToTask() {
-        TaskDto dto = new TaskDto(UUID.randomUUID().toString(), "Task 1", "Test Description",
+        TaskResponseDto dto = new TaskResponseDto(UUID.randomUUID().toString(), "Task 1", "Test Description",
                 LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), false,
                 UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);

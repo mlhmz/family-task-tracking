@@ -2,7 +2,7 @@ package org.ftt.familytasktracking.dtos;
 
 import java.time.LocalDateTime;
 
-public record TaskDto (
+public record TaskResponseDto(
     String uuid,
     String name,
     String description,
