@@ -1,12 +1,15 @@
 version: 2.1
 executors:
-  # The api environment uses Testconatiners, thats why we need a machine executor
+  # The api environment uses Testcontainers, thats why we need a machine executor
   machine-ubuntu-executor:
     machine: 
       image: ubuntu-2204:2022.04.2
     environment:
       architecture: "amd64"
       platform: "linux/amd64"
+  docker-node-executor:
+    docker:
+      - image: cimg/node:current
 
 jobs:
   api:
@@ -16,8 +19,27 @@ jobs:
       - run: |
           cd api
           ./gradlew build
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+
+  frontend:
+    executor: docker-node-executor
+    steps:
+      - checkout
+      - run: |
+          cd frontend
+          npm ci
+          npm run lint
+
 
 workflows:
   build-workflow:
     jobs:
       - api
+      - frontend
