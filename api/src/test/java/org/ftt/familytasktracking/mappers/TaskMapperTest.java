@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
+import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.entities.Task;
 import org.junit.jupiter.api.Test;
@@ -42,17 +43,12 @@ class TaskMapperTest {
 
     @Test
     void mapTaskDtoToTask() {
-        TaskResponseDto dto = new TaskResponseDto(UUID.randomUUID().toString(), "Task 1", "Test Description",
-                LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), false,
+        TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description",
+                false,
                 UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);
-        assertThat(task.getUuid()).hasToString(dto.uuid());
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
-        assertThat(task.getCreatedAt()).isEqualTo(dto.createdAt());
-        assertThat(task.getUpdatedAt()).isEqualTo(dto.updatedAt());
-        assertThat(task.getExpirationAt()).isEqualTo(dto.expirationAt());
-        assertThat(task.getDoneAt()).isEqualTo(dto.doneAt());
         assertThat(task.isDone()).isEqualTo(dto.done());
     }
 }

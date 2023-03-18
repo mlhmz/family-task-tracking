@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
+import org.ftt.familytasktracking.dtos.TaskRoutineRequestDto;
 import org.ftt.familytasktracking.dtos.TaskRoutineResponseDto;
 import org.ftt.familytasktracking.entities.TaskRoutine;
 import org.ftt.familytasktracking.enums.IntervalType;
@@ -49,18 +50,13 @@ class TaskRoutineMapperTest {
     @ParameterizedTest
     @EnumSource(IntervalType.class)
     void mapTaskRoutineDtoToTaskRoutine(IntervalType type) {
-        TaskRoutineResponseDto dto = new TaskRoutineResponseDto(UUID.randomUUID().toString(), "Task 1",
-                "Test Description", 5, type, LocalDateTime.now(), LocalDateTime.now(),
-                LocalDateTime.now(), true);
+        TaskRoutineRequestDto dto = new TaskRoutineRequestDto( "Task 1", "Test Description",
+                5, type, true);
         TaskRoutine taskRoutine = taskRoutineMapper.mapTaskRoutineDtoToTaskRoutine(dto);
-        assertThat(taskRoutine.getUuid()).hasToString(dto.uuid());
         assertThat(taskRoutine.getName()).isEqualTo(dto.name());
         assertThat(taskRoutine.getDescription()).isEqualTo(dto.description());
         assertThat(taskRoutine.getInterval()).isEqualTo(dto.interval());
         assertThat(taskRoutine.getIntervalType()).isEqualTo(dto.intervalType());
-        assertThat(taskRoutine.getCreatedAt()).isEqualTo(dto.createdAt());
-        assertThat(taskRoutine.getUpdatedAt()).isEqualTo(dto.updatedAt());
-        assertThat(taskRoutine.getLastTaskCreationAt()).isEqualTo(dto.lastTaskCreationAt());
         assertThat(taskRoutine.isActivated()).isEqualTo(dto.activated());
     }
 }

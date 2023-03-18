@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
+import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.enums.PermissionType;
@@ -22,7 +23,7 @@ class ProfileMapperTest {
 
     @ParameterizedTest
     @EnumSource(PermissionType.class)
-    void mapProfileToProfileDto(PermissionType permissionType) {
+    void mapProfileToProfileResponseDto(PermissionType permissionType) {
         Profile profile = Profile.builder()
                 .uuid(UUID.randomUUID())
                 .name("Task 1")
@@ -42,16 +43,12 @@ class ProfileMapperTest {
     }
 
     @Test
-    void mapProfileDtoToProfile() {
-        ProfileResponseDto profileResponseDto = new ProfileResponseDto(UUID.randomUUID().toString(), "Test", 100, PermissionType.ADMIN,
-                LocalDateTime.now(), LocalDateTime.now());
-        Profile profile = profileMapper.mapProfileDtoToProfile(profileResponseDto);
-        assertThat(profile.getUuid()).hasToString(profileResponseDto.uuid());
-        assertThat(profile.getName()).isEqualTo(profileResponseDto.name());
-        assertThat(profile.getPoints()).isEqualTo(profileResponseDto.points());
-        assertThat(profile.getPermissionType()).isEqualTo(profileResponseDto.permissionType());
-        assertThat(profile.getCreatedAt()).isEqualTo(profileResponseDto.createdAt());
-        assertThat(profile.getUpdatedAt()).isEqualTo(profileResponseDto.updatedAt());
+    void mapProfileRequestDtoToProfile() {
+        ProfileRequestDto dto = new ProfileRequestDto("Test", 100, PermissionType.ADMIN);
+        Profile profile = profileMapper.mapProfileDtoToProfile(dto);
+        assertThat(profile.getName()).isEqualTo(dto.name());
+        assertThat(profile.getPoints()).isEqualTo(dto.points());
+        assertThat(profile.getPermissionType()).isEqualTo(dto.permissionType());
         assertThat(profile.getTasks()).isNullOrEmpty();
     }
 }

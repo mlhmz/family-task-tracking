@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.mappers;
 
+import org.ftt.familytasktracking.dtos.HouseholdRequestDto;
 import org.ftt.familytasktracking.dtos.HouseholdResponseDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.junit.jupiter.api.Test;
@@ -18,14 +19,14 @@ class HouseholdMapperTest {
     HouseholdMapper householdMapper;
 
     @Test
-    void mapHouseholdToHouseholdDto() {
+    void mapHouseholdToHouseholdResponseDto() {
         Household household = Household.builder()
                 .uuid(UUID.randomUUID())
                 .householdName("Test")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        HouseholdResponseDto householdResponseDto = householdMapper.mapHouseholdToHouseholdDto(household);
+        HouseholdResponseDto householdResponseDto = householdMapper.mapHouseholdToHouseholdResponseDto(household);
         assertThat(householdResponseDto.uuid()).isEqualTo(household.getUuid().toString());
         assertThat(householdResponseDto.householdName()).isEqualTo(household.getHouseholdName());
         assertThat(householdResponseDto.createdAt()).isEqualTo(household.getCreatedAt());
@@ -33,13 +34,9 @@ class HouseholdMapperTest {
     }
 
     @Test
-    void mapHouseholdDtoToHousehold() {
-        HouseholdResponseDto dto = new HouseholdResponseDto(UUID.randomUUID().toString(), "Test",
-                LocalDateTime.now(), LocalDateTime.now());
-        Household household = householdMapper.mapHouseholdDtoToHousehold(dto);
-        assertThat(household.getUuid()).hasToString(dto.uuid());
+    void mapHouseholdRequestDtoToHousehold() {
+        HouseholdRequestDto dto = new HouseholdRequestDto("Test");
+        Household household = householdMapper.mapHouseholdRequestDtoToHousehold(dto);
         assertThat(household.getHouseholdName()).isEqualTo(dto.householdName());
-        assertThat(household.getCreatedAt()).isEqualTo(dto.createdAt());
-        assertThat(household.getUpdatedAt()).isEqualTo(dto.updatedAt());
     }
 }
