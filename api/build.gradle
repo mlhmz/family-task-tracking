@@ -12,6 +12,13 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	configureEach {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+		exclude group: 'ch.qos.logback', module: 'logback-classic'
+	}
+}
+
 ext {
 	set('testcontainersVersion', "1.17.6")
 }
@@ -22,10 +29,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2:3.0.4'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.3'
-	implementation 'org.keycloak:keycloak-spring-boot-starter:21.0.1'
-	runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.projectlombok:lombok:1.18.22'
+	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+	implementation 'com.blue-veery:spring-rest2ts-generator:1.5.1'
+	implementation 'com.blue-veery:spring-rest2ts-spring:1.5.1'
+	implementation 'com.blue-veery:spring-rest2ts-jackson:1.5.1'
+    runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:postgresql'
