@@ -5,12 +5,16 @@ import org.ftt.familytasktracking.dtos.TaskRoutineRequestDto;
 import org.ftt.familytasktracking.dtos.TaskRoutineResponseDto;
 import org.ftt.familytasktracking.entities.TaskRoutine;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Mapper for the {@link TaskRoutine} and {@link TaskRoutineResponseDto} Object.
  */
-@Mapper
-public interface TaskRoutineMapper extends DefaultMapper {
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
+public interface TaskRoutineMapper {
     /**
      * Maps a {@link TaskRoutine} to a {@link TaskRoutineResponseDto}-Entity
      *

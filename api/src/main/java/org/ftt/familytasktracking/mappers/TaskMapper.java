@@ -6,12 +6,16 @@ import org.ftt.familytasktracking.entities.Task;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Mapper for the {@link Task} and {@link TaskResponseDto} Object
  */
-@Mapper
-public interface TaskMapper extends DefaultMapper {
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
+public interface TaskMapper {
     /**
      * Maps a {@link Task}-Entity to a {@link TaskResponseDto}.
      * The assignee will be mapped to special uuid fields
