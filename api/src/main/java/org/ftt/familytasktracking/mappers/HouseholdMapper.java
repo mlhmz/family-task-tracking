@@ -30,4 +30,6 @@ public interface HouseholdMapper {
      * @return Mapped {@link Household}
      */
     Household mapHouseholdRequestDtoToHousehold(HouseholdRequestDto dto);
+    
+    Household updateHouseholdByHouseholdRequestDto(Household household, HouseholdRequestDto dto);
 }

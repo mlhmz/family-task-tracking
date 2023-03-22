@@ -1,5 +1,7 @@
 package org.ftt.familytasktracking.services;
 
+import io.micrometer.common.util.StringUtils;
+import org.ftt.familytasktracking.exceptions.JwtSubjectInvalidException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +24,16 @@ public class KeycloakServiceImpl implements KeycloakService {
      */
     @Override
     public boolean isJwtSubjectContainingUUID(Jwt token) {
-        return UUID_REGEX.matcher(token.getSubject()).matches();
+        String subject = token.getSubject();
+        return StringUtils.isNotEmpty(subject) && UUID_REGEX.matcher(subject).matches();
     }
 
     /**
      * Fetches Keycloak User ID from Jwt and parses it as UUID
      *
      * @param token {@link Jwt}-Object with Subject
-     * @return {@link UUID} from {@link Jwt}, null if the Subject isn't containing a UUID.
+     * @return {@link UUID} from {@link Jwt}
+     * @throws JwtSubjectInvalidException if the Subject isn't containing a UUID.
      */
     @Override
     public UUID getKeycloakUserId(Jwt token) {
@@ -37,7 +41,7 @@ public class KeycloakServiceImpl implements KeycloakService {
             String subject = token.getSubject();
             return UUID.fromString(subject);
         } else {
-            return null;
+            throw new JwtSubjectInvalidException();
         }
     }
 }
