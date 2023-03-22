@@ -4,12 +4,16 @@ import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Mapper for the {@link Profile} and {@link ProfileResponseDto} Object.
  */
-@Mapper
-public interface ProfileMapper extends DefaultMapper {
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
+public interface ProfileMapper {
     /**
      * Maps a {@link Profile}-Entity to a {@link ProfileResponseDto}.
      * The tasks field, as well as the password field will be ignored.
