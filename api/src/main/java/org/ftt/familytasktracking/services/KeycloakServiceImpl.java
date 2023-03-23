@@ -1,7 +1,8 @@
 package org.ftt.familytasktracking.services;
 
 import io.micrometer.common.util.StringUtils;
-import org.ftt.familytasktracking.exceptions.JwtSubjectInvalidException;
+import org.ftt.familytasktracking.exceptions.WebRtExec;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class KeycloakServiceImpl implements KeycloakService {
      *
      * @param token {@link Jwt}-Object with Subject
      * @return {@link UUID} from {@link Jwt}
-     * @throws JwtSubjectInvalidException if the Subject isn't containing a UUID.
+     * @throws WebRtExec with {@link HttpStatus#UNAUTHORIZED} if the Subject isn't containing a UUID.
      */
     @Override
     public UUID getKeycloakUserId(Jwt token) {
@@ -41,7 +42,7 @@ public class KeycloakServiceImpl implements KeycloakService {
             String subject = token.getSubject();
             return UUID.fromString(subject);
         } else {
-            throw new JwtSubjectInvalidException();
+            throw new WebRtExec(HttpStatus.UNAUTHORIZED, "The JWT Payload is not valid");
         }
     }
 }
