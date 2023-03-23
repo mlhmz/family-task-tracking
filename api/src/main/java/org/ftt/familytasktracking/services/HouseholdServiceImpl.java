@@ -131,4 +131,19 @@ public class HouseholdServiceImpl implements HouseholdService {
     public Household saveHousehold(Household household) {
         return this.householdRepository.save(household);
     }
+
+    /**
+     * Deletes a household
+     *
+     * @param jwt {@link Jwt} of the household
+     * @throws WebRtExec with {@link HttpStatus#NOT_FOUND} when the Household
+     */
+    @Override
+    public void deleteHouseholdByJwt(Jwt jwt) {
+        Optional<Household> household = this.getHouseholdByJwt(jwt);
+        if (household.isEmpty()) {
+            throw new WebRtExec(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+        }
+        this.householdRepository.delete(household.get());
+    }
 }

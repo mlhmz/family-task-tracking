@@ -25,4 +25,6 @@ public interface HouseholdService {
     HouseholdResponseDto updateHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto);
 
     Household saveHousehold(Household household);
+
+    void deleteHouseholdByJwt(Jwt jwt);
 }

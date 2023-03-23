@@ -59,4 +59,16 @@ public class HouseholdController {
         HouseholdResponseDto response = this.householdService.updateHouseholdByRequest(jwt, request);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Deletes a household that is bound to the jwt
+     *
+     * @param jwt {@link Jwt} that is automatically sent and fetched by the {@link AuthenticationPrincipal}
+     * @return {@link ResponseEntity} with NO CONTENT
+     */
+    @DeleteMapping
+    public ResponseEntity<?> deleteHouseholdByJwt(@AuthenticationPrincipal Jwt jwt) {
+        this.householdService.deleteHouseholdByJwt(jwt);
+        return ResponseEntity.noContent().build();
+    }
 }
