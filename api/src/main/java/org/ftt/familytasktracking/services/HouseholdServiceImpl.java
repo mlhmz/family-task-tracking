@@ -3,7 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.dtos.HouseholdRequestDto;
 import org.ftt.familytasktracking.dtos.HouseholdResponseDto;
 import org.ftt.familytasktracking.entities.Household;
-import org.ftt.familytasktracking.exceptions.EntityNotFoundException;
+import org.ftt.familytasktracking.exceptions.ObjectNotFoundException;
 import org.ftt.familytasktracking.exceptions.HouseholdAlreadyExistingException;
 import org.ftt.familytasktracking.mappers.HouseholdMapper;
 import org.ftt.familytasktracking.repositories.HouseholdRepository;
@@ -33,15 +33,18 @@ public class HouseholdServiceImpl implements HouseholdService {
     }
 
     @Override
-    public Optional<Household> getHouseholdByJwt(Jwt jwt) {
-        UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
-        return getHouseholdByKeycloakUserId(keycloakUserId);
+    public HouseholdResponseDto getHouseholdResponseByKeycloakUserId(UUID keycloakUserId) {
+        Optional<Household> household = getHouseholdByKeycloakUserId(keycloakUserId);
+        if (household.isEmpty()) {
+            throw new HouseholdAlreadyExistingException();
+        }
+        return this.householdMapper.mapHouseholdToHouseholdResponseDto(household.get());
     }
 
     @Override
-    public HouseholdResponseDto getHouseholdResponseByKeycloakUserId(UUID keycloakUserId) {
-        Optional<Household> household = getHouseholdByKeycloakUserId(keycloakUserId);
-        return household.map(this.householdMapper::mapHouseholdToHouseholdResponseDto).orElse(null);
+    public Optional<Household> getHouseholdByJwt(Jwt jwt) {
+        UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
+        return getHouseholdByKeycloakUserId(keycloakUserId);
     }
 
     public Optional<Household> getHouseholdByKeycloakUserId(UUID keycloakUserId) {
@@ -51,7 +54,7 @@ public class HouseholdServiceImpl implements HouseholdService {
     @Override
     public HouseholdResponseDto createHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto) {
         UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
-        if (this.getHouseholdResponseByKeycloakUserId(keycloakUserId) != null) {
+        if (this.householdRepository.existsHouseholdByKeycloakUserId(keycloakUserId)) {
             throw new HouseholdAlreadyExistingException();
         }
         Household household = this.householdMapper.mapHouseholdRequestDtoToHousehold(householdRequestDto);
@@ -64,7 +67,7 @@ public class HouseholdServiceImpl implements HouseholdService {
     public HouseholdResponseDto updateHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto) {
         Optional<Household> household = this.getHouseholdByJwt(jwt);
         if (household.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new ObjectNotFoundException();
         }
         Household updatedHousehold = this.householdMapper.updateHouseholdByHouseholdRequestDto(
                 householdRequestDto, household.get()

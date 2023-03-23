@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface HouseholdRepository extends JpaRepository<Household, UUID> {
     Optional<Household> getHouseholdByKeycloakUserId(UUID uuid);
+    boolean existsHouseholdByKeycloakUserId(UUID keycloakUserId);
 }
