@@ -7,6 +7,7 @@ import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -41,5 +42,14 @@ public class TaskServiceImpl implements TaskService {
                     this.profileService.getProfileByUuidAndJwt(assigneeUuid, jwt).toEntity() : null;
             task.setAssignee(assignee);
         }
+
+    @Override
+    public void delete(UUID taskId) {
+
+        if (!taskRepository.existsTaskByUuid(taskId)) {
+            //TODO durch fachliche Exception ersetzen
+            throw new RuntimeException("Task was not found");
+        }
+        taskRepository.deleteById(taskId);
     }
 }
