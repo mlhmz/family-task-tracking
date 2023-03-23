@@ -4,6 +4,7 @@ import org.ftt.familytasktracking.dtos.HouseholdRequestDto;
 import org.ftt.familytasktracking.dtos.HouseholdResponseDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -31,5 +32,5 @@ public interface HouseholdMapper {
      */
     Household mapHouseholdRequestDtoToHousehold(HouseholdRequestDto dto);
     
-    Household updateHouseholdByHouseholdRequestDto(Household household, HouseholdRequestDto dto);
+    Household updateHouseholdByHouseholdRequestDto(HouseholdRequestDto dto, @MappingTarget Household household);
 }

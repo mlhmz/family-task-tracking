@@ -67,9 +67,9 @@ public class HouseholdServiceImpl implements HouseholdService {
             throw new EntityNotFoundException();
         }
         Household updatedHousehold = this.householdMapper.updateHouseholdByHouseholdRequestDto(
-                household.get(),
-                householdRequestDto
+                householdRequestDto, household.get()
         );
+        this.saveHousehold(updatedHousehold);
         return this.householdMapper.mapHouseholdToHouseholdResponseDto(updatedHousehold);
     }
 
