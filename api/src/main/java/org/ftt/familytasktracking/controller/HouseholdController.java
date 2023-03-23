@@ -42,7 +42,6 @@ public class HouseholdController {
     @PostMapping
     public ResponseEntity<HouseholdResponseDto> createHouseholdByJwt(@RequestBody HouseholdRequestDto request,
                                                                      @AuthenticationPrincipal Jwt jwt) {
-        // TODO: When Creating a Household, a Profile should be created with it?
         HouseholdResponseDto response = this.householdService.createHouseholdByRequest(jwt, request);
         return ResponseEntity.ok(response);
     }
