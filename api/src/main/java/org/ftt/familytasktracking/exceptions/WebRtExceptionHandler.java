@@ -7,20 +7,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Exception Handler for the {@link WebRtExec} as a {@link ControllerAdvice}
+ * Exception Handler for the {@link WebRtException} as a {@link ControllerAdvice}
  */
 @ControllerAdvice
-public class WebRtExecHandler {
+public class WebRtExceptionHandler {
     /**
-     * Handles the {@link WebRtExec} in Controllers by getting the {@link ErrorDetails} from it and
+     * Handles the {@link WebRtException} in Controllers by getting the {@link ErrorDetails} from it and
      * putting it into a {@link ResponseEntity}
      *
-     * @param ex {@link WebRtExec} to handle
+     * @param ex {@link WebRtException} to handle
      * @return {@link ResponseEntity} filled with the {@link ErrorDetails}
      */
-    @ExceptionHandler(WebRtExec.class)
+    @ExceptionHandler(WebRtException.class)
     @ResponseBody
-    public ResponseEntity<?> handleWebRtExec(WebRtExec ex) {
+    public ResponseEntity<?> handleWebRtExec(WebRtException ex) {
         return new ResponseEntity<>(ex.getErrorDetails(), HttpStatusCode.valueOf(ex.getErrorDetails().httpStatus()));
     }
 }

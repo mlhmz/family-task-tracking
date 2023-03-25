@@ -3,7 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.dtos.HouseholdRequestDto;
 import org.ftt.familytasktracking.dtos.HouseholdResponseDto;
 import org.ftt.familytasktracking.entities.Household;
-import org.ftt.familytasktracking.exceptions.WebRtExec;
+import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.HouseholdMapper;
 import org.ftt.familytasktracking.repositories.HouseholdRepository;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class HouseholdServiceImpl implements HouseholdService {
      *
      * @param jwt {@link Jwt} of the Keycloak User which contains the keycloakUserId as a subject
      * @return {@link HouseholdResponseDto} that the user is linked to
-     * @throws WebRtExec with a {@link HttpStatus#NOT_FOUND} if the household doesn't exist
+     * @throws WebRtException with a {@link HttpStatus#NOT_FOUND} if the household doesn't exist
      */
     @Override
     public HouseholdResponseDto getHouseholdResponseByJwt(Jwt jwt) {
@@ -47,13 +47,13 @@ public class HouseholdServiceImpl implements HouseholdService {
      *
      * @param keycloakUserId UUID of the Household
      * @return {@link HouseholdResponseDto} of the Keycloak User
-     * @throws WebRtExec with a {@link HttpStatus#NOT_FOUND} if the household doesn't exist
+     * @throws WebRtException with a {@link HttpStatus#NOT_FOUND} if the household doesn't exist
      */
     @Override
     public HouseholdResponseDto getHouseholdResponseByKeycloakUserId(UUID keycloakUserId) {
         Optional<Household> household = getHouseholdByKeycloakUserId(keycloakUserId);
         if (household.isEmpty()) {
-            throw new WebRtExec(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+            throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
         }
         return this.householdMapper.mapHouseholdToHouseholdResponseDto(household.get());
     }
@@ -92,7 +92,7 @@ public class HouseholdServiceImpl implements HouseholdService {
     public HouseholdResponseDto createHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto) {
         UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
         if (this.householdRepository.existsHouseholdByKeycloakUserId(keycloakUserId)) {
-            throw new WebRtExec(HttpStatus.BAD_REQUEST, "The user is already bound to a household.");
+            throw new WebRtException(HttpStatus.BAD_REQUEST, "The user is already bound to a household.");
         }
         Household household = this.householdMapper.mapHouseholdRequestDtoToHousehold(householdRequestDto);
         household.setKeycloakUserId(keycloakUserId);
@@ -106,13 +106,13 @@ public class HouseholdServiceImpl implements HouseholdService {
      * @param jwt                 {@link Jwt} that the Household is identified with
      * @param householdRequestDto Dto with which the Household is updated with
      * @return Updated {@link HouseholdResponseDto}-Object
-     * @throws WebRtExec with a {@link HttpStatus#NOT_FOUND} if the household doesn't exist
+     * @throws WebRtException with a {@link HttpStatus#NOT_FOUND} if the household doesn't exist
      */
     @Override
     public HouseholdResponseDto updateHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto) {
         Optional<Household> household = this.getHouseholdByJwt(jwt);
         if (household.isEmpty()) {
-            throw new WebRtExec(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+            throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
         }
         Household updatedHousehold = this.householdMapper.updateHouseholdByHouseholdRequestDto(
                 householdRequestDto, household.get()
@@ -136,13 +136,13 @@ public class HouseholdServiceImpl implements HouseholdService {
      * Deletes a household
      *
      * @param jwt {@link Jwt} of the household
-     * @throws WebRtExec with {@link HttpStatus#NOT_FOUND} when the Household
+     * @throws WebRtException with {@link HttpStatus#NOT_FOUND} when the Household
      */
     @Override
     public void deleteHouseholdByJwt(Jwt jwt) {
         Optional<Household> household = this.getHouseholdByJwt(jwt);
         if (household.isEmpty()) {
-            throw new WebRtExec(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+            throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
         }
         this.householdRepository.delete(household.get());
     }
