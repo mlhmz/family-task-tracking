@@ -1,0 +1,36 @@
+_id: req_ff67d79797074fddaf22a9f5905968be
+type: Request
+parentId: fld_9a298bb815f94cf19bd561a852458599
+modified: 1679769814004
+created: 1679769772991
+url: "{{ _.api }}/{{ _.api_base_path }}/household"
+name: Create Household
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"householdName": "Test Household"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1679769047869
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

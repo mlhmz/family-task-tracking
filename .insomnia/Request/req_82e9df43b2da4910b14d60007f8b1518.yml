@@ -1,0 +1,36 @@
+_id: req_82e9df43b2da4910b14d60007f8b1518
+type: Request
+parentId: fld_9a298bb815f94cf19bd561a852458599
+modified: 1679769883093
+created: 1679769862802
+url: "{{ _.api }}/{{ _.api_base_path }}/household"
+name: Edit Household
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"householdName": "Test Householda"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1679768947625.5
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
