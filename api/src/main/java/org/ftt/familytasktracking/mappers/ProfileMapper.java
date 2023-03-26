@@ -4,6 +4,7 @@ import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -32,4 +33,5 @@ public interface ProfileMapper {
      */
     Profile mapProfileDtoToProfile(ProfileRequestDto dto);
 
+    void updateProfileFromDto(ProfileRequestDto dto, @MappingTarget Profile profile);
 }
