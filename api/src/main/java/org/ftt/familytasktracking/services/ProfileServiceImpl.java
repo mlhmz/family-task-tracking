@@ -8,6 +8,7 @@ import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.ProfileMapper;
 import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,16 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileMapper profileMapper;
     private final KeycloakService keycloakService;
     private final HouseholdService householdService;
+    private final PasswordEncoder passwordEncoder;
 
     private ProfileServiceImpl(ProfileRepository profileRepository, ProfileMapper profileMapper,
-                               KeycloakService keycloakService, HouseholdService householdService) {
+                               KeycloakService keycloakService, HouseholdService householdService,
+                               PasswordEncoder passwordEncoder) {
         this.profileRepository = profileRepository;
         this.profileMapper = profileMapper;
         this.keycloakService = keycloakService;
         this.householdService = householdService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -63,6 +67,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password) {
+        Profile profile = getProfileByUuidAndJwt(profileUuid, jwt);
+        return passwordEncoder.matches(password, profile.getPassword());
+    }
+
+    @Override
     public ProfileResponseDto createProfile(ProfileRequestDto dto, Jwt jwt) {
         Profile profile = this.profileMapper.mapProfileDtoToProfile(dto);
         Household household = this.householdService.getHouseholdByJwt(jwt)
@@ -77,6 +87,12 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = this.getProfileByUuidAndJwt(uuid, jwt);
         this.profileMapper.updateProfileFromDto(dto, profile);
         return this.profileMapper.mapProfileToProfileDto(profile);
+    }
+
+    private void savePasswordToProfile(Profile profile, String rawPassword) {
+        profile.setPassword(
+                passwordEncoder.encode(rawPassword)
+        );
     }
 
     @Override

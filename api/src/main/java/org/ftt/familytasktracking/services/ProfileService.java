@@ -20,6 +20,8 @@ public interface ProfileService {
 
     Profile getProfileByUuidAndJwt(UUID profileUuid, Jwt jwt);
 
+    boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password);
+
     ProfileResponseDto createProfile(ProfileRequestDto dto, Jwt jwt);
     ProfileResponseDto updateProfile(UUID uuid, ProfileRequestDto dto, Jwt jwt);
 
