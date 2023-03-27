@@ -89,6 +89,12 @@ public class ProfileServiceImpl implements ProfileService {
         return this.profileMapper.mapProfileToProfileDto(profile);
     }
 
+    @Override
+    public void updateProfilePassword(UUID uuid, Jwt jwt, String rawPassword) {
+        Profile profile = this.getProfileByUuidAndJwt(uuid, jwt);
+        this.savePasswordToProfile(profile, rawPassword);
+    }
+
     private void savePasswordToProfile(Profile profile, String rawPassword) {
         profile.setPassword(
                 passwordEncoder.encode(rawPassword)

@@ -25,5 +25,7 @@ public interface ProfileService {
     ProfileResponseDto createProfile(ProfileRequestDto dto, Jwt jwt);
     ProfileResponseDto updateProfile(UUID uuid, ProfileRequestDto dto, Jwt jwt);
 
+    void updateProfilePassword(UUID uuid, Jwt jwt, String rawPassword);
+
     void deleteProfileByUuid(UUID uuid, Jwt jwt);
 }
