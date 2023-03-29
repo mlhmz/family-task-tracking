@@ -37,7 +37,6 @@ public class Profile {
     @Builder.Default
     private PermissionType permissionType = PermissionType.MEMBER;
 
-    @Column(nullable = false)
     private String password;
 
     @CreationTimestamp
