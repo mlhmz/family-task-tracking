@@ -1,7 +1,5 @@
 package org.ftt.familytasktracking.services;
 
-import org.ftt.familytasktracking.dtos.ProfileRequestDto;
-import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.springframework.security.oauth2.jwt.Jwt;
 

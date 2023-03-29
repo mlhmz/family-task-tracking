@@ -1,11 +1,8 @@
 package org.ftt.familytasktracking.services;
 
-import org.ftt.familytasktracking.dtos.ProfileRequestDto;
-import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.exceptions.WebRtException;
-import org.ftt.familytasktracking.mappers.ProfileMapper;
 import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
