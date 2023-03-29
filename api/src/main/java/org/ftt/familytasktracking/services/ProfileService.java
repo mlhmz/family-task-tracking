@@ -12,20 +12,11 @@ import java.util.UUID;
  * Service for all {@link org.ftt.familytasktracking.entities.Profile}-related Processes
  */
 public interface ProfileService {
-    List<ProfileResponseDto> getAllProfileResponsesByJwt(Jwt jwt);
-
+    Profile createProfile(Profile profile, Jwt jwt);
+    Profile updateProfile(Profile profile);
     List<Profile> getAllProfilesByJwt(Jwt jwt);
-
-    ProfileResponseDto getProfileResponseByUuidAndJwt(UUID profileUuid, Jwt jwt);
-
     Profile getProfileByUuidAndJwt(UUID profileUuid, Jwt jwt);
-
     boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password);
-
-    ProfileResponseDto createProfile(ProfileRequestDto dto, Jwt jwt);
-    ProfileResponseDto updateProfile(UUID uuid, ProfileRequestDto dto, Jwt jwt);
-
     void updateProfilePassword(UUID uuid, Jwt jwt, String rawPassword);
-
     void deleteProfileByUuid(UUID uuid, Jwt jwt);
 }

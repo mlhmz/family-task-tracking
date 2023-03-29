@@ -22,27 +22,16 @@ import java.util.function.Supplier;
 @Service
 public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
-    private final ProfileMapper profileMapper;
     private final KeycloakService keycloakService;
     private final HouseholdService householdService;
     private final PasswordEncoder passwordEncoder;
 
-    private ProfileServiceImpl(ProfileRepository profileRepository, ProfileMapper profileMapper,
-                               KeycloakService keycloakService, HouseholdService householdService,
-                               PasswordEncoder passwordEncoder) {
+    private ProfileServiceImpl(ProfileRepository profileRepository, KeycloakService keycloakService,
+                               HouseholdService householdService, PasswordEncoder passwordEncoder) {
         this.profileRepository = profileRepository;
-        this.profileMapper = profileMapper;
         this.keycloakService = keycloakService;
         this.householdService = householdService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    public List<ProfileResponseDto> getAllProfileResponsesByJwt(Jwt jwt) {
-        return getAllProfilesByJwt(jwt)
-                .stream()
-                .map(profileMapper::mapProfileToProfileDto)
-                .toList();
     }
 
     @Override
@@ -51,12 +40,6 @@ public class ProfileServiceImpl implements ProfileService {
         return this.profileRepository.findAllByKeycloakUserId(
                 keycloakUserId
         );
-    }
-
-    @Override
-    public ProfileResponseDto getProfileResponseByUuidAndJwt(UUID profileUuid, Jwt jwt) {
-        Profile profile = getProfileByUuidAndJwt(profileUuid, jwt);
-        return this.profileMapper.mapProfileToProfileDto(profile);
     }
 
     @Override
@@ -73,20 +56,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileResponseDto createProfile(ProfileRequestDto dto, Jwt jwt) {
-        Profile profile = this.profileMapper.mapProfileDtoToProfile(dto);
+    public Profile createProfile(Profile profile, Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt)
                 .orElseThrow(() -> new WebRtException(HttpStatus.BAD_REQUEST,
                         "Couldn't create the profile because the user has no household"));
         profile.setHousehold(household);
-        return this.profileMapper.mapProfileToProfileDto(this.profileRepository.save(profile));
+        return saveProfile(profile);
     }
 
     @Override
-    public ProfileResponseDto updateProfile(UUID uuid, ProfileRequestDto dto, Jwt jwt) {
-        Profile profile = this.getProfileByUuidAndJwt(uuid, jwt);
-        this.profileMapper.updateProfileFromDto(dto, profile);
-        return this.profileMapper.mapProfileToProfileDto(profile);
+    public Profile updateProfile(Profile profile) {
+        return this.saveProfile(profile);
+    }
+
+    private Profile saveProfile(Profile profile) {
+        return this.profileRepository.save(profile);
     }
 
     @Override
