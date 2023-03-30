@@ -1,15 +1,19 @@
 package org.ftt.familytasktracking.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.models.ProfileModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class ProfileAuthServiceImpl implements ProfileAuthService {
+    private static final Map<UUID, UUID> sessions = new HashMap<>();
     private final ProfileService profileService;
     private final PasswordEncoder passwordEncoder;
 
@@ -19,14 +23,22 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
     }
 
     @Override
-    public boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password) {
-        ProfileModel model = this.profileService.getProfileByUuidAndJwt(profileUuid, jwt);
-        return passwordEncoder.matches(password, model.toEntity().getPassword());
+    public UUID createSession(UUID profileUuid) {
+        UUID sessionUuid = UUID.randomUUID();
+        sessions.put(sessionUuid, profileUuid);
+        return sessionUuid;
     }
 
     @Override
-    public void updateProfilePassword(UUID uuid, Jwt jwt, String rawPassword) {
-        ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
+    public boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password) {
+        ProfileModel model = this.profileService.getProfileByUuidAndJwt(profileUuid, jwt);
+        return StringUtils.isEmpty(model.toEntity().getPassword()) ||
+                passwordEncoder.matches(password, model.toEntity().getPassword());
+    }
+
+    @Override
+    public void updateProfilePassword(UUID profileUuid, Jwt jwt, String rawPassword) {
+        ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(profileUuid, jwt);
         ProfileModel updatedModel = this.getProfileWithChangedPassword(targetModel, rawPassword);
         this.profileService.updateProfile(updatedModel, targetModel);
     }

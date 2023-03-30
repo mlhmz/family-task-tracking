@@ -5,7 +5,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.UUID;
 
 public interface ProfileAuthService {
+    UUID createSession(UUID profileUuid);
+
     boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password);
 
-    void updateProfilePassword(UUID uuid, Jwt jwt, String rawPassword);
+    void updateProfilePassword(UUID profileUuid, Jwt jwt, String rawPassword);
+
 }
