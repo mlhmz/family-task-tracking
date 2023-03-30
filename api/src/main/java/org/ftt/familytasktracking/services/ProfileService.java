@@ -20,10 +20,6 @@ public interface ProfileService {
 
     ProfileModel getProfileByUuidAndJwt(UUID profileUuid, Jwt jwt);
 
-    boolean isProfilePasswordValid(UUID profileUuid, Jwt jwt, String password);
-
-    void updateProfilePassword(UUID uuid, Jwt jwt, String rawPassword);
-
     void deleteProfileByUuid(UUID uuid, Jwt jwt);
 
     ProfileModel buildModelFromProfileEntity(Profile profile);
