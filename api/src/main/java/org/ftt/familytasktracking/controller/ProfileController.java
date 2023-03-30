@@ -4,6 +4,7 @@ import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.mappers.ProfileMapper;
+import org.ftt.familytasktracking.models.ProfileModel;
 import org.ftt.familytasktracking.services.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,10 +37,10 @@ public class ProfileController {
      */
     @GetMapping
     public List<ProfileResponseDto> getAllProfilesByJwt(@AuthenticationPrincipal Jwt jwt) {
-        List<Profile> profileList = this.profileService.getAllProfilesByJwt(jwt);
-        return profileList
+        List<ProfileModel> modelList = this.profileService.getAllProfilesByJwt(jwt);
+        return modelList
                 .stream()
-                .map(profileMapper::mapProfileToProfileDto)
+                .map(ProfileModel::toResponseDto)
                 .toList();
     }
 
@@ -53,8 +54,8 @@ public class ProfileController {
     @GetMapping("/{uuid}")
     public ProfileResponseDto getProfileByUuidAndJwt(@PathVariable("uuid") UUID uuid,
                                                      @AuthenticationPrincipal Jwt jwt) {
-        Profile profile = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
-        return this.profileMapper.mapProfileToProfileDto(profile);
+        ProfileModel model = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
+        return model.toResponseDto();
     }
 
     /**
@@ -68,9 +69,9 @@ public class ProfileController {
     @PostMapping
     public ProfileResponseDto createProfileWithJwt(@RequestBody ProfileRequestDto profileRequestDto,
                                                    @AuthenticationPrincipal Jwt jwt) {
-        Profile profile = this.profileMapper.mapProfileDtoToProfile(profileRequestDto);
-        Profile persistedProfile = this.profileService.createProfile(profile, jwt);
-        return this.profileMapper.mapProfileToProfileDto(persistedProfile);
+        ProfileModel model = this.profileService.buildModelFromProfileRequestDto(profileRequestDto);
+        ProfileModel persistedModel = this.profileService.createProfile(model, jwt);
+        return persistedModel.toResponseDto();
     }
 
     /**
@@ -85,10 +86,10 @@ public class ProfileController {
     public ProfileResponseDto updateProfileByUuidAndJwt(@PathVariable("uuid") UUID uuid,
                                                         @RequestBody ProfileRequestDto profileRequestDto,
                                                         @AuthenticationPrincipal Jwt jwt) {
-        Profile profile = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
-        this.profileMapper.updateProfileFromDto(profileRequestDto, profile);
-        Profile persistedProfile = this.profileService.updateProfile(profile);
-        return this.profileMapper.mapProfileToProfileDto(persistedProfile);
+        ProfileModel model = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
+        this.profileMapper.updateProfileFromDto(profileRequestDto, model.toEntity());
+        ProfileModel persistedModel = this.profileService.updateProfile(model);
+        return persistedModel.toResponseDto();
     }
 
     /**
