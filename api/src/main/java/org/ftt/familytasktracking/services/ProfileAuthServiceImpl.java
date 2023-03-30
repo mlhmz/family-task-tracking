@@ -2,7 +2,9 @@ package org.ftt.familytasktracking.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ftt.familytasktracking.entities.Profile;
+import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.models.ProfileModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,15 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
     public ProfileAuthServiceImpl(ProfileService profileService, PasswordEncoder passwordEncoder) {
         this.profileService = profileService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public ProfileModel getProfileBySession(UUID sessionId, Jwt jwt) {
+        if (sessions.containsKey(sessionId)) {
+            return this.profileService.getProfileByUuidAndJwt(sessions.get(sessionId), jwt);
+        } else {
+            throw new WebRtException(HttpStatus.UNAUTHORIZED, "The session was not found");
+        }
     }
 
     @Override
