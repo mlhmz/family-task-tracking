@@ -3,7 +3,6 @@ package org.ftt.familytasktracking.controller;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
-import org.ftt.familytasktracking.mappers.ProfileMapper;
 import org.ftt.familytasktracking.models.ProfileModel;
 import org.ftt.familytasktracking.services.ProfileService;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/profiles")
 public class ProfileController {
-    private final ProfileMapper profileMapper;
     private final ProfileService profileService;
 
-    public ProfileController(ProfileMapper profileMapper, ProfileService profileService) {
-        this.profileMapper = profileMapper;
+    public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
     }
 
@@ -86,9 +83,9 @@ public class ProfileController {
     public ProfileResponseDto updateProfileByUuidAndJwt(@PathVariable("uuid") UUID uuid,
                                                         @RequestBody ProfileRequestDto profileRequestDto,
                                                         @AuthenticationPrincipal Jwt jwt) {
-        ProfileModel model = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
-        this.profileMapper.updateProfileFromDto(profileRequestDto, model.toEntity());
-        ProfileModel persistedModel = this.profileService.updateProfile(model);
+        ProfileModel updateModel = this.profileService.buildModelFromProfileRequestDto(profileRequestDto);
+        ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
+        ProfileModel persistedModel = this.profileService.updateProfile(updateModel, targetModel);
         return persistedModel.toResponseDto();
     }
 

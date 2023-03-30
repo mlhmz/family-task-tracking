@@ -5,6 +5,7 @@ import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -12,7 +13,8 @@ import org.mapstruct.ReportingPolicy;
  */
 @Mapper(
         componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface ProfileMapper {
     /**
@@ -33,5 +35,5 @@ public interface ProfileMapper {
      */
     Profile mapProfileDtoToProfile(ProfileRequestDto dto);
 
-    void updateProfileFromDto(ProfileRequestDto dto, @MappingTarget Profile profile);
+    void updateProfileFromDto(Profile updateContent, @MappingTarget Profile profile);
 }
