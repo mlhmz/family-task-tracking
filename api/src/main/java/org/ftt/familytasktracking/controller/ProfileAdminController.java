@@ -54,7 +54,7 @@ public class ProfileAdminController {
                                                         @AuthenticationPrincipal Jwt jwt) {
         ProfileModel updateModel = this.profileService.buildModelFromProfileRequestDto(profileRequestDto);
         ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
-        ProfileModel persistedModel = this.profileService.updateProfile(updateModel, targetModel);
+        ProfileModel persistedModel = this.profileService.updateProfile(updateModel, targetModel, false);
         return persistedModel.toResponseDto();
     }
 

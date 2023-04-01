@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface ProfileService {
     ProfileModel createProfile(ProfileModel model, Jwt jwt);
 
-    ProfileModel updateProfile(ProfileModel updateModel, ProfileModel targetModel);
+    ProfileModel updateProfile(ProfileModel updateModel, ProfileModel targetModel, boolean safe);
 
     List<ProfileModel> getAllProfilesByJwt(Jwt jwt);
 

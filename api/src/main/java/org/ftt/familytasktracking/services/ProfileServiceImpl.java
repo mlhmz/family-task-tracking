@@ -63,8 +63,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileModel updateProfile(ProfileModel updateModel, ProfileModel targetModel) {
-        this.profileMapper.updateProfileFromDto(updateModel.toEntity(), targetModel.toEntity());
+    public ProfileModel updateProfile(ProfileModel updateModel, ProfileModel targetModel, boolean safe) {
+        if (safe) {
+            this.profileMapper.safeUpdateProfileFromDto(updateModel.toEntity(), targetModel.toEntity());
+        } else {
+            this.profileMapper.updateProfileFromDto(updateModel.toEntity(), targetModel.toEntity());
+        }
         return this.buildModelFromProfileEntity(this.saveProfile(targetModel.toEntity()));
     }
 
