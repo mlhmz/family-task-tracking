@@ -1,6 +1,7 @@
 package org.ftt.familytasktracking.filter;
 
 import jakarta.servlet.annotation.WebFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.enums.PermissionType;
@@ -19,6 +20,7 @@ import java.util.UUID;
  * in the session id will use the resources that are matching with the {@link jakarta.servlet.annotation.WebFilter}
  */
 @WebFilter(urlPatterns = {"/api/v1/admin/*"})
+@Slf4j
 public class ProfileAdminAppFilter extends AppFilter {
     private final ProfileAuthService profileAuthService;
     private final ProfileService profileService;
@@ -36,6 +38,8 @@ public class ProfileAdminAppFilter extends AppFilter {
     @Override
     public void doAuthFilter(Jwt jwt) {
         if (isHouseholdNotSetUpYet(householdService, profileService, jwt)) {
+            log.debug("The filter won't be triggered because the household of the Keycloak User {} isn't set up yet.",
+                    jwt.getSubject());
             return;
         }
 
@@ -46,6 +50,7 @@ public class ProfileAdminAppFilter extends AppFilter {
         Profile profile = profileAuthService.getProfileBySession(uuid, jwt).toEntity();
 
         if (isProfileNotAdmin(profile)) {
+            log.debug("The selected profile {} is not allowed to use this resource.", profile.getUuid());
             throw new WebRtException(HttpStatus.FORBIDDEN, "The selected profile is not allowed to use this resource.");
         }
     }

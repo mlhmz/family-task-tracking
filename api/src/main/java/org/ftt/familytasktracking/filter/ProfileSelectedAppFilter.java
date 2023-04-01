@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.services.HouseholdService;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * Filter that is making sure, that only requests, having a selected authenticated profile
  * in the session id will use the resources that are matching with the {@link jakarta.servlet.annotation.WebFilter}
  */
+@Slf4j
 public class ProfileSelectedAppFilter extends AppFilter {
     private final ProfileAuthService profileAuthService;
     private final ProfileService profileService;
@@ -32,6 +34,8 @@ public class ProfileSelectedAppFilter extends AppFilter {
     @Override
     protected void doAuthFilter(Jwt jwt) {
         if (isHouseholdNotSetUpYet(householdService, profileService, jwt)) {
+            log.debug("The filter won't be triggered because the household of the Keycloak User {} isn't set up yet.",
+                    jwt.getSubject());
             return;
         }
 
@@ -40,6 +44,7 @@ public class ProfileSelectedAppFilter extends AppFilter {
         UUID uuid = parseSessionId(sessionId);
 
         if (isSessionNotValid(jwt, uuid)) {
+            log.debug("The user session of the session id is not valid {}.", uuid);
             throw new WebRtException(HttpStatus.UNAUTHORIZED, "The user session is not valid");
         }
 

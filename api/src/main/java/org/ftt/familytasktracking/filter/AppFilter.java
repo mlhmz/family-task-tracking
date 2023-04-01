@@ -46,6 +46,7 @@ public abstract class AppFilter implements Filter {
             doAuthFilter(jwt);
             chain.doFilter(request, response);
         } catch (WebRtException exception) {
+            log.debug("An user error happened while a filter was triggered {}", exception.getErrorDetails().message());
             convertWebRtExceptionToServletError(exception);
         }
     }
