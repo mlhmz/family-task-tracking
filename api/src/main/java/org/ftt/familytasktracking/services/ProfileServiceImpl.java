@@ -85,7 +85,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public boolean existsAnyAdminProfileByJwt(Jwt jwt) {
+    public boolean existsAnyPrivilegedProfileByJwt(Jwt jwt) {
         UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
         return this.profileRepository.existsByKeycloakUserIdAndPermissionType(keycloakUserId, PermissionType.ADMIN);
     }

@@ -84,6 +84,6 @@ public abstract class AppFilter implements Filter {
     }
 
     protected boolean isNoAdminProfileExistingByJwt(ProfileService profileService, Jwt jwt) {
-        return !profileService.existsAnyAdminProfileByJwt(jwt);
+        return !profileService.existsAnyPrivilegedProfileByJwt(jwt);
     }
 }
