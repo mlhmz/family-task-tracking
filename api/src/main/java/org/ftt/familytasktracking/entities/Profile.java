@@ -35,6 +35,7 @@ public class Profile {
 
     @Column(nullable = false)
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private PermissionType permissionType = PermissionType.MEMBER;
 
     private String password;
