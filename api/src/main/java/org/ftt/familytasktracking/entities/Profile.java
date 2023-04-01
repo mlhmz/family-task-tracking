@@ -35,9 +35,9 @@ public class Profile {
 
     @Column(nullable = false)
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private PermissionType permissionType = PermissionType.MEMBER;
 
-    @Column(nullable = false)
     private String password;
 
     @CreationTimestamp

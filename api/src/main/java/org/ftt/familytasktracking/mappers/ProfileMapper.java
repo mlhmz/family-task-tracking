@@ -3,16 +3,15 @@ package org.ftt.familytasktracking.mappers;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 /**
  * Mapper for the {@link Profile} and {@link ProfileResponseDto} Object.
  */
 @Mapper(
         componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface ProfileMapper {
     /**
@@ -33,5 +32,21 @@ public interface ProfileMapper {
      */
     Profile mapProfileDtoToProfile(ProfileRequestDto dto);
 
-    void updateProfileFromDto(ProfileRequestDto dto, @MappingTarget Profile profile);
+    /**
+     * Updates the {@link Profile}
+     *
+     * @param updateContent Content for Update
+     * @param profile       Profile that is being updated
+     */
+    void updateProfileFromDto(Profile updateContent, @MappingTarget Profile profile);
+
+    /**
+     * Safe Updates the {@link Profile} for unprivileged Users
+     *
+     * @param updateContent Content for Update
+     * @param profile       Profile that is being updated
+     */
+    @Mapping(target = "points", ignore = true)
+    @Mapping(target = "permissionType", ignore = true)
+    void safeUpdateProfileFromDto(Profile updateContent, @MappingTarget Profile profile);
 }
