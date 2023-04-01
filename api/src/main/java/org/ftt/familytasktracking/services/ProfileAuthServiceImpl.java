@@ -9,13 +9,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ProfileAuthServiceImpl implements ProfileAuthService {
-    private static final Map<UUID, UUID> sessions = new HashMap<>();
+    private static final Map<UUID, UUID> sessions = new ConcurrentHashMap<>();
     private final ProfileService profileService;
     private final PasswordEncoder passwordEncoder;
 
