@@ -73,7 +73,19 @@ public interface ProfileService {
      */
     boolean existsByUuidAndJwt(UUID uuid, Jwt jwt);
 
+    /**
+     * Builds a Model from a {@link Profile}-Entity
+     *
+     * @param profile {@link Profile} entity that the model is being build from
+     * @return {@link ProfileModel} that the {@link Profile} is stored in
+     */
     ProfileModel buildModelFromProfileEntity(Profile profile);
 
+    /**
+     * Builds a Model from a {@link ProfileRequestDto}
+     *
+     * @param dto {@link ProfileRequestDto} that the model is being build from
+     * @return {@link ProfileModel} that the {@link ProfileRequestDto} is being mapped and stored in
+     */
     ProfileModel buildModelFromProfileRequestDto(ProfileRequestDto dto);
 }
