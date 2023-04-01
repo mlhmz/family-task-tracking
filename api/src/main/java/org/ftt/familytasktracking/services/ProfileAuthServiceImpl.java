@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Implementation of the {@link ProfileAuthService}
+ * Implementation of the {@link ProfileAuthService}}
  */
 @Service
 public class ProfileAuthServiceImpl implements ProfileAuthService {
@@ -56,7 +56,7 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
     public void updateProfilePassword(UUID profileUuid, Jwt jwt, String rawPassword) {
         ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(profileUuid, jwt);
         ProfileModel updatedModel = this.getProfileWithChangedPassword(targetModel, rawPassword);
-        this.profileService.updateProfile(updatedModel, targetModel);
+        this.profileService.updateProfile(updatedModel, targetModel, true);
     }
 
     private UUID getProfileUuidFromSession(UUID sessionId) {

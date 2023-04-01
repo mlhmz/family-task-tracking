@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.ftt.familytasktracking.dtos.ProfileResponseDto;
+import org.ftt.familytasktracking.enums.PermissionType;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.services.ProfileAuthService;
 import org.springframework.http.HttpStatus;
@@ -34,9 +36,26 @@ public class ProfileAuthController {
     }
 
     @PutMapping
-    public void updatePassword(@RequestBody ProfileAuthRequestBody authBody,
-                               @AuthenticationPrincipal Jwt jwt) {
-        this.profileAuthService.updateProfilePassword(authBody.profileUuid, jwt, authBody.password);
+    public void updatePassword(@RequestHeader("session-id") UUID sessionId,
+                               @RequestBody ProfileAuthRequestBody authBody, @AuthenticationPrincipal Jwt jwt) {
+        ProfileResponseDto profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toResponseDto();
+        if (authBody.profileUuid == null) {
+            this.profileAuthService.updateProfilePassword(UUID.fromString(profile.uuid()), jwt, authBody.password);
+        } else if (hasAdminPermission(profile)) {
+            this.profileAuthService.updateProfilePassword(authBody.profileUuid, jwt, authBody.password);
+        } else if (isProfileUuidEqualToRequestedUuid(UUID.fromString(profile.uuid()), authBody.profileUuid)) {
+            this.profileAuthService.updateProfilePassword(UUID.fromString(profile.uuid()), jwt, authBody.password);
+        } else {
+            throw new WebRtException(HttpStatus.FORBIDDEN, "You have no permission to set the password of others");
+        }
+    }
+
+    private boolean isProfileUuidEqualToRequestedUuid(UUID uuid, UUID profileUuid) {
+        return profileUuid.equals(uuid);
+    }
+
+    private boolean hasAdminPermission(ProfileResponseDto profile) {
+        return profile.permissionType() == PermissionType.ADMIN;
     }
 
     @Getter
