@@ -38,19 +38,19 @@ public class ProfileAuthController {
                                @AuthenticationPrincipal Jwt jwt) {
         this.profileAuthService.updateProfilePassword(authBody.profileUuid, jwt, authBody.password);
     }
-}
 
-@Getter
-@Setter
-class ProfileAuthRequestBody {
-    @NotNull
-    UUID profileUuid;
-    String password = "";
-}
+    @Getter
+    @Setter
+    private static class ProfileAuthRequestBody {
+        @NotNull
+        UUID profileUuid;
+        String password = "";
+    }
 
-@Getter
-@Setter
-@AllArgsConstructor
-class ProfileAuthResponseBody {
-    UUID sessionId;
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    private static class ProfileAuthResponseBody {
+        UUID sessionId;
+    }
 }
