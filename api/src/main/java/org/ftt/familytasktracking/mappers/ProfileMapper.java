@@ -32,10 +32,16 @@ public interface ProfileMapper {
      */
     Profile mapProfileDtoToProfile(ProfileRequestDto dto);
 
+    /**
+     * Updates the {@link Profile}
+     *
+     * @param updateContent Content for Update
+     * @param profile       Profile that is being updated
+     */
     void updateProfileFromDto(Profile updateContent, @MappingTarget Profile profile);
 
     /**
-     * Safe Update Method for unprivileged Users
+     * Safe Updates the {@link Profile} for unprivileged Users
      *
      * @param updateContent Content for Update
      * @param profile       Profile that is being updated
