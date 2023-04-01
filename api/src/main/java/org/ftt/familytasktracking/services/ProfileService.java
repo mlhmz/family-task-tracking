@@ -24,6 +24,8 @@ public interface ProfileService {
 
     boolean existsAnyAdminProfileByJwt(Jwt jwt);
 
+    boolean existsByUuidAndJwt(UUID uuid, Jwt jwt);
+
     ProfileModel buildModelFromProfileEntity(Profile profile);
 
     ProfileModel buildModelFromProfileRequestDto(ProfileRequestDto dto);

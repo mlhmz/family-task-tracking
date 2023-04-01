@@ -74,8 +74,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void deleteProfileByUuid(UUID uuid, Jwt jwt) {
-        UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
-        if (!this.profileRepository.existsByKeycloakUserIdAndUuid(keycloakUserId, uuid)) {
+        if (!this.existsByUuidAndJwt(uuid, jwt)) {
             this.throwProfileNotFoundWebRtException(uuid);
         }
         this.profileRepository.deleteById(uuid);
@@ -85,6 +84,12 @@ public class ProfileServiceImpl implements ProfileService {
     public boolean existsAnyAdminProfileByJwt(Jwt jwt) {
         UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
         return this.profileRepository.existsByKeycloakUserIdAndPermissionType(keycloakUserId, PermissionType.ADMIN);
+    }
+
+    @Override
+    public boolean existsByUuidAndJwt(UUID uuid, Jwt jwt) {
+        UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
+        return this.profileRepository.existsByKeycloakUserIdAndUuid(keycloakUserId, uuid);
     }
 
     @Override

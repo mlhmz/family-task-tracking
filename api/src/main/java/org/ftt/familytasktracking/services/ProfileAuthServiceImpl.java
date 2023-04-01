@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implementation of the {@link ProfileAuthService}
+ */
 @Service
 public class ProfileAuthServiceImpl implements ProfileAuthService {
     private static final Map<UUID, UUID> sessions = new ConcurrentHashMap<>();
@@ -26,11 +29,13 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
 
     @Override
     public ProfileModel getProfileBySession(UUID sessionId, Jwt jwt) {
-        if (sessions.containsKey(sessionId)) {
-            return this.profileService.getProfileByUuidAndJwt(sessions.get(sessionId), jwt);
-        } else {
-            throw new WebRtException(HttpStatus.UNAUTHORIZED, "The session was not found");
-        }
+        return this.profileService.getProfileByUuidAndJwt(getProfileUuidFromSession(sessionId), jwt);
+    }
+
+    @Override
+    public boolean isProfileSessionValid(UUID sessionId, Jwt jwt) {
+        UUID profileUuid = getProfileUuidFromSession(sessionId);
+        return this.profileService.existsByUuidAndJwt(profileUuid, jwt);
     }
 
     @Override
@@ -52,6 +57,14 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
         ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(profileUuid, jwt);
         ProfileModel updatedModel = this.getProfileWithChangedPassword(targetModel, rawPassword);
         this.profileService.updateProfile(updatedModel, targetModel);
+    }
+
+    private UUID getProfileUuidFromSession(UUID sessionId) {
+        if (sessions.containsKey(sessionId)) {
+            return sessions.get(sessionId);
+        } else {
+            throw new WebRtException(HttpStatus.UNAUTHORIZED, "The session was not found");
+        }
     }
 
     private ProfileModel getProfileWithChangedPassword(ProfileModel model, String rawPassword) {

@@ -3,10 +3,7 @@ package org.ftt.familytasktracking.mappers;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 /**
  * Mapper for the {@link Profile} and {@link ProfileResponseDto} Object.
@@ -36,4 +33,14 @@ public interface ProfileMapper {
     Profile mapProfileDtoToProfile(ProfileRequestDto dto);
 
     void updateProfileFromDto(Profile updateContent, @MappingTarget Profile profile);
+
+    /**
+     * Safe Update Method for unprivileged Users
+     *
+     * @param updateContent Content for Update
+     * @param profile       Profile that is being updated
+     */
+    @Mapping(target = "points", ignore = true)
+    @Mapping(target = "permissionType", ignore = true)
+    void safeUpdateProfileFromDto(Profile updateContent, @MappingTarget Profile profile);
 }
