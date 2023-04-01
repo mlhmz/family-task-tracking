@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * The app filter can execute code before requests and can modify their response payload or even
+ * completely prevent them.
+ */
 @Component
 @Slf4j
 public abstract class AppFilter implements Filter {
