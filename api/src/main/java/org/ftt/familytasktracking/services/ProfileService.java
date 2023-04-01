@@ -22,6 +22,8 @@ public interface ProfileService {
 
     void deleteProfileByUuid(UUID uuid, Jwt jwt);
 
+    boolean existsAnyAdminProfileByJwt(Jwt jwt);
+
     ProfileModel buildModelFromProfileEntity(Profile profile);
 
     ProfileModel buildModelFromProfileRequestDto(ProfileRequestDto dto);

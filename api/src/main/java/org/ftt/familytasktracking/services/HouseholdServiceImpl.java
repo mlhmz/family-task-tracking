@@ -53,7 +53,7 @@ public class HouseholdServiceImpl implements HouseholdService {
     public HouseholdResponseDto getHouseholdResponseByKeycloakUserId(UUID keycloakUserId) {
         Optional<Household> household = getHouseholdByKeycloakUserId(keycloakUserId);
         if (household.isEmpty()) {
-            throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+            throwNoHouseholdFoundWebRtExec();
         }
         return this.householdMapper.mapHouseholdToHouseholdResponseDto(household.get());
     }
@@ -112,7 +112,7 @@ public class HouseholdServiceImpl implements HouseholdService {
     public HouseholdResponseDto updateHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto) {
         Optional<Household> household = this.getHouseholdByJwt(jwt);
         if (household.isEmpty()) {
-            throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+            throwNoHouseholdFoundWebRtExec();
         }
         Household updatedHousehold = this.householdMapper.updateHouseholdByHouseholdRequestDto(
                 householdRequestDto, household.get()
@@ -142,8 +142,18 @@ public class HouseholdServiceImpl implements HouseholdService {
     public void deleteHouseholdByJwt(Jwt jwt) {
         Optional<Household> household = this.getHouseholdByJwt(jwt);
         if (household.isEmpty()) {
-            throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+            throwNoHouseholdFoundWebRtExec();
         }
         this.householdRepository.delete(household.get());
+    }
+
+    @Override
+    public boolean isHouseholdBoundToJwt(Jwt jwt) {
+        UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
+        return this.householdRepository.existsHouseholdByKeycloakUserId(keycloakUserId);
+    }
+
+    private void throwNoHouseholdFoundWebRtExec() {
+        throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
     }
 }

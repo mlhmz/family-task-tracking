@@ -3,6 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
+import org.ftt.familytasktracking.enums.PermissionType;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.ProfileMapper;
 import org.ftt.familytasktracking.models.ProfileModel;
@@ -25,8 +26,8 @@ public class ProfileServiceImpl implements ProfileService {
     private final KeycloakService keycloakService;
     private final HouseholdService householdService;
 
-    private ProfileServiceImpl(ProfileRepository profileRepository, ProfileMapper mapper,
-                               KeycloakService keycloakService, HouseholdService householdService) {
+    public ProfileServiceImpl(ProfileRepository profileRepository, ProfileMapper mapper,
+                              KeycloakService keycloakService, HouseholdService householdService) {
         this.profileRepository = profileRepository;
         this.profileMapper = mapper;
         this.keycloakService = keycloakService;
@@ -78,6 +79,12 @@ public class ProfileServiceImpl implements ProfileService {
             this.throwProfileNotFoundWebRtException(uuid);
         }
         this.profileRepository.deleteById(uuid);
+    }
+
+    @Override
+    public boolean existsAnyAdminProfileByJwt(Jwt jwt) {
+        UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
+        return this.profileRepository.existsByKeycloakUserIdAndPermissionType(keycloakUserId, PermissionType.ADMIN);
     }
 
     @Override
