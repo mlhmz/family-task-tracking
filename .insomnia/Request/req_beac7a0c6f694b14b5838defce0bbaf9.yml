@@ -1,19 +1,15 @@
-_id: req_12420a50cc284c088421637882dfae45
+_id: req_beac7a0c6f694b14b5838defce0bbaf9
 type: Request
-parentId: fld_9a298bb815f94cf19bd561a852458599
-modified: 1680364270443
-created: 1679769871684
-url: "{{ _.api }}/{{ _.api_base_path }}/admin/household"
-name: Delete Household
+parentId: fld_802ecda018e244579a06b2433dbb8916
+modified: 1680361558614
+created: 1680123404306
+url: "{{ _.api }}/{{ _.api_base_path }}/profiles/{{ _.profile_uuid }}"
+name: Get Profile
 description: ""
-method: DELETE
+method: GET
 body: {}
 parameters: []
-headers:
-  - id: pair_c9e21f7d4a434c81b5459a3af9dc0cdf
-    name: "{{ _.session_id_header }}"
-    value: "{{ _.session_id }}"
-    description: ""
+headers: []
 authentication:
   type: oauth2
   grantType: password
@@ -23,7 +19,7 @@ authentication:
   accessTokenUrl: "{{ _.oauth_token_url }}"
   clientId: "{{ _.oauth_client_id }}"
   scope: "{{ _.oauth_scopes }}"
-metaSortKey: -1679769148112.5
+metaSortKey: -1679769248356
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true

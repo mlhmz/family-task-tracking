@@ -1,16 +1,16 @@
-_id: req_12420a50cc284c088421637882dfae45
+_id: req_33083c2f2e6644dc96a29f5f1e6ead1c
 type: Request
-parentId: fld_9a298bb815f94cf19bd561a852458599
-modified: 1680364270443
-created: 1679769871684
-url: "{{ _.api }}/{{ _.api_base_path }}/admin/household"
-name: Delete Household
+parentId: fld_802ecda018e244579a06b2433dbb8916
+modified: 1680361425045
+created: 1680123404336
+url: "{{ _.api }}/{{ _.api_base_path }}/admin/profiles/{{ _.profile_uuid }}"
+name: Delete Profile
 description: ""
 method: DELETE
 body: {}
 parameters: []
 headers:
-  - id: pair_c9e21f7d4a434c81b5459a3af9dc0cdf
+  - id: pair_ffcd6c8029ca4d62b8f356814d3887f6
     name: "{{ _.session_id_header }}"
     value: "{{ _.session_id }}"
     description: ""

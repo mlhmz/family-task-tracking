@@ -1,16 +1,26 @@
-_id: req_12420a50cc284c088421637882dfae45
+_id: req_be366770c1d748de9f437bd5a61ac79d
 type: Request
-parentId: fld_9a298bb815f94cf19bd561a852458599
-modified: 1680364270443
-created: 1679769871684
-url: "{{ _.api }}/{{ _.api_base_path }}/admin/household"
-name: Delete Household
+parentId: fld_802ecda018e244579a06b2433dbb8916
+modified: 1680382352046
+created: 1680123404318
+url: "{{ _.api }}/{{ _.api_base_path }}/admin/profiles"
+name: Create Profile
 description: ""
-method: DELETE
-body: {}
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"name": "Max",
+    	"points": 0,
+    	"permissionType": "MEMBER"
+    }
 parameters: []
 headers:
-  - id: pair_c9e21f7d4a434c81b5459a3af9dc0cdf
+  - name: Content-Type
+    value: application/json
+    id: pair_01c43372afb9431ca155bfc03a13d853
+  - id: pair_e656fecc165940b3ba5deaf1175b2908
     name: "{{ _.session_id_header }}"
     value: "{{ _.session_id }}"
     description: ""
@@ -23,7 +33,7 @@ authentication:
   accessTokenUrl: "{{ _.oauth_token_url }}"
   clientId: "{{ _.oauth_client_id }}"
   scope: "{{ _.oauth_scopes }}"
-metaSortKey: -1679769148112.5
+metaSortKey: -1679769047869
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
