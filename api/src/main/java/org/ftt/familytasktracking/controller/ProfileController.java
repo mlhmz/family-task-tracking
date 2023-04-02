@@ -1,9 +1,11 @@
 package org.ftt.familytasktracking.controller;
 
+import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.models.ProfileModel;
+import org.ftt.familytasktracking.services.ProfileAuthService;
 import org.ftt.familytasktracking.services.ProfileService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -19,9 +21,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/profiles")
 public class ProfileController {
     private final ProfileService profileService;
+    private final ProfileAuthService profileAuthService;
 
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(ProfileService profileService, ProfileAuthService profileAuthService) {
         this.profileService = profileService;
+        this.profileAuthService = profileAuthService;
     }
 
     /**
@@ -54,12 +58,42 @@ public class ProfileController {
         return model.toResponseDto();
     }
 
-    @PutMapping("/{uuid}")
-    public ProfileResponseDto updateProfileByUuidAndJwt(@PathVariable("uuid") UUID uuid,
-                                                        @RequestBody ProfileRequestDto profileRequestDto,
-                                                        @AuthenticationPrincipal Jwt jwt) {
+    /**
+     * Gets the {@link Profile}-Entity of an authorized Profile by the Session ID and the
+     * Jwt of the Profiles Household
+     *
+     * @param sessionId Session ID of the {@link Profile}
+     * @param jwt       {@link Jwt} of the {@link org.ftt.familytasktracking.entities.Household}
+     * @return {@link ProfileResponseDto} with the Profile
+     */
+    @GetMapping("/profile")
+    public ProfileResponseDto getProfileBySessionId(
+            @RequestHeader(ApplicationConfigProperties.SESSION_ID_KEY) UUID sessionId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        return this.profileAuthService.getProfileBySession(sessionId, jwt).toResponseDto();
+    }
+
+    /**
+     * Safely Updates the {@link Profile}-Entity of an authorized Profile by the Session ID and the
+     * Jwt of the Profiles Household.
+     *
+     * @param sessionId         Session ID of the {@link Profile}
+     * @param profileRequestDto with Update-Payload
+     * @param jwt               {@link Jwt} of the {@link org.ftt.familytasktracking.entities.Household}
+     * @return {@link ProfileResponseDto} with the Profile
+     * @see ProfileService#updateProfile(ProfileModel, ProfileModel, boolean) The updateProfile Method to understand
+     * safe Update
+     */
+    @PutMapping("/profile")
+    public ProfileResponseDto updateProfileByUuidAndJwt(
+            @RequestHeader(ApplicationConfigProperties.SESSION_ID_KEY) UUID sessionId,
+            @RequestBody ProfileRequestDto profileRequestDto,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+
         ProfileModel updateModel = this.profileService.buildModelFromProfileRequestDto(profileRequestDto);
-        ProfileModel targetModel = this.profileService.getProfileByUuidAndJwt(uuid, jwt);
+        ProfileModel targetModel = profileAuthService.getProfileBySession(sessionId, jwt);
         ProfileModel persistedModel = this.profileService.updateProfile(updateModel, targetModel, true);
         return persistedModel.toResponseDto();
     }
