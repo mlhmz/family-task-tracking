@@ -1,5 +1,10 @@
 package org.ftt.familytasktracking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,6 +13,7 @@ import lombok.Setter;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.enums.PermissionType;
+import org.ftt.familytasktracking.exceptions.ErrorDetails;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.services.ProfileAuthService;
 import org.springframework.http.HttpStatus;
@@ -37,13 +43,29 @@ public class ProfileAuthController {
      * @param jwt      {@link Jwt} to make sure that the user can only log into Profiles that are in the household
      * @return {@link ProfileAuthResponseBody} with the Session Data
      */
+    @Operation(summary = "Authenticates an user to a profile and returns the Session ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found profile, data is valid, session was created",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileAuthResponseBody.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or Login failed",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Profile couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
     @PostMapping
     public ProfileAuthResponseBody authenticate(@RequestBody @Valid ProfileAuthRequestBody authBody,
                                                 @AuthenticationPrincipal Jwt jwt) {
         if (this.profileAuthService.isProfilePasswordValid(authBody.profileUuid, jwt, authBody.password)) {
             return new ProfileAuthResponseBody(this.profileAuthService.createSession(authBody.profileUuid));
         } else {
-            throw new WebRtException(HttpStatus.UNAUTHORIZED, "Failed login");
+            throw new WebRtException(HttpStatus.UNAUTHORIZED, "Login failed");
         }
     }
 
@@ -60,6 +82,27 @@ public class ProfileAuthController {
      * @param jwt       {@link Jwt} of the Household to make sure that only Household-intern Profiles can be updated
      *                  by Admins
      */
+    @Operation(summary = "Changes the Password of an user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found profile, data is valid, password has been changed",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileAuthResponseBody.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session Id is invalid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "403", description = "Session is valid but user tried to modify the password " +
+                    "of another user, while being non-privileged.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Profile couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
     @PutMapping
     public void updatePassword(@RequestHeader(ApplicationConfigProperties.SESSION_ID_KEY) UUID sessionId,
                                @RequestBody ProfileAuthRequestBody authBody, @AuthenticationPrincipal Jwt jwt) {
