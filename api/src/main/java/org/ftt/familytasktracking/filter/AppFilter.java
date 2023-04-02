@@ -8,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.exceptions.ErrorDetails;
 import org.ftt.familytasktracking.exceptions.WebRtException;
-import org.ftt.familytasktracking.services.HouseholdService;
-import org.ftt.familytasktracking.services.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -47,7 +45,7 @@ public abstract class AppFilter implements Filter {
         Jwt jwt = jwtDecoder.decode(jwtKey);
 
         try {
-            doAuthFilter(jwt);
+            doAppFilter(jwt);
             chain.doFilter(request, response);
         } catch (WebRtException exception) {
             log.debug("An user error happened while a filter was triggered {}", exception.getErrorDetails().message());
@@ -64,7 +62,7 @@ public abstract class AppFilter implements Filter {
         this.response.sendError(errorDetails.httpStatus(), errorDetails.message());
     }
 
-    protected abstract void doAuthFilter(Jwt jwt);
+    protected abstract void doAppFilter(Jwt jwt);
 
     protected UUID parseSessionId(String sessionId) {
         UUID uuid;
@@ -74,20 +72,5 @@ public abstract class AppFilter implements Filter {
             throw new WebRtException(HttpStatus.UNAUTHORIZED, "The session id is malformed.");
         }
         return uuid;
-    }
-
-    protected boolean isHouseholdNotSetUpYet(HouseholdService householdService,
-                                             ProfileService profileService,
-                                             Jwt jwt) {
-        return isNoHouseholdBoundToJwt(householdService, jwt) ||
-                isNoAdminProfileExistingByJwt(profileService, jwt);
-    }
-
-    protected boolean isNoHouseholdBoundToJwt(HouseholdService householdService, Jwt jwt) {
-        return !householdService.isHouseholdBoundToJwt(jwt);
-    }
-
-    protected boolean isNoAdminProfileExistingByJwt(ProfileService profileService, Jwt jwt) {
-        return !profileService.existsAnyPrivilegedProfileByJwt(jwt);
     }
 }
