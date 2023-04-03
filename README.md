@@ -1,6 +1,15 @@
 # Family Task Tracking
 
+## Links
+
+* [About](#about)
+* [Requirements](#requirements)
+* [Quickstart](#quickstart)
+* [Docs](#documentation)
+* [Help](HELP.md)
+
 ## About
+
 A family task tracking app to give family members (mostly kids) tasks and reward them for completing the tasks.
 
 ## Requirements
@@ -41,6 +50,6 @@ Username - admin
 Password - admin
 ```
 
-A guide on how to set up Keycloak can be found here
-[Getting started with Keycloak](HELP.md#keycloak-installation)
+## Documentation
 
+* API Documentation (Can be found under <APP-URL>/swagger) (`localhost` Link)[http://localhost:8081/swagger]
