@@ -17,10 +17,15 @@ public interface ProfileMapper {
     /**
      * Maps a {@link Profile}-Entity to a {@link ProfileResponseDto}.
      * The tasks field, as well as the password field will be ignored.
+     * The passwordProtected Field will be mapped by checking if the password is null or empty
      *
      * @param profile {@link Profile} to map
      * @return Mapped {@link ProfileResponseDto}
      */
+    @Mapping(
+            expression = "java(profile.getPassword() != null && !profile.getPassword().equals(\"\"))",
+            target = "passwordProtected"
+    )
     ProfileResponseDto mapProfileToProfileDto(Profile profile);
 
     /**
