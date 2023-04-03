@@ -40,6 +40,25 @@ class ProfileMapperTest {
         assertThat(profileResponseDto.permissionType()).isEqualTo(profile.getPermissionType());
         assertThat(profileResponseDto.createdAt()).isEqualTo(profile.getCreatedAt());
         assertThat(profileResponseDto.updatedAt()).isEqualTo(profile.getUpdatedAt());
+        assertThat(profileResponseDto.passwordProtected()).isTrue();
+    }
+
+    @Test
+    void mapProfileToProfileResponseDto_withNullPassword() {
+        Profile profile = Profile.builder()
+                .password(null)
+                .build();
+        ProfileResponseDto profileResponseDto = profileMapper.mapProfileToProfileDto(profile);
+        assertThat(profileResponseDto.passwordProtected()).isFalse();
+    }
+
+    @Test
+    void mapProfileToProfileResponseDto_withEmptyPassword() {
+        Profile profile = Profile.builder()
+                .password("")
+                .build();
+        ProfileResponseDto profileResponseDto = profileMapper.mapProfileToProfileDto(profile);
+        assertThat(profileResponseDto.passwordProtected()).isFalse();
     }
 
     @Test
@@ -50,5 +69,48 @@ class ProfileMapperTest {
         assertThat(profile.getPoints()).isEqualTo(dto.points());
         assertThat(profile.getPermissionType()).isEqualTo(dto.permissionType());
         assertThat(profile.getTasks()).isNullOrEmpty();
+    }
+
+    @Test
+    void updateProfileFromDto() {
+        Profile updateContent = Profile.builder()
+                .name("Max")
+                .points(100)
+                .permissionType(PermissionType.ADMIN)
+                .password("1234")
+                .build();
+        Profile target = Profile.builder()
+                .name("Maximillian")
+                .points(0)
+                .permissionType(PermissionType.MEMBER)
+                .password("123")
+                .build();
+        profileMapper.updateProfileFromDto(updateContent, target);
+        assertThat(target.getName()).isEqualTo(updateContent.getName());
+        assertThat(target.getPoints()).isEqualTo(updateContent.getPoints());
+        assertThat(target.getPermissionType()).isEqualTo(updateContent.getPermissionType());
+        assertThat(target.getPassword()).isEqualTo(updateContent.getPassword());
+
+    }
+
+    @Test
+    void safeUpdateProfileFromDto() {
+        Profile updateContent = Profile.builder()
+                .name("Max")
+                .points(100)
+                .permissionType(PermissionType.ADMIN)
+                .password("1234")
+                .build();
+        int oldTargetPoints = 0;
+        PermissionType oldTargetPermissionType = PermissionType.MEMBER;
+        Profile target = Profile.builder()
+                .name("Maximillian")
+                .points(oldTargetPoints)
+                .permissionType(oldTargetPermissionType)
+                .build();
+        profileMapper.safeUpdateProfileFromDto(updateContent, target);
+        assertThat(target.getName()).isEqualTo(updateContent.getName());
+        assertThat(target.getPoints()).isEqualTo(oldTargetPoints);
+        assertThat(target.getPermissionType()).isEqualTo(oldTargetPermissionType);
     }
 }

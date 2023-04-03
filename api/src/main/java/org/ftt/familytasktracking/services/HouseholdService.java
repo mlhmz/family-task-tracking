@@ -27,4 +27,6 @@ public interface HouseholdService {
     Household saveHousehold(Household household);
 
     void deleteHouseholdByJwt(Jwt jwt);
+
+    boolean isHouseholdBoundToJwt(Jwt jwt);
 }

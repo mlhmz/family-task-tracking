@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.services;
 
+import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +9,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test für Keycloak Service.
@@ -21,7 +23,7 @@ class KeycloakServiceTest {
     KeycloakService keycloakService;
 
     @Test
-    void isJwtSubjectContainingUUID() {
+    void isJwtSubjectContainingUUID_ReturnsTrueOnValidData() {
         Jwt jwt = Jwt.withTokenValue("TEST_TOKEN")
                 .header("TEST", "TEST")
                 .subject(UUID.randomUUID().toString())
@@ -30,12 +32,21 @@ class KeycloakServiceTest {
     }
 
     @Test
-    void getKeycloakUserId() {
+    void getKeycloakUserId_ReturnsValidIdOnValidData() {
         UUID userId = UUID.randomUUID();
         Jwt jwt = Jwt.withTokenValue("TEST_TOKEN")
                 .header("TEST", "TEST")
                 .subject(userId.toString())
                 .build();
         assertThat(keycloakService.getKeycloakUserId(jwt)).isEqualTo(userId);
+    }
+
+    @Test
+    void getKeycloakUserId_ThrowsWebRtExceptionOnJwtWithoutValidSubject() {
+        Jwt jwt = Jwt.withTokenValue("TEST_TOKEN")
+                .header("TEST", "TEST")
+                .subject("INVALID-TOKEN")
+                .build();
+        assertThatThrownBy(() -> keycloakService.getKeycloakUserId(jwt)).isInstanceOf(WebRtException.class);
     }
 }
