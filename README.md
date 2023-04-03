@@ -52,4 +52,4 @@ Password - admin
 
 ## Documentation
 
-* API Documentation (Can be found under <APP-URL>/swagger) (`localhost` Link)[http://localhost:8081/swagger]
+* API Documentation (Can be found under <APP-URL>/swagger) [`localhost` Link](http://localhost:8081/swagger)
