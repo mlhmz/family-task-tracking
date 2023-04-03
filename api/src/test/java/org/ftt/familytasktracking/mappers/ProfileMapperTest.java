@@ -40,6 +40,25 @@ class ProfileMapperTest {
         assertThat(profileResponseDto.permissionType()).isEqualTo(profile.getPermissionType());
         assertThat(profileResponseDto.createdAt()).isEqualTo(profile.getCreatedAt());
         assertThat(profileResponseDto.updatedAt()).isEqualTo(profile.getUpdatedAt());
+        assertThat(profileResponseDto.passwordProtected()).isTrue();
+    }
+
+    @Test
+    void mapProfileToProfileResponseDto_withNullPassword() {
+        Profile profile = Profile.builder()
+                .password(null)
+                .build();
+        ProfileResponseDto profileResponseDto = profileMapper.mapProfileToProfileDto(profile);
+        assertThat(profileResponseDto.passwordProtected()).isFalse();
+    }
+
+    @Test
+    void mapProfileToProfileResponseDto_withEmptyPassword() {
+        Profile profile = Profile.builder()
+                .password("")
+                .build();
+        ProfileResponseDto profileResponseDto = profileMapper.mapProfileToProfileDto(profile);
+        assertThat(profileResponseDto.passwordProtected()).isFalse();
     }
 
     @Test
