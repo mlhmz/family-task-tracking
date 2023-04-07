@@ -1,0 +1,42 @@
+_id: req_3ae55862a3a14a6ea3386d5428e8cbfb
+type: Request
+parentId: fld_d546274f5c564b54ab917418079893ef
+modified: 1680386836747
+created: 1680199171233
+url: "{{ _.api }}/{{ _.api_base_path }}/profiles/auth"
+name: Update Password
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"profileUuid": "{{ _.profile_uuid }}",
+    	"password": "123456"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_7ceb15189d6f4b0ab4c9e13d957ab289
+  - id: pair_6deb0ca3fc2c4cc9a5019dc8f9565a22
+    name: "{{ _.session_id_header }}"
+    value: "{{ _.session_id }}"
+    description: ""
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1680146954167.6875
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

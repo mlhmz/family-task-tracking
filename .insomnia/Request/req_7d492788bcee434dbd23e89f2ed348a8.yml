@@ -1,0 +1,43 @@
+_id: req_7d492788bcee434dbd23e89f2ed348a8
+type: Request
+parentId: fld_802ecda018e244579a06b2433dbb8916
+modified: 1680361540385
+created: 1680123616765
+url: "{{ _.api }}/{{ _.api_base_path }}/admin/profiles/{{ _.profile_uuid }}"
+name: Edit Profile
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"name": "Max",
+    	"points": 120,
+    	"permissionType": "MEMBER"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_1f212858555a4e7f8af738e7ccebbb00
+  - id: pair_eafac11333384e2db4c4688bc3c00e53
+    name: "{{ _.session_id_header }}"
+    value: "{{ _.session_id }}"
+    description: ""
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1679768997747.25
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

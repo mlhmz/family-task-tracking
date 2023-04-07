@@ -1,0 +1,41 @@
+_id: req_e186733a6d1644fa8fe9cdd6698d1434
+type: Request
+parentId: fld_6a06b47320684feeb67871d8020658e1
+modified: 1680449054178
+created: 1680449003912
+url: "{{ _.api }}/{{ _.api_base_path }}/profiles/profile"
+name: Safely Update own Profile
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"name": "Maxi"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_01c43372afb9431ca155bfc03a13d853
+  - id: pair_e656fecc165940b3ba5deaf1175b2908
+    name: "{{ _.session_id_header }}"
+    value: "{{ _.session_id }}"
+    description: ""
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1680309792792.6875
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

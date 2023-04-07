@@ -1,0 +1,29 @@
+_id: req_7cfbe9b26fb34cbfa321f063a6f9528f
+type: Request
+parentId: fld_802ecda018e244579a06b2433dbb8916
+modified: 1680364298479
+created: 1680123433612
+url: "{{ _.api }}/{{ _.api_base_path }}/profiles"
+name: Get All Profiles
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1679769198234.25
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

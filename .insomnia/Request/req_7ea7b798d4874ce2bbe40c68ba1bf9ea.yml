@@ -1,0 +1,36 @@
+_id: req_7ea7b798d4874ce2bbe40c68ba1bf9ea
+type: Request
+parentId: fld_d546274f5c564b54ab917418079893ef
+modified: 1680383023979
+created: 1680197491668
+url: "{{ _.api }}/{{ _.api_base_path }}/profiles/auth"
+name: Authenticate
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"profileUuid": "{{ _.profile_uuid }}"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1680170635015.375
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
