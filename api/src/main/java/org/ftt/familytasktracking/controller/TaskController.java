@@ -1,34 +1,26 @@
 package org.ftt.familytasktracking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
-import org.ftt.familytasktracking.services.TaskServiceImpl;
+import org.ftt.familytasktracking.services.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("task")
 public class TaskController {
-
-    private final TaskServiceImpl taskService;
-
-
-    public TaskController(TaskServiceImpl taskService) {
+    private final TaskService taskService;
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = "application/json",
-            produces = "application/hal+json"
-    )
+    @Operation(summary = "Creates a new task")
+    @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(@RequestBody @Valid final TaskRequestDto dto,
                                                       @AuthenticationPrincipal Jwt jwt) {
         TaskResponseDto responseDto = taskService.createTask(dto);
