@@ -2,6 +2,7 @@ package org.ftt.familytasktracking.mappers;
 
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
+import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Task;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ class TaskMapperTest {
                 .expirationAt(LocalDateTime.now())
                 .doneAt(LocalDateTime.now())
                 .done(false)
+                .assignee(Profile.builder().uuid(UUID.randomUUID()).build())
                 .build();
         TaskResponseDto dto = taskMapper.mapTaskToTaskDto(task);
         assertThat(dto.uuid()).isEqualTo(task.getUuid().toString());
@@ -39,6 +41,7 @@ class TaskMapperTest {
         assertThat(dto.expirationAt()).isEqualTo(task.getExpirationAt());
         assertThat(dto.doneAt()).isEqualTo(task.getDoneAt());
         assertThat(dto.done()).isEqualTo(task.isDone());
+        assertThat(dto.assigneeUuid()).isEqualTo(task.getAssignee().getUuid().toString());
     }
 
     @Test
@@ -50,5 +53,6 @@ class TaskMapperTest {
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
         assertThat(task.isDone()).isEqualTo(dto.done());
+        assertThat(task.getAssignee().getUuid()).hasToString(dto.assigneeUuid());
     }
 }
