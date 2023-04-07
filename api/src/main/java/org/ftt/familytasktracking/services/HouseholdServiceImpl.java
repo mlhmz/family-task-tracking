@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Service-Implementation of the {@link HouseholdService}
@@ -51,11 +52,7 @@ public class HouseholdServiceImpl implements HouseholdService {
      */
     @Override
     public HouseholdResponseDto getHouseholdResponseByKeycloakUserId(UUID keycloakUserId) {
-        Optional<Household> household = getHouseholdByKeycloakUserId(keycloakUserId);
-        if (household.isEmpty()) {
-            throwNoHouseholdFoundWebRtExec();
-        }
-        return this.householdMapper.mapHouseholdToHouseholdResponseDto(household.get());
+        return this.householdMapper.mapHouseholdToHouseholdResponseDto(getHouseholdByKeycloakUserId(keycloakUserId));
     }
 
     /**
@@ -65,7 +62,7 @@ public class HouseholdServiceImpl implements HouseholdService {
      * @return {@link Household} that the user is linked to
      */
     @Override
-    public Optional<Household> getHouseholdByJwt(Jwt jwt) {
+    public Household getHouseholdByJwt(Jwt jwt) {
         UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
         return getHouseholdByKeycloakUserId(keycloakUserId);
     }
@@ -77,8 +74,9 @@ public class HouseholdServiceImpl implements HouseholdService {
      * @return {@link Household} of the Keycloak User
      */
     @Override
-    public Optional<Household> getHouseholdByKeycloakUserId(UUID keycloakUserId) {
-        return this.householdRepository.getHouseholdByKeycloakUserId(keycloakUserId);
+    public Household getHouseholdByKeycloakUserId(UUID keycloakUserId) {
+        Optional<Household> household = this.householdRepository.getHouseholdByKeycloakUserId(keycloakUserId);
+        return household.orElseThrow(getNoHouseholdFoundRtException());
     }
 
     /**
@@ -110,12 +108,8 @@ public class HouseholdServiceImpl implements HouseholdService {
      */
     @Override
     public HouseholdResponseDto updateHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto) {
-        Optional<Household> household = this.getHouseholdByJwt(jwt);
-        if (household.isEmpty()) {
-            throwNoHouseholdFoundWebRtExec();
-        }
         Household updatedHousehold = this.householdMapper.updateHouseholdByHouseholdRequestDto(
-                householdRequestDto, household.get()
+                householdRequestDto, this.getHouseholdByJwt(jwt)
         );
         this.saveHousehold(updatedHousehold);
         return this.householdMapper.mapHouseholdToHouseholdResponseDto(updatedHousehold);
@@ -140,11 +134,7 @@ public class HouseholdServiceImpl implements HouseholdService {
      */
     @Override
     public void deleteHouseholdByJwt(Jwt jwt) {
-        Optional<Household> household = this.getHouseholdByJwt(jwt);
-        if (household.isEmpty()) {
-            throwNoHouseholdFoundWebRtExec();
-        }
-        this.householdRepository.delete(household.get());
+        this.householdRepository.delete(this.getHouseholdByJwt(jwt));
     }
 
     @Override
@@ -153,7 +143,7 @@ public class HouseholdServiceImpl implements HouseholdService {
         return this.householdRepository.existsHouseholdByKeycloakUserId(keycloakUserId);
     }
 
-    private void throwNoHouseholdFoundWebRtExec() {
-        throw new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
+    private Supplier<WebRtException> getNoHouseholdFoundRtException() {
+        return () -> new WebRtException(HttpStatus.NOT_FOUND, "The keycloak user doesn't have a household");
     }
 }

@@ -5,7 +5,6 @@ import org.ftt.familytasktracking.dtos.HouseholdResponseDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -14,11 +13,11 @@ import java.util.UUID;
 public interface HouseholdService {
     HouseholdResponseDto getHouseholdResponseByJwt(Jwt jwt);
 
-    Optional<Household> getHouseholdByJwt(Jwt jwt);
+    Household getHouseholdByJwt(Jwt jwt);
 
     HouseholdResponseDto getHouseholdResponseByKeycloakUserId(UUID keycloakUserId);
 
-    Optional<Household> getHouseholdByKeycloakUserId(UUID keycloakUserId);
+    Household getHouseholdByKeycloakUserId(UUID keycloakUserId);
 
     HouseholdResponseDto createHouseholdByRequest(Jwt jwt, HouseholdRequestDto householdRequestDto);
 

@@ -1,8 +1,12 @@
 package org.ftt.familytasktracking.dtos;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public record TaskRequestDto(
-    String name,
-    String description,
-    boolean done,
-    String assigneeUuid
-) {}
+        @NotEmpty
+        String name,
+        String description,
+        boolean done,
+        String assigneeUuid
+) {
+}

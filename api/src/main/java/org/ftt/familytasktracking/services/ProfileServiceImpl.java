@@ -55,9 +55,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ProfileModel createProfile(ProfileModel model, Jwt jwt) {
         Profile profile = model.toEntity();
-        Household household = this.householdService.getHouseholdByJwt(jwt)
-                .orElseThrow(() -> new WebRtException(HttpStatus.BAD_REQUEST,
-                        "Couldn't create the profile because the user has no household"));
+        Household household = this.householdService.getHouseholdByJwt(jwt);
         profile.setHousehold(household);
         return this.buildModelFromProfileEntity(saveProfile(model.toEntity()));
     }

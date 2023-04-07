@@ -24,4 +24,6 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
     @Query("select (count(p) > 0) from Profile p where p.household.keycloakUserId = ?1 and p.permissionType = ?2")
     boolean existsByKeycloakUserIdAndPermissionType(UUID keycloakUserId, PermissionType type);
+
+    Profile getProfileByUuid(UUID uuid);
 }
