@@ -35,9 +35,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void setTasksAssigneeByMappingResult(Task task, Jwt jwt) {
-        UUID assigneeUuid = task.getAssignee().getUuid();
-        Profile assignee = assigneeUuid != null ?
-                this.profileService.getProfileByUuidAndJwt(assigneeUuid, jwt).toEntity() : null;
-        task.setAssignee(assignee);
+        if (task.getAssignee() != null) {
+            UUID assigneeUuid = task.getAssignee().getUuid();
+            Profile assignee = assigneeUuid != null ?
+                    this.profileService.getProfileByUuidAndJwt(assigneeUuid, jwt).toEntity() : null;
+            task.setAssignee(assignee);
+        }
     }
 }
