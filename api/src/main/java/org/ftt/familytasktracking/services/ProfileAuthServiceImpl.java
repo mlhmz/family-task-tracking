@@ -2,29 +2,28 @@ package org.ftt.familytasktracking.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ftt.familytasktracking.entities.Profile;
-import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.models.ProfileModel;
-import org.springframework.http.HttpStatus;
+import org.ftt.familytasktracking.session.UserSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of the {@link ProfileAuthService}}
  */
 @Service
 public class ProfileAuthServiceImpl implements ProfileAuthService {
-    private static final Map<UUID, UUID> sessions = new ConcurrentHashMap<>();
     private final ProfileService profileService;
     private final PasswordEncoder passwordEncoder;
+    private final UserSessionService userSessionService;
 
-    public ProfileAuthServiceImpl(ProfileService profileService, PasswordEncoder passwordEncoder) {
+    public ProfileAuthServiceImpl(ProfileService profileService, PasswordEncoder passwordEncoder,
+                                  UserSessionService userSessionService) {
         this.profileService = profileService;
         this.passwordEncoder = passwordEncoder;
+        this.userSessionService = userSessionService;
     }
 
     @Override
@@ -39,10 +38,8 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
     }
 
     @Override
-    public UUID createSession(UUID profileUuid) {
-        UUID sessionUuid = UUID.randomUUID();
-        sessions.put(sessionUuid, profileUuid);
-        return sessionUuid;
+    public UserSession createSession(UUID profileUuid) {
+        return this.userSessionService.storeSession(profileUuid);
     }
 
     @Override
@@ -60,11 +57,7 @@ public class ProfileAuthServiceImpl implements ProfileAuthService {
     }
 
     private UUID getProfileUuidFromSession(UUID sessionId) {
-        if (sessions.containsKey(sessionId)) {
-            return sessions.get(sessionId);
-        } else {
-            throw new WebRtException(HttpStatus.UNAUTHORIZED, "The session was not found");
-        }
+        return this.userSessionService.getSession(sessionId).profileId();
     }
 
     private ProfileModel getProfileWithChangedPassword(ProfileModel model, String rawPassword) {
