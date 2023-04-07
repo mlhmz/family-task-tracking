@@ -12,10 +12,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("task")
-public class TaskController {
+@RequestMapping("/api/v1/admin/tasks")
+public class TaskAdminController {
     private final TaskService taskService;
-    public TaskController(TaskService taskService) {
+    public TaskAdminController(TaskService taskService) {
         this.taskService = taskService;
     }
 
