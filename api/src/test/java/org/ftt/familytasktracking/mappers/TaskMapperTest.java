@@ -53,6 +53,7 @@ class TaskMapperTest {
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
         assertThat(task.isDone()).isEqualTo(dto.done());
+        assertThat(task.getAssignee()).isNotNull();
         assertThat(task.getAssignee().getUuid()).hasToString(dto.assigneeUuid());
     }
 }

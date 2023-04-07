@@ -3,7 +3,6 @@ package org.ftt.familytasktracking.mappers;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.entities.Task;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -34,6 +33,6 @@ public interface TaskMapper {
      * @param taskRequestDto {@link TaskRequestDto} to map
      * @return Mapped {@link Task}
      */
-    @InheritInverseConfiguration
+    @Mapping(source = "assigneeUuid", target = "assignee.uuid")
     Task mapTaskDtoToTask(TaskRequestDto taskRequestDto);
 }
