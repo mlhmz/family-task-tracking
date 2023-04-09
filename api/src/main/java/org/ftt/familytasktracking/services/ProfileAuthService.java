@@ -1,6 +1,7 @@
 package org.ftt.familytasktracking.services;
 
 import org.ftt.familytasktracking.models.ProfileModel;
+import org.ftt.familytasktracking.session.UserSession;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
@@ -29,7 +30,7 @@ public interface ProfileAuthService {
      * @param profileUuid {@link UUID} of the Profile
      * @return Session ID as {@link UUID}
      */
-    UUID createSession(UUID profileUuid);
+    UserSession createSession(UUID profileUuid);
 
     /**
      * Checks if the Password of the {@link org.ftt.familytasktracking.entities.Profile} is valid

@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
@@ -16,6 +15,7 @@ import org.ftt.familytasktracking.enums.PermissionType;
 import org.ftt.familytasktracking.exceptions.ErrorDetails;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.services.ProfileAuthService;
+import org.ftt.familytasktracking.session.UserSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -36,18 +36,18 @@ public class ProfileAuthController {
     }
 
     /**
-     * Authenticates a Profile and returns a {@link ProfileAuthResponseBody}
+     * Authenticates a Profile and returns a {@link UserSession}
      *
      * @param authBody {@link ProfileAuthRequestBody} which contains the Data for the Authentication
      *                 (Constraints will be validated)
      * @param jwt      {@link Jwt} to make sure that the user can only log into Profiles that are in the household
-     * @return {@link ProfileAuthResponseBody} with the Session Data
+     * @return {@link UserSession} with the Session Data
      */
     @Operation(summary = "Authenticates an user to a profile and returns the Session ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found profile, data is valid, session was created",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProfileAuthResponseBody.class))}),
+                            schema = @Schema(implementation = UserSession.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDetails.class))}),
@@ -60,10 +60,10 @@ public class ProfileAuthController {
             )}
     )
     @PostMapping
-    public ProfileAuthResponseBody authenticate(@RequestBody @Valid ProfileAuthRequestBody authBody,
-                                                @AuthenticationPrincipal Jwt jwt) {
+    public UserSession authenticate(@RequestBody @Valid ProfileAuthRequestBody authBody,
+                                    @AuthenticationPrincipal Jwt jwt) {
         if (this.profileAuthService.isProfilePasswordValid(authBody.profileUuid, jwt, authBody.password)) {
-            return new ProfileAuthResponseBody(this.profileAuthService.createSession(authBody.profileUuid));
+            return this.profileAuthService.createSession(authBody.profileUuid);
         } else {
             throw new WebRtException(HttpStatus.UNAUTHORIZED, "Login failed");
         }
@@ -86,7 +86,7 @@ public class ProfileAuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found profile, data is valid, password has been changed",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProfileAuthResponseBody.class))}),
+                            schema = @Schema(implementation = ProfileAuthRequestBody.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDetails.class))}),
@@ -149,15 +149,5 @@ public class ProfileAuthController {
         @NotNull
         UUID profileUuid;
         String password = "";
-    }
-
-    /**
-     * Response Body for Auth Requests, contains the sessionId
-     */
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    private static class ProfileAuthResponseBody {
-        UUID sessionId;
     }
 }
