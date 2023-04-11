@@ -19,7 +19,7 @@ public interface TaskService {
      */
     TaskResponseDto createTask(TaskRequestDto dto, Jwt jwt);
 
-    List<TaskModel> getAllTasksByJwt(@NonNull Jwt jwt, Boolean done);
+    List<TaskModel> getAllTasksByJwt(@NonNull Jwt jwt);
 
     List<TaskModel> getAllTasksByJwtAndSearchQuery(@NonNull Jwt jwt, @NonNull String query);
 
