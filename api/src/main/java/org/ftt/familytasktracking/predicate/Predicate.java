@@ -1,4 +1,4 @@
-package org.ftt.familytasktracking.predicates;
+package org.ftt.familytasktracking.predicate;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -8,10 +8,11 @@ import org.ftt.familytasktracking.search.SearchQueryParserFactory;
 
 public class Predicate<T> {
     private final Class<T> type;
-    private SearchQuery query;
+    private final SearchQuery query;
 
-    public Predicate(Class<T> type) {
+    public Predicate(Class<T> type, SearchQuery query) {
         this.type = type;
+        this.query = query;
     }
 
     public BooleanExpression getPredicate() {
