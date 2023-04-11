@@ -6,8 +6,16 @@ buildscript {
 
 plugins {
     id 'java'
+    id 'idea'
     id 'org.springframework.boot' version '3.0.1'
     id 'io.spring.dependency-management' version '1.1.0'
+}
+
+idea {
+    module {
+        sourceDirs += file('generated/')
+        generatedSourceDirs += file('generated/')
+    }
 }
 
 group = 'org.familytasktracking'
@@ -15,7 +23,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 configurations {
@@ -43,12 +51,13 @@ dependencies {
     implementation 'com.blue-veery:spring-rest2ts-generator:1.5.1'
     implementation 'com.blue-veery:spring-rest2ts-spring:1.5.1'
     implementation 'com.blue-veery:spring-rest2ts-jackson:1.5.1'
-    compileOnly "com.querydsl:querydsl-sql:${queryDslVersion}"
+    compileOnly "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
     runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:general")
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
