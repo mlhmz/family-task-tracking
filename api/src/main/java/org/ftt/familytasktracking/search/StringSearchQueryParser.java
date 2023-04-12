@@ -8,7 +8,7 @@ public class StringSearchQueryParser<U> implements SearchQueryParser<U> {
     @Override
     public BooleanExpression parseSearchQuery(SearchQuery query, PathBuilder<U> path) {
         String value = (String) query.value();
-        StringPath stringPath = path.getString(value);
+        StringPath stringPath = path.getString(query.key());
         return switch (query.operation()) {
             case ':' -> stringPath.contains(value);
             case '=' -> stringPath.eq(value);

@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 public class SearchQueryUtils {
     private static final Pattern UUID_PATTERN =
             Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
-    public static final Pattern QUERY_PATTERN = Pattern.compile("(\\w+?)(:|<|>|=)(\\w+?),");
-    public static final String QUERY_SEPERATOR_CHAR = ",";
+    public static final Pattern QUERY_PATTERN = Pattern.compile("(\\w+?)([:<>=])([\\s\\S]+?),");
+    public static final String QUERY_SEPARATOR_CHAR = ",";
 
     public static List<SearchQuery> parseSearchQueries(String query) {
-        Matcher matcher = QUERY_PATTERN.matcher(query + QUERY_SEPERATOR_CHAR);
+        Matcher matcher = QUERY_PATTERN.matcher(query + QUERY_SEPARATOR_CHAR);
         List<SearchQuery> searchQueries = new ArrayList<>();
         while (matcher.find()) {
             searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)), getType(matcher.group(3))));
@@ -34,6 +34,8 @@ public class SearchQueryUtils {
             return dateTimeParseResult.result();
         } else if (UUID_PATTERN.matcher(value).matches()) {
             return UUID.fromString(value);
+        } else if (value.equals("true") || value.equals("false")) {
+            return Boolean.parseBoolean(value);
         } else {
             return value;
         }

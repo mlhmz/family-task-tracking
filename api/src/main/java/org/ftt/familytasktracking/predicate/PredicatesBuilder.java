@@ -4,15 +4,17 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import org.ftt.familytasktracking.search.SearchQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class PredicatesBuilder<T> {
-    private List<SearchQuery> queries;
+    private final List<SearchQuery> queries;
     private final Class<T> type;
 
     public PredicatesBuilder(Class<T> type) {
         this.type = type;
+        queries = new ArrayList<>();
     }
 
     public PredicatesBuilder<T> with(SearchQuery searchQuery) {
