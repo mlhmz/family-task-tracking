@@ -22,4 +22,7 @@ public class ApplicationConfigProperties {
     @Getter
     @Setter
     private String allowedOrigins;
+    @Getter
+    @Setter
+    private String secCorsConfigPattern;
 }
