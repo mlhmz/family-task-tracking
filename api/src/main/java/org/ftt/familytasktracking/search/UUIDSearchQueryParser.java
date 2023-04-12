@@ -6,6 +6,9 @@ import com.querydsl.core.types.dsl.PathBuilder;
 
 import java.util.UUID;
 
+/**
+ * Implementation for {@link UUID}
+ */
 public class UUIDSearchQueryParser<U> implements SearchQueryParser<U> {
     @Override
     public BooleanExpression parseSearchQuery(SearchQuery query, PathBuilder<U> path) {

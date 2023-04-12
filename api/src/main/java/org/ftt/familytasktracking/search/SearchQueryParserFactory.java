@@ -1,8 +1,12 @@
 package org.ftt.familytasktracking.search;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Factory that gets SearchParsers by the Type of the {@link SearchQuery}-Value
+ */
 public class SearchQueryParserFactory {
     private static SearchQueryParserFactory instance;
 
@@ -14,18 +18,21 @@ public class SearchQueryParserFactory {
     }
 
     public <U> SearchQueryParser<U> getSearchQueryParserByDataType(SearchQuery searchQuery) {
-        if (searchQuery.value().getClass().equals(String.class)) {
-            return new StringSearchQueryParser<>();
-        } else if (searchQuery.value().getClass().equals(Boolean.class)) {
-            return new BooleanSearchQueryParser<>();
-        } else if (searchQuery.value().getClass().equals(UUID.class)) {
-            return new UUIDSearchQueryParser<>();
-        } else if (searchQuery.value().getClass().equals(Integer.class)) {
-            return new IntegerSearchQueryParser<>();
-        } else if (searchQuery.value().getClass().equals(LocalDateTime.class)) {
-            return new DateTimeSearchQueryParser<>();
-        } else {
+        HashMap<Class<?>, SearchQueryParser<U>> parsers = getSearchQueryParserMap();
+        SearchQueryParser<U> parser = parsers.get(searchQuery.value().getClass());
+        if (parser == null) {
             throw new UnsupportedOperationException();
         }
+        return parser;
+    }
+
+    private static <U> HashMap<Class<?>, SearchQueryParser<U>> getSearchQueryParserMap() {
+        HashMap<Class<?>, SearchQueryParser<U>> parsers = new HashMap<>();
+        parsers.put(String.class, new StringSearchQueryParser<>());
+        parsers.put(Boolean.class, new BooleanSearchQueryParser<>());
+        parsers.put(UUID.class, new UUIDSearchQueryParser<>());
+        parsers.put(Integer.class, new IntegerSearchQueryParser<>());
+        parsers.put(LocalDateTime.class, new DateTimeSearchQueryParser<>());
+        return parsers;
     }
 }

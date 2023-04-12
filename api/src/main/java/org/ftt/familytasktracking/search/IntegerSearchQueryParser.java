@@ -4,6 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 
+/**
+ * Implementation for {@link Integer}
+ */
 public class IntegerSearchQueryParser<U> implements SearchQueryParser<U> {
     @Override
     public BooleanExpression parseSearchQuery(SearchQuery query, PathBuilder<U> path) {

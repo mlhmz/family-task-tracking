@@ -6,6 +6,11 @@ import org.ftt.familytasktracking.search.SearchQuery;
 import org.ftt.familytasktracking.search.SearchQueryParser;
 import org.ftt.familytasktracking.search.SearchQueryParserFactory;
 
+/**
+ * Generic Predicate that Triggers {@link SearchQueryParser} to get a {@link Boolean}
+ *
+ * @param <T> JPA-Entity
+ */
 public class Predicate<T> {
     private final Class<T> type;
     private final SearchQuery query;
@@ -15,8 +20,13 @@ public class Predicate<T> {
         this.query = query;
     }
 
+    /**
+     * Gets a predicate for a SearchQuery
+     *
+     * @return Functional {@link BooleanExpression}
+     */
     public BooleanExpression getPredicate() {
-        PathBuilder<T> path = new PathBuilder<>(type, "task");
+        PathBuilder<T> path = new PathBuilder<>(type, type.getSimpleName().toLowerCase());
 
         SearchQueryParser<T> searchQueryParser = SearchQueryParserFactory.getInstance()
                 .getSearchQueryParserByDataType(query);

@@ -4,6 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringPath;
 
+/**
+ * Implementation for {@link String}
+ */
 public class StringSearchQueryParser<U> implements SearchQueryParser<U> {
     @Override
     public BooleanExpression parseSearchQuery(SearchQuery query, PathBuilder<U> path) {

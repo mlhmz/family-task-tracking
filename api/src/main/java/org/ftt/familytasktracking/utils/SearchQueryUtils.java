@@ -11,22 +11,37 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utils for Search Queries
+ */
 public class SearchQueryUtils {
     private static final Pattern UUID_PATTERN =
             Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
     public static final Pattern QUERY_PATTERN = Pattern.compile("(\\w.+?)([:<>=])([\\s\\S]+?),");
     public static final String QUERY_SEPARATOR_CHAR = ",";
 
+    /**
+     * Parses and splits a SearchQuery
+     *
+     * @param query Query to parse
+     * @return {@link List} of {@link SearchQuery}
+     */
     public static List<SearchQuery> parseSearchQueries(String query) {
         Matcher matcher = QUERY_PATTERN.matcher(query + QUERY_SEPARATOR_CHAR);
         List<SearchQuery> searchQueries = new ArrayList<>();
         while (matcher.find()) {
-            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)), getType(matcher.group(3))));
+            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)), parseValueAndGetType(matcher.group(3))));
         }
         return searchQueries;
     }
 
-    private static Object getType(String value) {
+    /**
+     * Parses the value and returns the actual typed object
+     *
+     * @param value Value that is being parsed
+     * @return untyped Object that is being returned
+     */
+    private static Object parseValueAndGetType(String value) {
         DateTimeParseResult dateTimeParseResult = getDateTimeParseResult(value);
         if (StringUtils.isNumeric(value)) {
             return Integer.parseInt(value);

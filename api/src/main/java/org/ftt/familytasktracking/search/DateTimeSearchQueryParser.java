@@ -6,6 +6,9 @@ import com.querydsl.core.types.dsl.PathBuilder;
 
 import java.time.LocalDateTime;
 
+/**
+ * Implementation for {@link LocalDateTime}
+ */
 public class DateTimeSearchQueryParser<U> implements SearchQueryParser<U> {
     @Override
     public BooleanExpression parseSearchQuery(SearchQuery query, PathBuilder<U> path) {
