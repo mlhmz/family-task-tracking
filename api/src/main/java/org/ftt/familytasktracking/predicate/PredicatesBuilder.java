@@ -1,42 +1,37 @@
 package org.ftt.familytasktracking.predicate;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import org.ftt.familytasktracking.search.SearchQuery;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class PredicatesBuilder<T> {
-    private final List<SearchQuery> queries;
+    private final List<BooleanExpression> expressions;
     private final Class<T> type;
 
     public PredicatesBuilder(Class<T> type) {
         this.type = type;
-        queries = new ArrayList<>();
+        expressions = new ArrayList<>();
     }
 
     public PredicatesBuilder<T> with(SearchQuery searchQuery) {
-        queries.add(searchQuery);
+        expressions.add(
+                new Predicate<>(type, searchQuery).getPredicate()
+        );
         return this;
     }
 
     public BooleanExpression build() {
-        if (queries.isEmpty()) {
+        if (expressions.isEmpty()) {
             return null;
         }
 
-        List<BooleanExpression> expressions = queries.stream()
-                .map(query -> new Predicate<>(type, query))
-                .map(Predicate::getPredicate)
-                .filter(Objects::nonNull)
-                .toList();
-
-        BooleanExpression result = Expressions.asBoolean(true).isTrue();
-        for (BooleanExpression expression : expressions) {
-            result = result.and(expression);
-        }
-        return result;
+        BooleanBuilder reducedExpressions = this.expressions
+                .stream()
+                .reduce(new BooleanBuilder(), BooleanBuilder::and, BooleanBuilder::and);
+        return Expressions.asBoolean(true).isTrue().and(reducedExpressions);
     }
 }
