@@ -7,6 +7,7 @@ import org.ftt.familytasktracking.search.SearchQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PredicatesBuilder<T> {
     private final List<BooleanExpression> expressions;
@@ -31,7 +32,8 @@ public class PredicatesBuilder<T> {
 
         BooleanBuilder reducedExpressions = this.expressions
                 .stream()
+                .filter(Objects::nonNull)
                 .reduce(new BooleanBuilder(), BooleanBuilder::and, BooleanBuilder::and);
-        return Expressions.asBoolean(true).isTrue().and(reducedExpressions);
+        return Expressions.asBoolean(true).isTrue().and(reducedExpressions.getValue());
     }
 }

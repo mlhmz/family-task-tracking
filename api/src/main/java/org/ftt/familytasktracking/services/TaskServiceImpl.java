@@ -8,12 +8,14 @@ import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
+import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.models.TaskModel;
 import org.ftt.familytasktracking.predicate.PredicatesBuilder;
 import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.ftt.familytasktracking.search.SearchQuery;
 import org.ftt.familytasktracking.utils.SearchQueryUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -60,13 +62,19 @@ public class TaskServiceImpl implements TaskService {
 
         List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
 
+        searchQueries.forEach(predicatesBuilder::with);
         for (SearchQuery searchQuery : searchQueries) {
             predicatesBuilder.with(searchQuery);
         }
 
         BooleanExpression exp = predicatesBuilder.build();
         QTask task = QTask.task;
-        Iterable<Task> tasks = this.taskRepository.findAll(task.household.eq(household).and(exp));
+        Iterable<Task> tasks;
+        try {
+            tasks = this.taskRepository.findAll(task.household.eq(household).and(exp));
+        } catch (Exception exception) {
+            throw new WebRtException(HttpStatus.BAD_REQUEST, "Query Error: " + exception.getMessage());
+        }
         return StreamSupport.stream(tasks.spliterator(), false)
                 .map(this::buildModelFromTaskEntity)
                 .toList();
