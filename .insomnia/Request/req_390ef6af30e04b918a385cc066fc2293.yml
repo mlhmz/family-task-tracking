@@ -1,0 +1,38 @@
+_id: req_390ef6af30e04b918a385cc066fc2293
+type: Request
+parentId: fld_bbad2f44645d468f913806b948a714e0
+modified: 1681331173118
+created: 1681330812141
+url: "{{ _.api }}/{{ _.api_base_path }}/tasks/f2f59915-7a49-49fe-a337-0271b1a03070"
+name: Find Task by Id
+description: ""
+method: GET
+body:
+  mimeType: application/json
+  text: ""
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_01c43372afb9431ca155bfc03a13d853
+  - id: pair_e656fecc165940b3ba5deaf1175b2908
+    name: "{{ _.session_id_header }}"
+    value: "{{ _.session_id }}"
+    description: ""
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1680317160441.5938
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

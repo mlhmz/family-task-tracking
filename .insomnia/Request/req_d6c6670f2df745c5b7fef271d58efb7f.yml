@@ -1,0 +1,44 @@
+_id: req_d6c6670f2df745c5b7fef271d58efb7f
+type: Request
+parentId: fld_bbad2f44645d468f913806b948a714e0
+modified: 1681291060254
+created: 1680879877511
+url: "{{ _.api }}/{{ _.api_base_path }}/admin/tasks"
+name: Create Task
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"name": "Test Task 2",
+    	"description": "Test Description",
+    	"done": false,
+    	"assigneeUuid": "edf0b43a-b93d-48b4-a86a-b9489ebe5039"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_01c43372afb9431ca155bfc03a13d853
+  - id: pair_e656fecc165940b3ba5deaf1175b2908
+    name: "{{ _.session_id_header }}"
+    value: "{{ _.session_id }}"
+    description: ""
+authentication:
+  type: oauth2
+  grantType: password
+  authorizationUrl: "{{ _.api }}"
+  username: "{{ _.oauth_username }}"
+  password: .user
+  accessTokenUrl: "{{ _.oauth_token_url }}"
+  clientId: "{{ _.oauth_client_id }}"
+  scope: "{{ _.oauth_scopes }}"
+metaSortKey: -1680324528140.5
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
