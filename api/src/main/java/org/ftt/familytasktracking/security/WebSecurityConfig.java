@@ -121,7 +121,7 @@ public class WebSecurityConfig {
         configuration.setExposedHeaders(List.of("*"));
 
         final var source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/hello/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }

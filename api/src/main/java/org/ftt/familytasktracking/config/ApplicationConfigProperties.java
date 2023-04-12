@@ -19,4 +19,7 @@ public class ApplicationConfigProperties {
     @Getter
     @Setter
     private int sessionExpirationSchedulingDelayInMinutes;
+    @Getter
+    @Setter
+    private String allowedOrigins;
 }
