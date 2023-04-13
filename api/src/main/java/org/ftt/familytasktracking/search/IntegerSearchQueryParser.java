@@ -13,8 +13,8 @@ public class IntegerSearchQueryParser<U> implements SearchQueryParser<U> {
         Integer value = (Integer) query.value();
         NumberPath<Integer> numberPath = path.getNumber(query.key(), Integer.class);
         return switch (query.operation()) {
-            case '>' -> numberPath.loe(value);
-            case '<' -> numberPath.goe(value);
+            case '<' -> numberPath.loe(value);
+            case '>' -> numberPath.goe(value);
             case ':' -> numberPath.eq(value);
             default -> null;
         };

@@ -15,8 +15,8 @@ public class DateTimeSearchQueryParser<U> implements SearchQueryParser<U> {
         LocalDateTime dateTime = (LocalDateTime) query.value();
         DateTimePath<LocalDateTime> dateTimePath = path.getDateTime(query.key(), LocalDateTime.class);
         return switch (query.operation()) {
-            case '>' -> dateTimePath.loe(dateTime);
-            case '<' -> dateTimePath.goe(dateTime);
+            case '<' -> dateTimePath.loe(dateTime);
+            case '>' -> dateTimePath.goe(dateTime);
             case ':' -> dateTimePath.eq(dateTime);
             default -> null;
         };
