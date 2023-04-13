@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
         task.setHousehold(this.householdService.getHouseholdByJwt(jwt));
         return taskMapper.mapTaskToTaskDto(taskRepository.save(task));
     }
-    
+
     @Override
     public List<TaskModel> getAllTasksByJwt(@NonNull Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt);
@@ -95,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
         }
         taskRepository.deleteTaskByUuidAndHousehold(taskId, household);
     }
-    
+
     @Override
     public TaskModel buildModelFromTaskEntity(Task entity) {
         return new TaskModel(entity, taskMapper);

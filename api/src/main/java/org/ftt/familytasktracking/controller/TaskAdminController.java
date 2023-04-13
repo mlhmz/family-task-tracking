@@ -9,15 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/admin/tasks")
 public class TaskAdminController {
     private final TaskService taskService;
+
     public TaskAdminController(TaskService taskService) {
         this.taskService = taskService;
     }
@@ -30,4 +30,9 @@ public class TaskAdminController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTaskById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt) {
+        taskService.deleteTaskByIdAndJwt(id, jwt);
+    }
 }
