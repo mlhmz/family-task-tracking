@@ -2,6 +2,7 @@ package org.ftt.familytasktracking.repositories;
 
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import lombok.NonNull;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public interface TaskRepository extends JpaRepository<Task, UUID>,
         QuerydslPredicateExecutor<Task>, QuerydslBinderCustomizer<QTask> {
     @Override
-    default void customize(QuerydslBindings bindings, QTask root) {
+    default void customize(QuerydslBindings bindings, @NonNull QTask root) {
         bindings.bind(String.class)
                 .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
     }
@@ -26,4 +27,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID>,
 
     Task findTaskByHouseholdAndUuid(Household household, UUID uuid);
 
+    void deleteTaskByUuidAndHousehold(UUID uuid, Household household);
+
+    boolean existsTaskByUuidAndHousehold(UUID uuid, Household household);
 }

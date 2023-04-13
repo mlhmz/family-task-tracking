@@ -19,6 +19,8 @@ public interface TaskService {
      */
     TaskResponseDto createTask(TaskRequestDto dto, Jwt jwt);
 
+    void deleteTaskByIdAndJwt(UUID taskId, Jwt jwt);
+
     List<TaskModel> getAllTasksByJwt(@NonNull Jwt jwt);
 
     List<TaskModel> getAllTasksByJwtAndSearchQuery(@NonNull Jwt jwt, @NonNull String query);

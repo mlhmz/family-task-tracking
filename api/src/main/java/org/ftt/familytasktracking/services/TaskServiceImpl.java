@@ -1,6 +1,7 @@
 package org.ftt.familytasktracking.services;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
@@ -25,7 +26,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
     private final ProfileService profileService;
@@ -89,6 +89,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
+    public void deleteTaskByIdAndJwt(UUID taskId, Jwt jwt) {
+        Household household = this.householdService.getHouseholdByJwt(jwt);
+        if (!taskRepository.existsTaskByUuidAndHousehold(taskId, household)) {
+            throw new WebRtException(HttpStatus.NOT_FOUND, "Task was not found");
+        }
+        taskRepository.deleteTaskByUuidAndHousehold(taskId, household);
+    }
+
+    @Override
     public TaskModel buildModelFromTaskEntity(Task entity) {
         return new TaskModel(entity, taskMapper);
     }
@@ -97,7 +107,6 @@ public class TaskServiceImpl implements TaskService {
     public TaskModel buildModelFromTaskRequestDto(TaskRequestDto dto) {
         return new TaskModel(dto, taskMapper);
     }
-
 
     private void setTasksAssigneeByMappingResult(Task task, Jwt jwt) {
         if (task.getAssignee() != null) {
