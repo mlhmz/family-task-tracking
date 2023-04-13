@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.security;
 
+import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,13 @@ public class WebSecurityConfig {
     public static final String KC_RESOURCE_ACCESS_KEY = "resource_access";
     public static final String KC_SPRING_ADDONS_CONFIDENTIAL_KEY = "spring-addons-confidential";
     public static final String KC_SPRING_ADDONS_PUBLIC = "spring-addons-public";
+
+    private final ApplicationConfigProperties appProps;
+
+    public WebSecurityConfig(ApplicationConfigProperties appProps) {
+        this.appProps = appProps;
+    }
+
 
     public interface Jwt2AuthoritiesConverter extends Converter<Jwt, Collection<? extends GrantedAuthority>> {
     }
@@ -121,7 +129,7 @@ public class WebSecurityConfig {
         configuration.setExposedHeaders(List.of("*"));
 
         final var source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/hello/**", configuration);
+        source.registerCorsConfiguration(appProps.getSecCorsConfigPattern(), configuration);
 
         return source;
     }
