@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.filter;
 
+import jakarta.servlet.annotation.WebFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.exceptions.WebRtException;
@@ -14,6 +15,7 @@ import java.util.UUID;
  * Filter that is making sure, that only requests, having a selected authenticated profile
  * in the session id will use the resources that are matching with the {@link jakarta.servlet.annotation.WebFilter}
  */
+@WebFilter(urlPatterns = {"/api/v1/tasks/*"})
 @Slf4j
 public class ProfileSelectedAppFilter extends AppFilter {
     private final ProfileAuthService profileAuthService;
