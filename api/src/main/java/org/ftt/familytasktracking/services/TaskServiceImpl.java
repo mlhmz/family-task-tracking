@@ -1,6 +1,7 @@
 package org.ftt.familytasktracking.services;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
@@ -88,6 +89,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public void deleteTaskByIdAndJwt(UUID taskId, Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         if (!taskRepository.existsTaskByUuidAndHousehold(taskId, household)) {
