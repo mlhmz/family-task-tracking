@@ -1,21 +1,17 @@
-_id: req_d0bfde45a6da4219aa5fab77c706e171
+_id: req_7896bd14208f4c2fbf6f510d19205036
 type: Request
 parentId: fld_bbad2f44645d468f913806b948a714e0
-modified: 1681380439305
-created: 1681285808227
-url: "{{ _.api }}/{{ _.api_base_path }}/tasks"
-name: Find all Tasks
+modified: 1681380008040
+created: 1681378846325
+url: "{{ _.api }}/{{ _.api_base_path
+  }}/admin/tasks/6ed889af-6c20-4130-ba9b-b56a231ac34a"
+name: Delete by Id
 description: ""
-method: GET
+method: DELETE
 body:
   mimeType: application/json
   text: ""
-parameters:
-  - id: pair_b41918b14712484c982799c2e0f282a0
-    name: query
-    value: done:false,createdAt:2023-04-12T10:29:17.171389
-    description: ""
-    disabled: false
+parameters: []
 headers:
   - name: Content-Type
     value: application/json
@@ -33,8 +29,7 @@ authentication:
   accessTokenUrl: "{{ _.oauth_token_url }}"
   clientId: "{{ _.oauth_client_id }}"
   scope: "{{ _.oauth_scopes }}"
-  disabled: false
-metaSortKey: -1680324528090.5
+metaSortKey: -1680313476617.1406
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
