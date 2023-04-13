@@ -41,6 +41,8 @@ public abstract class AppFilter implements Filter {
         this.request = (HttpServletRequest) request;
         this.response = (HttpServletResponse) response;
 
+        setCors();
+
         String jwtKey = getHeader("Authorization").split(" ")[1];
         Jwt jwt = jwtDecoder.decode(jwtKey);
 
@@ -55,6 +57,10 @@ public abstract class AppFilter implements Filter {
 
     protected String getHeader(String headerName) {
         return this.request.getHeader(headerName);
+    }
+
+    protected void setHeader(String name, String value) {
+        this.response.setHeader(name, value);
     }
 
     protected void convertWebRtExceptionToServletError(WebRtException exception) throws IOException {
@@ -72,5 +78,9 @@ public abstract class AppFilter implements Filter {
             throw new WebRtException(HttpStatus.UNAUTHORIZED, "The session id is malformed.");
         }
         return uuid;
+    }
+
+    private void setCors() {
+        setHeader("Access-Control-Allow-Origin", appProps.getAllowedOrigins());
     }
 }
