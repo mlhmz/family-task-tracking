@@ -11,5 +11,4 @@ public class FamilyTaskTrackingApplication {
     public static void main(String[] args) {
         SpringApplication.run(FamilyTaskTrackingApplication.class, args);
     }
-
 }
