@@ -3,6 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.springframework.security.oauth2.jwt.Jwt;
+
 import java.util.UUID;
 
 public interface TaskService {
@@ -13,5 +14,6 @@ public interface TaskService {
      * @return {@link TaskResponseDto}
      */
     TaskResponseDto createTask(TaskRequestDto dto, Jwt jwt);
-    void delete(UUID taskId);
+
+    void deleteTaskByIdAndJwt(UUID taskId, Jwt jwt);
 }

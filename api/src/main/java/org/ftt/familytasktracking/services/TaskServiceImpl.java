@@ -2,12 +2,14 @@ package org.ftt.familytasktracking.services;
 
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
+import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Task;
+import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.repositories.TaskRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -35,6 +37,15 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.mapTaskToTaskDto(taskRepository.save(task));
     }
 
+    @Override
+    public void deleteTaskByIdAndJwt(UUID taskId, Jwt jwt) {
+        Household household = this.householdService.getHouseholdByJwt(jwt);
+        if (!taskRepository.existsTaskByUuidAndHousehold(taskId, household)) {
+            throw new WebRtException(HttpStatus.NOT_FOUND, "Task was not found");
+        }
+        taskRepository.deleteTaskByUuidAndHousehold(taskId, household);
+    }
+
     private void setTasksAssigneeByMappingResult(Task task, Jwt jwt) {
         if (task.getAssignee() != null) {
             UUID assigneeUuid = task.getAssignee().getUuid();
@@ -42,14 +53,5 @@ public class TaskServiceImpl implements TaskService {
                     this.profileService.getProfileByUuidAndJwt(assigneeUuid, jwt).toEntity() : null;
             task.setAssignee(assignee);
         }
-
-    @Override
-    public void delete(UUID taskId) {
-
-        if (!taskRepository.existsTaskByUuid(taskId)) {
-            //TODO durch fachliche Exception ersetzen
-            throw new RuntimeException("Task was not found");
-        }
-        taskRepository.deleteById(taskId);
     }
 }

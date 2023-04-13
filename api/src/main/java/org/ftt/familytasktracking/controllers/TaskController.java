@@ -2,7 +2,8 @@ package org.ftt.familytasktracking.controllers;
 
 import org.ftt.familytasktracking.services.TaskService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,10 +20,9 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @DeleteMapping(value = "/id")
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public HttpStatusCode delete(@PathVariable UUID taskId) {
-        taskService.delete(taskId);
-        return HttpStatus.NO_CONTENT;
+    public void deleteTaskById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt) {
+        taskService.deleteTaskByIdAndJwt(id, jwt);
     }
 }
