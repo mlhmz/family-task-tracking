@@ -27,6 +27,8 @@ public interface TaskService {
 
     TaskModel getTaskByUuidAndJwt(@NonNull UUID uuid, @NonNull Jwt jwt);
 
+    TaskModel editTaskByUuidAndJwt(@NonNull TaskModel updateTask, @NonNull UUID uuid, @NonNull Jwt jwt, boolean safe);
+
     TaskModel buildModelFromTaskEntity(Task entity);
 
     TaskModel buildModelFromTaskRequestDto(TaskRequestDto dto);

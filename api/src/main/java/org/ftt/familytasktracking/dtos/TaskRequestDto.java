@@ -6,7 +6,7 @@ public record TaskRequestDto(
         @NotEmpty
         String name,
         String description,
-        boolean done,
+        Boolean done,
         String assigneeUuid
 ) {
 }

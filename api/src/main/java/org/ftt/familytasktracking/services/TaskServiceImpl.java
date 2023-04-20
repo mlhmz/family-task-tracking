@@ -10,6 +10,7 @@ import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.exceptions.WebRtException;
+import org.ftt.familytasktracking.hooks.TaskUpdateHook;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.models.TaskModel;
 import org.ftt.familytasktracking.predicate.PredicatesBuilder;
@@ -89,6 +90,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public TaskModel editTaskByUuidAndJwt(@NonNull TaskModel updateTaskModel, @NonNull UUID uuid, @NonNull Jwt jwt,
+                                          boolean safe) {
+        Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
+        updateTargetTask(updateTaskModel.toEntity(), targetTask, safe);
+        executeUpdateHooks(targetTask);
+        return buildModelFromTaskEntity(
+                this.taskRepository.save(targetTask)
+        );
+    }
+
+    @Override
     @Transactional
     public void deleteTaskByIdAndJwt(UUID taskId, Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt);
@@ -96,6 +108,34 @@ public class TaskServiceImpl implements TaskService {
             throw new WebRtException(HttpStatus.NOT_FOUND, "Task was not found");
         }
         taskRepository.deleteTaskByUuidAndHousehold(taskId, household);
+    }
+
+    /**
+     * Executes all {@link TaskUpdateHook}-Hooks
+     *
+     * @param targetTask {@link Task} that the hooks should execute on
+     */
+    private void executeUpdateHooks(Task targetTask) {
+        for (TaskUpdateHook taskUpdateHook : getAllTaskUpdateHooks()) {
+            taskUpdateHook.executeUpdateHook(targetTask);
+        }
+    }
+
+    /**
+     * Gets a predefined List of Update Hooks
+     *
+     * @return {@link List} of {@link TaskUpdateHook}
+     */
+    private static List<TaskUpdateHook> getAllTaskUpdateHooks() {
+        return List.of();
+    }
+
+    private void updateTargetTask(@NonNull Task updateTask, @NonNull Task targetTask, boolean safe) {
+        if (safe) {
+            this.taskMapper.updateTask(updateTask, targetTask);
+        } else {
+            this.taskMapper.safeUpdateTask(updateTask, targetTask);
+        }
     }
 
     @Override
