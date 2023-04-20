@@ -83,6 +83,24 @@ public class TaskController {
         return this.taskService.getTaskByUuidAndJwt(uuid, jwt).toResponseDto();
     }
 
+    @Operation(summary = "Updates a Task safely" +
+            "(Safely means that fields that unprivileged users shouldn't update won't be updated).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated Task",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session ID is not valid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Task to update couldn't be found from session",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
     @PutMapping("/{id}")
     public TaskResponseDto safeUpdateTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
                                                       @AuthenticationPrincipal Jwt jwt,

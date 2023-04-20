@@ -54,6 +54,26 @@ public class TaskAdminController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Updates a Task by it's UUID and it's Authorization-Token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found task and updated it",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session Id is invalid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "403", description = "The profile is unprivileged",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Task to update couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
     @PutMapping("/{id}")
     public TaskResponseDto updateTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
                                                   @AuthenticationPrincipal Jwt jwt,
