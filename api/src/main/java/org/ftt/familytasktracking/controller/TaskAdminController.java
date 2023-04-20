@@ -10,6 +10,7 @@ import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.exceptions.ErrorDetails;
+import org.ftt.familytasktracking.models.TaskModel;
 import org.ftt.familytasktracking.services.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,14 @@ public class TaskAdminController {
                                                       @AuthenticationPrincipal Jwt jwt) {
         TaskResponseDto responseDto = taskService.createTask(dto, jwt);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public TaskResponseDto updateTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
+                                                  @AuthenticationPrincipal Jwt jwt,
+                                                  @RequestBody TaskRequestDto dto) {
+        TaskModel model = this.taskService.buildModelFromTaskRequestDto(dto);
+        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, false).toResponseDto();
     }
 
     @Operation(summary = "Deletes a Task by it's UUID and it's Authorization-Token")

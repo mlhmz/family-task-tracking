@@ -90,8 +90,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskModel editTaskByUuidAndJwt(@NonNull TaskModel updateTaskModel, @NonNull UUID uuid, @NonNull Jwt jwt,
-                                          boolean safe) {
+    public TaskModel updateTaskByUuidAndJwt(@NonNull TaskModel updateTaskModel, @NonNull UUID uuid, @NonNull Jwt jwt,
+                                            boolean safe) {
         Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
         updateTargetTask(updateTaskModel.toEntity(), targetTask, safe);
         executeUpdateHooks(targetTask);
@@ -127,7 +127,8 @@ public class TaskServiceImpl implements TaskService {
      * @return {@link List} of {@link TaskUpdateHook}
      */
     private static List<TaskUpdateHook> getAllTaskUpdateHooks() {
-        return List.of();
+        return List.of(
+        );
     }
 
     private void updateTargetTask(@NonNull Task updateTask, @NonNull Task targetTask, boolean safe) {
