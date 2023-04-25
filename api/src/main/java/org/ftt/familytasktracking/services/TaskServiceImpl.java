@@ -99,7 +99,7 @@ public class TaskServiceImpl implements TaskService {
         Task updateTask = updateTaskModel.toEntity();
         Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
         updateTargetTask(updateTask, targetTask, safe);
-        executeUpdateHooks(updateTask, targetTask);
+        executeUpdateHooks(updateTask, targetTask, safe);
         return buildModelFromTaskEntity(
                 this.taskRepository.save(targetTask)
         );
@@ -128,9 +128,9 @@ public class TaskServiceImpl implements TaskService {
      *
      * @param targetTask {@link Task} that the hooks should execute on
      */
-    private void executeUpdateHooks(Task updateTask, Task targetTask) {
+    private void executeUpdateHooks(Task updateTask, Task targetTask, boolean safe) {
         for (TaskUpdateHook taskUpdateHook : taskUpdateHooks) {
-            taskUpdateHook.executeUpdateHook(updateTask, targetTask);
+            taskUpdateHook.executeUpdateHook(updateTask, targetTask, safe);
         }
     }
 
