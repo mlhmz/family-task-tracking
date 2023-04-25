@@ -1,24 +1,25 @@
-_id: req_82e9df43b2da4910b14d60007f8b1518
+_id: req_58dc8edf9cc7406eb9d923a06127e56b
 type: Request
-parentId: fld_9a298bb815f94cf19bd561a852458599
-modified: 1681994941057
-created: 1679769862802
-url: "{{ _.api }}/{{ _.api_base_path }}/admin/household"
-name: Edit Household
+parentId: fld_bbad2f44645d468f913806b948a714e0
+modified: 1682451707035
+created: 1681988962685
+url: "{{ _.api }}/{{ _.api_base_path
+  }}/admin/tasks/f2f59915-7a49-49fe-a337-0271b1a03070"
+name: Update Task
 description: ""
 method: PUT
 body:
   mimeType: application/json
   text: |-
     {
-    	"householdName": "Test Householda"
+    	"name": "Test Task"
     }
 parameters: []
 headers:
   - name: Content-Type
     value: application/json
-    id: pair_0e10f1df3b5c440a8c054f068ddffd09
-  - id: pair_c6f7338159164bbeb92ced28d611fe70
+    id: pair_01c43372afb9431ca155bfc03a13d853
+  - id: pair_e656fecc165940b3ba5deaf1175b2908
     name: "{{ _.session_id_header }}"
     value: "{{ _.session_id }}"
     description: ""
@@ -31,7 +32,8 @@ authentication:
   accessTokenUrl: "{{ _.oauth_token_url }}"
   clientId: "{{ _.oauth_client_id }}"
   scope: "{{ _.oauth_scopes }}"
-metaSortKey: -1679768947625.5
+  disabled: false
+metaSortKey: -1680324528115.5
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true

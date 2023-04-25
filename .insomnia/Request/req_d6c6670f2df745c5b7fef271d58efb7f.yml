@@ -1,7 +1,7 @@
 _id: req_d6c6670f2df745c5b7fef271d58efb7f
 type: Request
 parentId: fld_bbad2f44645d468f913806b948a714e0
-modified: 1681332472541
+modified: 1681993235499
 created: 1680879877511
 url: "{{ _.api }}/{{ _.api_base_path }}/admin/tasks"
 name: Create Task
@@ -13,8 +13,7 @@ body:
     {
     	"name": "Test Task 2",
     	"description": "Test Description",
-    	"done": false,
-    	"assigneeUuid": "edf0b43a-b93d-48b4-a86a-b9489ebe5039"
+    	"done": false
     }
 parameters: []
 headers:
