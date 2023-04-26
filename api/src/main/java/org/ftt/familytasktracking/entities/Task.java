@@ -40,8 +40,15 @@ public class Task {
 
     private LocalDateTime doneAt;
 
-    @Builder.Default
-    private boolean done = false;
+    private Boolean done;
+
+    @PrePersist
+    @PreUpdate
+    private void prePersist() {
+        if (done == null) {
+            done = false;
+        }
+    }
 
     @ManyToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
     private Profile assignee;

@@ -10,6 +10,7 @@ import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.exceptions.ErrorDetails;
+import org.ftt.familytasktracking.models.TaskModel;
 import org.ftt.familytasktracking.services.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,34 @@ public class TaskAdminController {
                                                       @AuthenticationPrincipal Jwt jwt) {
         TaskResponseDto responseDto = taskService.createTask(dto, jwt);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Updates a Task by it's UUID and it's Authorization-Token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found task and updated it",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session Id is invalid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "403", description = "The profile is unprivileged",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Task to update couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
+    @PutMapping("/{id}")
+    public TaskResponseDto updateTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
+                                                  @AuthenticationPrincipal Jwt jwt,
+                                                  @RequestBody TaskRequestDto dto) {
+        TaskModel model = this.taskService.buildModelFromTaskRequestDto(dto);
+        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, false).toResponseDto();
     }
 
     @Operation(summary = "Deletes a Task by it's UUID and it's Authorization-Token")

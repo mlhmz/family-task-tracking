@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
+import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.exceptions.ErrorDetails;
 import org.ftt.familytasktracking.models.TaskModel;
@@ -80,6 +81,32 @@ public class TaskController {
     public TaskResponseDto getTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
                                                @AuthenticationPrincipal Jwt jwt) {
         return this.taskService.getTaskByUuidAndJwt(uuid, jwt).toResponseDto();
+    }
+
+    @Operation(summary = "Updates a Task safely" +
+            "(Safely means that fields that unprivileged users shouldn't update won't be updated).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated Task",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session ID is not valid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Task to update couldn't be found from session",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
+    @PutMapping("/{id}")
+    public TaskResponseDto safeUpdateTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
+                                                      @AuthenticationPrincipal Jwt jwt,
+                                                      @RequestBody TaskRequestDto dto) {
+        TaskModel model = this.taskService.buildModelFromTaskRequestDto(dto);
+        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, true).toResponseDto();
     }
 
     private List<TaskResponseDto> mapModelCollectionToDtoCollection(List<TaskModel> models) {

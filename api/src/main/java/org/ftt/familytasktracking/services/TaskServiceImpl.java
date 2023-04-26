@@ -10,6 +10,7 @@ import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.exceptions.WebRtException;
+import org.ftt.familytasktracking.hooks.TaskUpdateHook;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.models.TaskModel;
 import org.ftt.familytasktracking.predicate.PredicatesBuilder;
@@ -26,6 +27,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class TaskServiceImpl implements TaskService {
+    private final List<TaskUpdateHook> taskUpdateHooks = List.of();
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
     private final ProfileService profileService;
@@ -63,9 +65,6 @@ public class TaskServiceImpl implements TaskService {
         List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
 
         searchQueries.forEach(predicatesBuilder::with);
-        for (SearchQuery searchQuery : searchQueries) {
-            predicatesBuilder.with(searchQuery);
-        }
 
         BooleanExpression exp = predicatesBuilder.build();
         QTask task = QTask.task;
@@ -83,8 +82,26 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskModel getTaskByUuidAndJwt(@NonNull UUID uuid, @NonNull Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt);
+        Task task = this.taskRepository.findTaskByHouseholdAndUuid(household, uuid);
+        if (task == null) {
+            throw new WebRtException(HttpStatus.NOT_FOUND,
+                    String.format("The task with the uuid '%s' was not found.", uuid));
+        }
         return buildModelFromTaskEntity(
-                this.taskRepository.findTaskByHouseholdAndUuid(household, uuid)
+                task
+        );
+    }
+
+    @Override
+    @Transactional
+    public TaskModel updateTaskByUuidAndJwt(@NonNull TaskModel updateTaskModel, @NonNull UUID uuid, @NonNull Jwt jwt,
+                                            boolean safe) {
+        Task updateTask = updateTaskModel.toEntity();
+        Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
+        updateTargetTask(updateTask, targetTask, safe);
+        executeUpdateHooks(updateTask, targetTask, safe);
+        return buildModelFromTaskEntity(
+                this.taskRepository.save(targetTask)
         );
     }
 
@@ -96,6 +113,25 @@ public class TaskServiceImpl implements TaskService {
             throw new WebRtException(HttpStatus.NOT_FOUND, "Task was not found");
         }
         taskRepository.deleteTaskByUuidAndHousehold(taskId, household);
+    }
+
+    private void updateTargetTask(@NonNull Task updateTask, @NonNull Task targetTask, boolean safe) {
+        if (safe) {
+            this.taskMapper.safeUpdateTask(updateTask, targetTask);
+        } else {
+            this.taskMapper.updateTask(updateTask, targetTask);
+        }
+    }
+
+    /**
+     * Executes all {@link TaskUpdateHook}-Hooks
+     *
+     * @param targetTask {@link Task} that the hooks should execute on
+     */
+    private void executeUpdateHooks(Task updateTask, Task targetTask, boolean safe) {
+        for (TaskUpdateHook taskUpdateHook : taskUpdateHooks) {
+            taskUpdateHook.executeUpdateHook(updateTask, targetTask, safe);
+        }
     }
 
     @Override

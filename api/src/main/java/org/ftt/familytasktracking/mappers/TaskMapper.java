@@ -3,16 +3,15 @@ package org.ftt.familytasktracking.mappers;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.entities.Task;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 /**
  * Mapper for the {@link Task} and {@link TaskResponseDto} Object
  */
 @Mapper(
         componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface TaskMapper {
     /**
@@ -35,4 +34,16 @@ public interface TaskMapper {
      */
     @Mapping(source = "assigneeUuid", target = "assignee.uuid")
     Task mapTaskDtoToTask(TaskRequestDto taskRequestDto);
+
+    @Mapping(target = "assignee", ignore = true)
+    @Mapping(target = "household", ignore = true)
+    void updateTask(Task updateTask, @MappingTarget Task targetTask);
+
+
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "done", ignore = true)
+    @Mapping(target = "assignee", ignore = true)
+    @Mapping(target = "household", ignore = true)
+    void safeUpdateTask(Task updateTask, @MappingTarget Task targetTask);
 }

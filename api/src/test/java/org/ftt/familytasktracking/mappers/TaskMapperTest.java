@@ -40,7 +40,7 @@ class TaskMapperTest {
         assertThat(dto.updatedAt()).isEqualTo(task.getUpdatedAt());
         assertThat(dto.expirationAt()).isEqualTo(task.getExpirationAt());
         assertThat(dto.doneAt()).isEqualTo(task.getDoneAt());
-        assertThat(dto.done()).isEqualTo(task.isDone());
+        assertThat(dto.done()).isEqualTo(task.getDone());
         assertThat(dto.assigneeUuid()).isEqualTo(task.getAssignee().getUuid().toString());
     }
 
@@ -52,7 +52,7 @@ class TaskMapperTest {
         Task task = taskMapper.mapTaskDtoToTask(dto);
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
-        assertThat(task.isDone()).isEqualTo(dto.done());
+        assertThat(task.getDone()).isEqualTo(dto.done());
         assertThat(task.getAssignee()).isNotNull();
         assertThat(task.getAssignee().getUuid()).hasToString(dto.assigneeUuid());
     }
