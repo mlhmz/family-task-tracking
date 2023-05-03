@@ -2,6 +2,7 @@ package org.ftt.familytasktracking.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.ftt.familytasktracking.enums.TaskState;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -40,13 +41,13 @@ public class Task {
 
     private LocalDateTime doneAt;
 
-    private Boolean done;
+    private TaskState taskState;
 
     @PrePersist
     @PreUpdate
     private void prePersist() {
-        if (done == null) {
-            done = false;
+        if (taskState == null) {
+            taskState = TaskState.UNDONE;
         }
     }
 

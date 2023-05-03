@@ -1,5 +1,7 @@
 package org.ftt.familytasktracking.dtos;
 
+import org.ftt.familytasktracking.enums.TaskState;
+
 import java.time.LocalDateTime;
 
 public record TaskResponseDto(
@@ -10,6 +12,6 @@ public record TaskResponseDto(
     LocalDateTime updatedAt,
     LocalDateTime expirationAt,
     LocalDateTime doneAt,
-    boolean done,
+    TaskState taskState,
     String assigneeUuid
 ) {}
