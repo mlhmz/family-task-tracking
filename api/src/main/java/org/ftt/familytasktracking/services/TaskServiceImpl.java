@@ -21,13 +21,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-    private final List<TaskUpdateHook> taskUpdateHooks = List.of();
+    private final List<TaskUpdateHook> taskUpdateHooks = new ArrayList<>();
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
     private final ProfileService profileService;
