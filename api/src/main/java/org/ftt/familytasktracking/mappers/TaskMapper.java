@@ -43,6 +43,8 @@ public interface TaskMapper {
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "description", ignore = true)
     @Mapping(target = "taskState", ignore = true)
+    @Mapping(target = "scheduled", ignore = true)
+    @Mapping(target = "cronExpression", ignore = true)
     @Mapping(target = "assignee", ignore = true)
     @Mapping(target = "household", ignore = true)
     void safeUpdateTask(Task updateTask, @MappingTarget Task targetTask);
