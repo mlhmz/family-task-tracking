@@ -7,6 +7,7 @@ import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.entities.TaskRoutine;
 import org.ftt.familytasktracking.enums.IntervalType;
 import org.ftt.familytasktracking.enums.PermissionType;
+import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.HouseholdRepository;
 import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.ftt.familytasktracking.repositories.TaskRepository;
@@ -107,7 +108,7 @@ public class FixtureConfig implements ApplicationRunner {
         Task firstTask = Task.builder()
                 .name("Do something 1")
                 .description("This is an example task")
-                .done(false)
+                .taskState(TaskState.UNDONE)
                 .expirationAt(LocalDateTime.now().plusDays(5))
                 .assignee(firstProfile)
                 .household(household)
@@ -115,7 +116,7 @@ public class FixtureConfig implements ApplicationRunner {
         Task secondTask = Task.builder()
                 .name("Do something 2")
                 .description("This is an example task")
-                .done(false)
+                .taskState(TaskState.UNDONE)
                 .expirationAt(LocalDateTime.now().plusDays(5))
                 .assignee(secondProfile)
                 .household(household)
