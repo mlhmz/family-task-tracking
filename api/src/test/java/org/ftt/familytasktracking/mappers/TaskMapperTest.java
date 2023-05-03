@@ -49,8 +49,7 @@ class TaskMapperTest {
     void mapTaskDtoToTask() {
         TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description",
                 TaskState.UNDONE,
-                UUID.randomUUID().toString());
-                false, true, "* * * * *", UUID.randomUUID().toString());
+                false, "* * * * *", UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());

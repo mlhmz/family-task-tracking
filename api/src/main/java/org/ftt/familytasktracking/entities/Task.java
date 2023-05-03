@@ -41,11 +41,9 @@ public class Task {
 
     private LocalDateTime doneAt;
 
-    private TaskState taskState;
-
     private LocalDateTime lastTaskCreationAt;
 
-    private Boolean done;
+    private TaskState taskState;
 
     private Boolean scheduled;
 
