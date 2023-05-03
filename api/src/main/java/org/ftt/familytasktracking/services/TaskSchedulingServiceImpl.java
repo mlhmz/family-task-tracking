@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.services;
 
+import io.micrometer.common.util.StringUtils;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
@@ -19,20 +20,27 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
     }
 
     @Override
-    public void updateAllTaskSchedulingsByHousehold(Household household) {
+    public void updateAllTaskSchedulingParametersByHousehold(Household household) {
         List<Task> tasks = this.taskRepository.findAllByHousehold(household);
-        tasks.forEach(this::updateTasksScheduling);
+        tasks.forEach(this::updateTasksSchedulingParameters);
         this.taskRepository.saveAll(tasks);
     }
 
     @Override
-    public void updateTasksScheduling(Task task) {
+    public void updateTasksSchedulingParameters(Task task) {
+        if (!isTaskScheduled(task)) {
+            return;
+        }
         CronExpression cronExpression = CronExpression.parse(task.getCronExpression());
         LocalDateTime nextExecution = cronExpression.next(task.getLastTaskCreationAt());
         if (LocalDateTime.now().isAfter(nextExecution)) {
             updateTaskSchedulingParametersByCronExpression(task, cronExpression);
             resetTaskState(task);
         }
+    }
+
+    private boolean isTaskScheduled(Task task) {
+        return Boolean.TRUE.equals(task.getScheduled()) && StringUtils.isNotEmpty(task.getCronExpression());
     }
 
     private void updateTaskSchedulingParametersByCronExpression(Task task, CronExpression cronExpression) {
