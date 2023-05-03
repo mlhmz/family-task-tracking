@@ -43,6 +43,8 @@ public class Task {
 
     private LocalDateTime lastTaskCreationAt;
 
+    private LocalDateTime nextTaskCreationAt;
+
     private TaskState taskState;
 
     private Boolean scheduled;
