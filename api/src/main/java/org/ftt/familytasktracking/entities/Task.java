@@ -43,6 +43,10 @@ public class Task {
 
     private TaskState taskState;
 
+    private LocalDateTime lastTaskCreationAt;
+
+    private Boolean done;
+
     private Boolean scheduled;
 
     private String cronExpression;
