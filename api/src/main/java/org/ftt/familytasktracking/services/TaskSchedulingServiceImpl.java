@@ -40,7 +40,9 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
     }
 
     private boolean isTaskScheduled(Task task) {
-        return Boolean.TRUE.equals(task.getScheduled()) && StringUtils.isNotEmpty(task.getCronExpression());
+        return Boolean.TRUE.equals(task.getScheduled()) &&
+                StringUtils.isNotEmpty(task.getCronExpression()) &&
+                CronExpression.isValidExpression(task.getCronExpression());
     }
 
     private void updateTaskSchedulingParametersByCronExpression(Task task, CronExpression cronExpression) {
