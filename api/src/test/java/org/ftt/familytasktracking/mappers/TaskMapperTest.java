@@ -49,12 +49,14 @@ class TaskMapperTest {
     void mapTaskDtoToTask() {
         TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description",
                 TaskState.UNDONE,
-                UUID.randomUUID().toString());
+                true, "* * * * *", UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
         assertThat(task.getTaskState()).isEqualTo(dto.taskState());
         assertThat(task.getAssignee()).isNotNull();
+        assertThat(task.getScheduled()).isEqualTo(dto.scheduled());
+        assertThat(task.getCronExpression()).isEqualTo(dto.cronExpression());
         assertThat(task.getAssignee().getUuid()).hasToString(dto.assigneeUuid());
     }
 }

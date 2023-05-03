@@ -4,14 +4,11 @@ import io.micrometer.common.util.StringUtils;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Task;
-import org.ftt.familytasktracking.entities.TaskRoutine;
-import org.ftt.familytasktracking.enums.IntervalType;
 import org.ftt.familytasktracking.enums.PermissionType;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.HouseholdRepository;
 import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.ftt.familytasktracking.repositories.TaskRepository;
-import org.ftt.familytasktracking.repositories.TaskRoutineRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -27,16 +24,14 @@ public class FixtureConfig implements ApplicationRunner {
     private final HouseholdRepository householdRepository;
     private final ProfileRepository profileRepository;
     private final TaskRepository taskRepository;
-    private final TaskRoutineRepository taskRoutineRepository;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public FixtureConfig(HouseholdRepository householdRepository, ProfileRepository profileRepository,
-                         TaskRepository taskRepository, TaskRoutineRepository taskRoutineRepository) {
+                         TaskRepository taskRepository) {
         this.householdRepository = householdRepository;
         this.profileRepository = profileRepository;
         this.taskRepository = taskRepository;
-        this.taskRoutineRepository = taskRoutineRepository;
     }
 
     @Override
@@ -51,18 +46,16 @@ public class FixtureConfig implements ApplicationRunner {
                     household,
                     sampleProfiles.get(0),
                     sampleProfiles.get(1));
-            List<TaskRoutine> taskRoutines = getTaskRoutines(household);
-            persistFixtures(household, sampleProfiles, sampleTasks, taskRoutines);
+            persistFixtures(household, sampleProfiles, sampleTasks);
             logger.info("Created Fixtures - Household UUID: {}", household.getUuid());
         }
     }
 
     private void persistFixtures(Household household, List<Profile> sampleProfiles,
-                                 List<Task> sampleTasks, List<TaskRoutine> taskRoutines) {
+                                 List<Task> sampleTasks) {
         this.householdRepository.save(household);
         this.profileRepository.saveAll(sampleProfiles);
         this.taskRepository.saveAll(sampleTasks);
-        this.taskRoutineRepository.saveAll(taskRoutines);
     }
 
     private UUID getKcUserUuid() {
@@ -122,27 +115,5 @@ public class FixtureConfig implements ApplicationRunner {
                 .household(household)
                 .build();
         return List.of(firstTask, secondTask);
-    }
-
-    private List<TaskRoutine> getTaskRoutines(Household household) {
-        TaskRoutine firstTaskRoutine = TaskRoutine.builder()
-                .name("Do something routine 1")
-                .description("This is an example task routine")
-                .activated(true)
-                .lastTaskCreationAt(LocalDateTime.now().minusDays(5))
-                .interval(5)
-                .intervalType(IntervalType.DAYS)
-                .household(household)
-                .build();
-        TaskRoutine secondTaskRoutine = TaskRoutine.builder()
-                .name("Do something routine 1")
-                .description("This is an example task routine")
-                .activated(true)
-                .lastTaskCreationAt(LocalDateTime.now().minusDays(5))
-                .interval(2)
-                .intervalType(IntervalType.WEEKS)
-                .household(household)
-                .build();
-        return List.of(firstTaskRoutine, secondTaskRoutine);
     }
 }

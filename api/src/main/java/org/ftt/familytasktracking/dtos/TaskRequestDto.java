@@ -8,6 +8,8 @@ public record TaskRequestDto(
         String name,
         String description,
         TaskState taskState,
+        Boolean scheduled,
+        String cronExpression,
         String assigneeUuid
 ) {
 }
