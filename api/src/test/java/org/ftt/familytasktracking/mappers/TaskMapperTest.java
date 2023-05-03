@@ -31,6 +31,7 @@ class TaskMapperTest {
                 .expirationAt(LocalDateTime.now())
                 .doneAt(LocalDateTime.now())
                 .taskState(TaskState.UNDONE)
+                .nextTaskCreationAt(LocalDateTime.now())
                 .assignee(Profile.builder().uuid(UUID.randomUUID()).build())
                 .build();
         TaskResponseDto dto = taskMapper.mapTaskToTaskDto(task);
@@ -42,6 +43,7 @@ class TaskMapperTest {
         assertThat(dto.expirationAt()).isEqualTo(task.getExpirationAt());
         assertThat(dto.doneAt()).isEqualTo(task.getDoneAt());
         assertThat(dto.taskState()).isEqualTo(task.getTaskState());
+        assertThat(dto.nextTaskCreationAt()).isEqualTo(task.getNextTaskCreationAt());
         assertThat(dto.assigneeUuid()).isEqualTo(task.getAssignee().getUuid().toString());
     }
 

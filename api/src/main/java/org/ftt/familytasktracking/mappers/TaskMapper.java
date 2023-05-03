@@ -22,7 +22,6 @@ public interface TaskMapper {
      * @return Mapped {@link TaskResponseDto}
      */
     @Mapping(target = "assigneeUuid", source = "assignee.uuid")
-    @Mapping(target = "nextTaskCreationAt", ignore = true)
     TaskResponseDto mapTaskToTaskDto(Task task);
 
     /**
