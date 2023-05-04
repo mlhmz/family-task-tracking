@@ -10,6 +10,7 @@ import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.exceptions.WebRtException;
+import org.ftt.familytasktracking.hooks.TaskUpdateDoneHook;
 import org.ftt.familytasktracking.hooks.TaskUpdateHook;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.models.TaskModel;
@@ -40,6 +41,7 @@ public class TaskServiceImpl implements TaskService {
         this.taskRepository = taskRepository;
         this.profileService = profileService;
         this.householdService = householdService;
+        taskUpdateHooks.add(new TaskUpdateDoneHook());
     }
 
     @Override
