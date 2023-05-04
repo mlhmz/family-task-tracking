@@ -4,10 +4,27 @@ import io.micrometer.common.util.StringUtils;
 
 import java.time.LocalDateTime;
 
+/**
+ * Utility for Formatting Cron Expressions
+ */
 public class CronFormattingUtils {
     private CronFormattingUtils() {
     }
 
+    /**
+     * Formats Time Identifiers of a cron expression
+     * <ul>
+     *     <li>${CS} => Current Seconds</li>
+     *     <li>${CM} => Current Minutes</li>
+     *     <li>${CH} => Current Hours</li>
+     *     <li>${CD} => Current Days</li>
+     *     <li>${CMT} => Current Month</li>
+     *     <li>${CDOW} => Current Day of the Week</li>
+     * </ul>
+     *
+     * @param cronExpression Expression to format
+     * @return Returns formatted cron string
+     */
     public static String format(String cronExpression) {
         if (StringUtils.isNotEmpty(cronExpression)) {
             LocalDateTime dateTime = LocalDateTime.now();
