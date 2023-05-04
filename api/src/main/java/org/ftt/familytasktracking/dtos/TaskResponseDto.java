@@ -12,6 +12,7 @@ public record TaskResponseDto(
     LocalDateTime updatedAt,
     LocalDateTime expirationAt,
     LocalDateTime doneAt,
+    LocalDateTime nextTaskCreationAt,
     TaskState taskState,
     String assigneeUuid
 ) {}

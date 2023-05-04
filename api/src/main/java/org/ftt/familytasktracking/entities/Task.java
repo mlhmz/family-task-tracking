@@ -41,13 +41,22 @@ public class Task {
 
     private LocalDateTime doneAt;
 
+    private LocalDateTime lastTaskCreationAt;
+
     private TaskState taskState;
+
+    private Boolean scheduled;
+
+    private String cronExpression;
 
     @PrePersist
     @PreUpdate
     private void prePersist() {
         if (taskState == null) {
             taskState = TaskState.UNDONE;
+        }
+        if (scheduled == null) {
+            scheduled = false;
         }
     }
 
