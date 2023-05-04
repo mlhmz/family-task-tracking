@@ -10,6 +10,7 @@ import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.exceptions.WebRtException;
+import org.ftt.familytasktracking.hooks.TaskUpdateDoneHook;
 import org.ftt.familytasktracking.hooks.TaskUpdateHook;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.models.TaskModel;
@@ -100,6 +101,7 @@ public class TaskServiceImpl implements TaskService {
         Task updateTask = updateTaskModel.toEntity();
         Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
         updateTargetTask(updateTask, targetTask, safe);
+        taskUpdateHooks.add(new TaskUpdateDoneHook());
         executeUpdateHooks(updateTask, targetTask, safe);
         return buildModelFromTaskEntity(
                 this.taskRepository.save(targetTask)
