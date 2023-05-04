@@ -80,12 +80,12 @@ class TaskSchedulingServiceTest {
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.DONE)
                 .scheduled(true)
-                .cronExpression("0 0 0 /5 * *")
+                .cronExpression("0 0 0 ${CD}/5 * *")
                 .build();
 
         taskSchedulingService.updateTasksSchedulingParameters(task);
         assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringMinutes(LocalDateTime.now());
         assertThat(task.getTaskState()).isEqualTo(TaskState.UNDONE);
-        assertThat(task.getNextTaskCreationAt()).isEqualToIgnoringMinutes(LocalDateTime.now().plusDays(5));
+        assertThat(task.getNextTaskCreationAt()).isEqualToIgnoringHours(LocalDateTime.now().plusDays(5));
     }
 }

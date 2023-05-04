@@ -5,6 +5,7 @@ import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
+import org.ftt.familytasktracking.utils.CronFormattingUtils;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +29,11 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
 
     @Override
     public void updateTasksSchedulingParameters(Task task) {
-        if (!isTaskScheduled(task)) {
+        String formattedExp = getFormattedCronExpressionString(task.getCronExpression());
+        if (!isTaskScheduledAndExpValid(task, formattedExp)) {
             return;
         }
-        CronExpression cronExpression = CronExpression.parse(task.getCronExpression());
+        CronExpression cronExpression = CronExpression.parse(formattedExp);
         LocalDateTime nextExecution = cronExpression.next(task.getLastTaskCreationAt());
         if (LocalDateTime.now().isAfter(nextExecution)) {
             updateTaskSchedulingParametersByCronExpression(task, cronExpression);
@@ -39,10 +41,14 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
         }
     }
 
-    private boolean isTaskScheduled(Task task) {
+    private String getFormattedCronExpressionString(String cronExpression) {
+        return CronFormattingUtils.format(cronExpression);
+    }
+
+    private boolean isTaskScheduledAndExpValid(Task task, String cronExpression) {
         return Boolean.TRUE.equals(task.getScheduled()) &&
                 StringUtils.isNotEmpty(task.getCronExpression()) &&
-                CronExpression.isValidExpression(task.getCronExpression());
+                CronExpression.isValidExpression(cronExpression);
     }
 
     private void updateTaskSchedulingParametersByCronExpression(Task task, CronExpression cronExpression) {
