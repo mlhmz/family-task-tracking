@@ -26,6 +26,7 @@ class TaskMapperTest {
                 .uuid(UUID.randomUUID())
                 .name("Task 1")
                 .description("Task Description")
+                .points(5)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .expirationAt(LocalDateTime.now())
@@ -38,6 +39,7 @@ class TaskMapperTest {
         assertThat(dto.uuid()).isEqualTo(task.getUuid().toString());
         assertThat(dto.name()).isEqualTo(task.getName());
         assertThat(dto.description()).isEqualTo(task.getDescription());
+        assertThat(dto.points()).isEqualTo(task.getPoints());
         assertThat(dto.createdAt()).isEqualTo(task.getCreatedAt());
         assertThat(dto.updatedAt()).isEqualTo(task.getUpdatedAt());
         assertThat(dto.expirationAt()).isEqualTo(task.getExpirationAt());
@@ -49,7 +51,7 @@ class TaskMapperTest {
 
     @Test
     void mapTaskDtoToTask() {
-        TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description",
+        TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description", 5,
                 TaskState.UNDONE,
                 true, "* * * * *", UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);

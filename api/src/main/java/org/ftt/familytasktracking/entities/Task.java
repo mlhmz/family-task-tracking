@@ -31,6 +31,8 @@ public class Task {
 
     private String description;
 
+    private Integer points;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

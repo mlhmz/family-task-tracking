@@ -3,6 +3,7 @@ package org.ftt.familytasktracking.mappers;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.entities.Task;
+import org.ftt.familytasktracking.enums.TaskState;
 import org.mapstruct.*;
 
 /**
@@ -39,13 +40,9 @@ public interface TaskMapper {
     @Mapping(target = "household", ignore = true)
     void updateTask(Task updateTask, @MappingTarget Task targetTask);
 
-
-    @Mapping(target = "name", ignore = true)
-    @Mapping(target = "description", ignore = true)
-    @Mapping(target = "taskState", ignore = true)
-    @Mapping(target = "scheduled", ignore = true)
-    @Mapping(target = "cronExpression", ignore = true)
-    @Mapping(target = "assignee", ignore = true)
-    @Mapping(target = "household", ignore = true)
-    void safeUpdateTask(Task updateTask, @MappingTarget Task targetTask);
+    default void safeUpdateTask(Task updateTask, @MappingTarget Task targetTask) {
+        if (TaskState.DONE == updateTask.getTaskState()) {
+            targetTask.setTaskState(TaskState.DONE);
+        }
+    }
 }
