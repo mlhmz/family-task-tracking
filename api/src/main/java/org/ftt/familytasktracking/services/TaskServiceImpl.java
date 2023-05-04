@@ -34,7 +34,6 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final ProfileService profileService;
     private final HouseholdService householdService;
-    private final TaskUpdateDoneHook taskUpdateDoneHook;
 
     public TaskServiceImpl(TaskMapper taskMapper, TaskRepository taskRepository, ProfileService profileService,
                            HouseholdService householdService) {
@@ -42,7 +41,7 @@ public class TaskServiceImpl implements TaskService {
         this.taskRepository = taskRepository;
         this.profileService = profileService;
         this.householdService = householdService;
-        this.taskUpdateDoneHook = new TaskUpdateDoneHook();
+        taskUpdateHooks.add(new TaskUpdateDoneHook());
     }
 
     @Override
@@ -103,7 +102,6 @@ public class TaskServiceImpl implements TaskService {
         Task updateTask = updateTaskModel.toEntity();
         Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
         updateTargetTask(updateTask, targetTask, safe);
-        taskUpdateHooks.add(taskUpdateDoneHook);
         executeUpdateHooks(updateTask, targetTask, safe);
         return buildModelFromTaskEntity(
                 this.taskRepository.save(targetTask)
