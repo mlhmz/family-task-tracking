@@ -7,6 +7,7 @@ public record TaskRequestDto(
         @NotEmpty
         String name,
         String description,
+        Integer points,
         TaskState taskState,
         Boolean scheduled,
         String cronExpression,
