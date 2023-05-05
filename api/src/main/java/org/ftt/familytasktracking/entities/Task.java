@@ -3,6 +3,7 @@ package org.ftt.familytasktracking.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.ftt.familytasktracking.enums.TaskState;
+import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -49,9 +50,17 @@ public class Task {
 
     private TaskState taskState;
 
-    private Boolean scheduled;
+    private SchedulerMode schedulerMode;
 
     private String cronExpression;
+
+    private Long intervalMillis;
+
+    @ManyToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
+    private Profile assignee;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    private Household household;
 
     @PrePersist
     @PreUpdate
@@ -59,14 +68,11 @@ public class Task {
         if (taskState == null) {
             taskState = TaskState.UNDONE;
         }
-        if (scheduled == null) {
-            scheduled = false;
+        if (schedulerMode == null) {
+            schedulerMode = SchedulerMode.DEACTIVATED;
+        }
+        if (lastTaskCreationAt == null) {
+            lastTaskCreationAt = LocalDateTime.now();
         }
     }
-
-    @ManyToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
-    private Profile assignee;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    private Household household;
 }

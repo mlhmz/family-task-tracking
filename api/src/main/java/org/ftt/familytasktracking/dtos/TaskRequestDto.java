@@ -2,6 +2,7 @@ package org.ftt.familytasktracking.dtos;
 
 import jakarta.validation.constraints.NotEmpty;
 import org.ftt.familytasktracking.enums.TaskState;
+import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
 
 public record TaskRequestDto(
         @NotEmpty
@@ -9,8 +10,9 @@ public record TaskRequestDto(
         String description,
         Integer points,
         TaskState taskState,
-        Boolean scheduled,
+        SchedulerMode schedulerMode,
         String cronExpression,
+        Long intervalMillis,
         String assigneeUuid
 ) {
 }
