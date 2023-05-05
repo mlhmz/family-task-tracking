@@ -5,19 +5,19 @@ import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.ftt.familytasktracking.tasks.scheduler.TaskScheduler;
+import org.ftt.familytasktracking.tasks.scheduler.TaskSchedulerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class TaskSchedulingServiceImpl implements TaskSchedulingService {
     private static final TaskState DONE_TASK_STATE = TaskState.FINISHED;
     private final TaskRepository taskRepository;
-    private final TaskScheduler taskScheduler;
 
-    public TaskSchedulingServiceImpl(TaskRepository taskRepository, TaskScheduler taskScheduler) {
+    public TaskSchedulingServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.taskScheduler = taskScheduler;
     }
 
     @Override
@@ -29,7 +29,10 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
 
     @Override
     public void rescheduleExpiredTask(Task task) {
-        if (taskScheduler.rescheduleOnExpiration(task)) {
+        TaskScheduler taskScheduler = TaskSchedulerFactory.getInstance().getBySchedulerMode(task.getSchedulerMode());
+        LocalDateTime nextExecution = taskScheduler != null ? taskScheduler.getNextExecution(task) : null;
+        if (nextExecution != null && LocalDateTime.now().isAfter(nextExecution)) {
+            updateTaskSchedulingParametersByNextExecution(task, nextExecution);
             resetTaskState(task);
         }
     }
@@ -37,5 +40,10 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
     private void resetTaskState(Task task) {
         task.setTaskState(TaskState.UNDONE);
         task.setDoneAt(null);
+    }
+
+    private void updateTaskSchedulingParametersByNextExecution(Task task, LocalDateTime nextExecution) {
+        task.setLastTaskCreationAt(LocalDateTime.now());
+        task.setNextTaskCreationAt(nextExecution);
     }
 }
