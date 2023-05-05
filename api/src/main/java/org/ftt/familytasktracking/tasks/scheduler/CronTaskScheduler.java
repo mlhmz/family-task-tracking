@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 
 public class CronTaskScheduler implements TaskScheduler {
     @Override
-    public LocalDateTime getNextExecutionFromLastOne(Task task) {
+    public LocalDateTime getNextExecutionFromLastExecutionDate(Task task) {
         return getNextExecutionFromDate(task, task.getLastTaskCreationAt());
     }
 
     @Override
-    public LocalDateTime getNextExecutionFromNow(Task task) {
+    public LocalDateTime getNextExecutionFromCurrentDate(Task task) {
         return getNextExecutionFromDate(task, LocalDateTime.now());
     }
 
