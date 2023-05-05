@@ -68,7 +68,7 @@ class TaskSchedulingServiceTest {
         doReturn(null).when(taskRepository).saveAll(tasksCaptor.capture());
 
         // Param is irrelevant because the Stub above matches everything
-        taskSchedulingService.updateAllTaskSchedulingParametersByHousehold(null);
+        taskSchedulingService.rescheduleAllExpiredAndDoneTasks(null);
 
         List<Task> savedTasks = tasksCaptor.getValue();
 
@@ -101,7 +101,7 @@ class TaskSchedulingServiceTest {
                 .cronExpression("0 0 0 ${CD}/5 * *")
                 .build();
 
-        taskSchedulingService.updateTasksSchedulingParameters(task);
+        taskSchedulingService.rescheduleExpiredTask(task);
         assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringMinutes(LocalDateTime.now());
         assertThat(task.getTaskState()).isEqualTo(TaskState.UNDONE);
         assertThat(task.getNextTaskCreationAt()).isEqualToIgnoringHours(LocalDateTime.now().plusDays(5));
@@ -118,7 +118,7 @@ class TaskSchedulingServiceTest {
                 .cronExpression("0 0 0 ${CD}/5 * *")
                 .build();
 
-        taskSchedulingService.updateTasksSchedulingParameters(task);
+        taskSchedulingService.rescheduleExpiredTask(task);
 
         assertThat(task.getNextTaskCreationAt()).isNull();
         assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringSeconds(lastTaskCreation);

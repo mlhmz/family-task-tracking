@@ -35,7 +35,7 @@ public class TaskSchedulingTriggerAppFilter extends AppFilter {
             return;
         }
         Household household = this.householdService.getHouseholdByJwt(jwt);
-        this.taskSchedulingService.updateAllTaskSchedulingParametersByHousehold(household);
+        this.taskSchedulingService.rescheduleAllExpiredAndDoneTasks(household);
     }
 
     private boolean isNoHouseholdBoundToJwt(Jwt jwt) {

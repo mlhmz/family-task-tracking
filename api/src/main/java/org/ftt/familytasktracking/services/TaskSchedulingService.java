@@ -12,12 +12,12 @@ public interface TaskSchedulingService {
      *
      * @param household Household that's tasks shall be updated
      */
-    void updateAllTaskSchedulingParametersByHousehold(Household household);
+    void rescheduleAllExpiredAndDoneTasks(Household household);
 
     /**
      * Updates a single tasks scheduling parameters
      *
      * @param task Task to update the scheduling parameters of
      */
-    void updateTasksSchedulingParameters(Task task);
+    void rescheduleExpiredTask(Task task);
 }
