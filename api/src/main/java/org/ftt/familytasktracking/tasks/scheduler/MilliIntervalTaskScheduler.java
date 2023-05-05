@@ -8,10 +8,11 @@ import java.time.temporal.ChronoUnit;
 public class MilliIntervalTaskScheduler implements TaskScheduler {
     @Override
     public LocalDateTime getNextExecution(Task task) {
-        if (task.getIntervalMillis() == null) {
+        if (task.getIntervalMillis() != null) {
+            LocalDateTime lastTaskCreationAt = task.getLastTaskCreationAt();
+            return lastTaskCreationAt.plus(task.getIntervalMillis(), ChronoUnit.MILLIS);
+        } else {
             return null;
         }
-        LocalDateTime lastTaskCreationAt = task.getLastTaskCreationAt();
-        return lastTaskCreationAt.plus(task.getIntervalMillis(), ChronoUnit.MILLIS);
     }
 }
