@@ -3,7 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
-import org.ftt.familytasktracking.schedulers.CronTaskScheduler;
+import org.ftt.familytasktracking.tasks.scheduler.CronTaskScheduler;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;

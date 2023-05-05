@@ -1,4 +1,4 @@
-package org.ftt.familytasktracking.schedulers;
+package org.ftt.familytasktracking.tasks.scheduler;
 
 import org.ftt.familytasktracking.entities.Task;
 

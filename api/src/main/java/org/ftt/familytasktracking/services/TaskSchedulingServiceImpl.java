@@ -4,7 +4,7 @@ import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
-import org.ftt.familytasktracking.schedulers.TaskScheduler;
+import org.ftt.familytasktracking.tasks.scheduler.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
