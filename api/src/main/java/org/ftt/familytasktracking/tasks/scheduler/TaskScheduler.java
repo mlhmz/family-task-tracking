@@ -10,5 +10,7 @@ import java.time.LocalDateTime;
  * The implementation is injected by the {@link org.springframework.stereotype.Component} annotation
  */
 public interface TaskScheduler {
-    LocalDateTime getNextExecution(Task task);
+    LocalDateTime getNextExecutionFromLastOne(Task task);
+
+    LocalDateTime getNextExecutionFromNow(Task task);
 }

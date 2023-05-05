@@ -8,16 +8,25 @@ import java.time.LocalDateTime;
 
 public class CronTaskScheduler implements TaskScheduler {
     @Override
-    public LocalDateTime getNextExecution(Task task) {
+    public LocalDateTime getNextExecutionFromLastOne(Task task) {
+        return getNextExecutionFromDate(task, task.getLastTaskCreationAt());
+    }
+
+    @Override
+    public LocalDateTime getNextExecutionFromNow(Task task) {
+        return getNextExecutionFromDate(task, LocalDateTime.now());
+    }
+
+    private LocalDateTime getNextExecutionFromDate(Task task, LocalDateTime dateTime) {
         String expression = task.getCronExpression();
-        if (isTaskScheduledAndExpValid(task, expression)) {
-            return CronExpression.parse(expression).next(task.getLastTaskCreationAt());
+        if (isTaskScheduledAndExpValid(expression)) {
+            return CronExpression.parse(expression).next(dateTime);
         } else {
             return null;
         }
     }
 
-    private boolean isTaskScheduledAndExpValid(Task task, String cronExpression) {
-        return StringUtils.isNotEmpty(task.getCronExpression()) && CronExpression.isValidExpression(cronExpression);
+    private boolean isTaskScheduledAndExpValid(String cronExpression) {
+        return StringUtils.isNotEmpty(cronExpression) && CronExpression.isValidExpression(cronExpression);
     }
 }
