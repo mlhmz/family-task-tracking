@@ -3,6 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
+import org.ftt.familytasktracking.schedulers.CronTaskScheduler;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -18,7 +19,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 
-@SpringBootTest(classes = {TaskSchedulingServiceTest.class, TaskSchedulingServiceImpl.class, TaskRepository.class})
+@SpringBootTest(classes = {TaskSchedulingServiceTest.class, TaskSchedulingServiceImpl.class, TaskRepository.class,
+        CronTaskScheduler.class})
 class TaskSchedulingServiceTest {
     @Autowired
     TaskSchedulingService taskSchedulingService;
@@ -102,7 +104,7 @@ class TaskSchedulingServiceTest {
         taskSchedulingService.updateTasksSchedulingParameters(task);
         assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringMinutes(LocalDateTime.now());
         assertThat(task.getTaskState()).isEqualTo(TaskState.UNDONE);
-        assertThat(task.getNextTaskCreationAt()).isEqualToIgnoringHours(LocalDateTime.now().plusDays(1));
+        assertThat(task.getNextTaskCreationAt()).isEqualToIgnoringHours(LocalDateTime.now().plusDays(5));
     }
 
     @Test
