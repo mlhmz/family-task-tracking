@@ -34,10 +34,19 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
             return;
         }
         CronExpression cronExpression = CronExpression.parse(formattedExp);
-        LocalDateTime nextExecution = cronExpression.next(task.getLastTaskCreationAt());
+        LocalDateTime nextExecution = cronExpression.next(getLastTaskCreation(task));
         if (LocalDateTime.now().isAfter(nextExecution)) {
             updateTaskSchedulingParametersByCronExpression(task, cronExpression);
             resetTaskState(task);
+        }
+    }
+
+    private static LocalDateTime getLastTaskCreation(Task task) {
+        LocalDateTime lastTaskCreationAt = task.getLastTaskCreationAt();
+        if (lastTaskCreationAt == null) {
+            return task.getCreatedAt();
+        } else {
+            return lastTaskCreationAt;
         }
     }
 
