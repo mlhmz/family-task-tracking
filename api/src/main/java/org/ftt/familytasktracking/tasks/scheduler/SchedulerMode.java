@@ -7,13 +7,30 @@ public enum SchedulerMode {
     /**
      * Cron uses a Cron Expression for resolving Execution Dates
      */
-    CRON,
+    CRON {
+        @Override
+        public TaskScheduler createScheduler() {
+            return new CronTaskScheduler();
+        }
+    },
     /**
      * Milli Interval uses an actual Milli Interval for resolving Execution Dates
      */
-    MILLI_INTERVAL,
+    MILLI_INTERVAL {
+        @Override
+        public TaskScheduler createScheduler() {
+            return new MilliIntervalTaskScheduler();
+        }
+    },
     /**
      * Deactivates the Scheduler
      */
-    DEACTIVATED
+    DEACTIVATED {
+        @Override
+        public TaskScheduler createScheduler() {
+            return null;
+        }
+    };
+
+    public abstract TaskScheduler createScheduler();
 }

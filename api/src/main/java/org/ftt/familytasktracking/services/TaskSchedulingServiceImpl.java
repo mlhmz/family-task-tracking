@@ -5,7 +5,6 @@ import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.ftt.familytasktracking.tasks.scheduler.TaskScheduler;
-import org.ftt.familytasktracking.tasks.scheduler.TaskSchedulerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,7 +28,7 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
 
     @Override
     public void rescheduleExpiredTask(Task task) {
-        TaskScheduler taskScheduler = TaskSchedulerFactory.getInstance().getBySchedulerMode(task.getSchedulerMode());
+        TaskScheduler taskScheduler = task.getSchedulerMode().createScheduler();
         LocalDateTime nextExecution = taskScheduler != null ? taskScheduler.getNextExecutionFromLastExecutionDate(task) : null;
         if (nextExecution != null && LocalDateTime.now().isAfter(nextExecution)) {
             updateTaskSchedulingParametersByNextExecution(task, taskScheduler.getNextExecutionFromCurrentDate(task));

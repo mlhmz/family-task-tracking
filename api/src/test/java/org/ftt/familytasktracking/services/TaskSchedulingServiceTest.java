@@ -3,7 +3,6 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
-import org.ftt.familytasktracking.tasks.scheduler.CronTaskScheduler;
 import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +24,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mockStatic;
 
-@SpringBootTest(classes = {TaskSchedulingServiceTest.class, TaskSchedulingServiceImpl.class, TaskRepository.class,
-        CronTaskScheduler.class})
+@SpringBootTest(classes = {TaskSchedulingServiceTest.class, TaskSchedulingServiceImpl.class, TaskRepository.class})
 class TaskSchedulingServiceTest {
     @Autowired
     TaskSchedulingService taskSchedulingService;
