@@ -4,6 +4,7 @@ import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.ftt.familytasktracking.tasks.scheduler.CronTaskScheduler;
+import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -35,7 +36,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(LocalDateTime.now().minusDays(7))
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .scheduled(true)
+                .schedulerMode(SchedulerMode.CRON)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
         LocalDateTime secondLastTaskCreationAt = LocalDateTime.now().minusDays(2);
@@ -43,7 +44,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(secondLastTaskCreationAt)
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .scheduled(true)
+                .schedulerMode(SchedulerMode.CRON)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
         LocalDateTime thirdLastTaskCreationAt = LocalDateTime.now().minusDays(2);
@@ -51,7 +52,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(thirdLastTaskCreationAt)
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .scheduled(false)
+                .schedulerMode(SchedulerMode.CRON)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
         LocalDateTime fourthLastTaskCreationAt = LocalDateTime.now().minusDays(2);
@@ -59,7 +60,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(fourthLastTaskCreationAt)
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.DONE)
-                .scheduled(true)
+                .schedulerMode(SchedulerMode.CRON)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
 
@@ -97,7 +98,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(LocalDateTime.now().minusDays(6))
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .scheduled(true)
+                .schedulerMode(SchedulerMode.CRON)
                 .cronExpression("0 0 0 ${CD}/5 * *")
                 .build();
 
@@ -114,7 +115,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(lastTaskCreation)
                 .nextTaskCreationAt(null)
                 .taskState(TaskState.FINISHED)
-                .scheduled(true)
+                .schedulerMode(SchedulerMode.CRON)
                 .cronExpression("0 0 0 ${CD}/5 * *")
                 .build();
 
