@@ -6,6 +6,7 @@ import lombok.NonNull;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
+import org.ftt.familytasktracking.enums.TaskState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -24,6 +25,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID>,
     }
 
     List<Task> findAllByHousehold(Household household);
+
+    List<Task> findAllByHouseholdAndTaskState(Household household, TaskState taskState);
 
     Task findTaskByHouseholdAndUuid(Household household, UUID uuid);
 

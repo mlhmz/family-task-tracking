@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 public class TaskSchedulingServiceImpl implements TaskSchedulingService {
+    private static final TaskState DONE_TASK_STATE = TaskState.FINISHED;
     private final TaskRepository taskRepository;
 
     public TaskSchedulingServiceImpl(TaskRepository taskRepository) {
@@ -22,7 +23,7 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
 
     @Override
     public void updateAllTaskSchedulingParametersByHousehold(Household household) {
-        List<Task> tasks = this.taskRepository.findAllByHousehold(household);
+        List<Task> tasks = this.taskRepository.findAllByHouseholdAndTaskState(household, DONE_TASK_STATE);
         tasks.forEach(this::updateTasksSchedulingParameters);
         this.taskRepository.saveAll(tasks);
     }
