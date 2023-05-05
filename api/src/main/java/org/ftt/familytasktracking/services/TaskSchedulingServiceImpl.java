@@ -30,9 +30,9 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
     @Override
     public void rescheduleExpiredTask(Task task) {
         TaskScheduler taskScheduler = TaskSchedulerFactory.getInstance().getBySchedulerMode(task.getSchedulerMode());
-        LocalDateTime nextExecution = taskScheduler != null ? taskScheduler.getNextExecution(task) : null;
+        LocalDateTime nextExecution = taskScheduler != null ? taskScheduler.getNextExecutionFromLastOne(task) : null;
         if (nextExecution != null && LocalDateTime.now().isAfter(nextExecution)) {
-            updateTaskSchedulingParametersByNextExecution(task, nextExecution);
+            updateTaskSchedulingParametersByNextExecution(task, taskScheduler.getNextExecutionFromNow(task));
             resetTaskState(task);
         }
     }
