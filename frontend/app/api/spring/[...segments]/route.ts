@@ -32,9 +32,4 @@ const springHandler = async (req, context: { params }) => {
   }
 };
 
-// export async function GET(request, context: { params }) {
-
-// }
-
-
 export { springHandler as GET, springHandler as POST, springHandler as PUT, springHandler as DELETE };
