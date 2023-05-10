@@ -23,7 +23,6 @@ public interface TaskMapper {
      * @return Mapped {@link TaskResponseDto}
      */
     @Mapping(target = "assigneeUuid", source = "assignee.uuid")
-    @Mapping(target = "nextTaskCreationAt", ignore = true)
     TaskResponseDto mapTaskToTaskDto(Task task);
 
     /**
@@ -40,7 +39,6 @@ public interface TaskMapper {
     @Mapping(target = "assignee", ignore = true)
     @Mapping(target = "household", ignore = true)
     void updateTask(Task updateTask, @MappingTarget Task targetTask);
-
 
     default void safeUpdateTask(Task updateTask, @MappingTarget Task targetTask) {
         if (TaskState.DONE == updateTask.getTaskState()) {
