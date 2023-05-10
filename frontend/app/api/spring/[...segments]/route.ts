@@ -17,11 +17,10 @@ const springHandler = async (req, context: { params }) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
     try {
-      const responseText = await householdResponse.text();
       return NextResponse.json(
-        { token: token, res: await Promise.resolve(responseText), status: householdResponse.status },
+        await Promise.resolve(householdResponse.json()),
         { status: householdResponse.status },
       );
     } catch (error) {
