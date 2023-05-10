@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+
+import { signIn, signOut, useSession } from "next-auth/react";
 
 import { siteConfig } from "@/config/site";
 
@@ -9,6 +13,7 @@ import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteHeader() {
+  const { status } = useSession();
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -25,17 +30,27 @@ export function SiteHeader() {
                 <span className="sr-only">GitHub</span>
               </div>
             </Link>
-            <Link href={siteConfig.links.twitter} target="_blank" rel="noreferrer">
+            <ThemeToggle />
+            {status === "authenticated" && (
               <div
+                onClick={() => signOut()}
                 className={buttonVariants({
                   size: "sm",
                   variant: "ghost",
                 })}>
-                <Icons.twitter className="h-5 w-5 fill-current" />
-                <span className="sr-only">Twitter</span>
+                Sign Out
               </div>
-            </Link>
-            <ThemeToggle />
+            )}
+            {status === "unauthenticated" && (
+              <div
+                onClick={() => signIn()}
+                className={buttonVariants({
+                  size: "sm",
+                  variant: "ghost",
+                })}>
+                Sign In
+              </div>
+            )}
           </nav>
         </div>
       </div>

@@ -5,12 +5,15 @@ export const siteConfig = {
   description: "Next generation addictive family task tracker that will make household chores more bearable.",
   mainNav: [
     {
-      title: "Home",
-      href: "/",
+      title: "Dashboard",
+      href: "/dashboard",
+    },
+    {
+      title: "Profile",
+      href: "/profile",
     },
   ],
   links: {
-    twitter: "https://twitter.com/ml_hmz",
     github: "https://github.com/mlhmz/family-task-tracking",
     docs: "https://github.com/mlhmz/family-task-tracking/blob/main/README.md",
   },
