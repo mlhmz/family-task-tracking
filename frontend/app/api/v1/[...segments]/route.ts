@@ -9,11 +9,12 @@ function setResponseHeaders(headers: Headers, originHeaders: Headers) {
 }
 
 async function getResponseContent(householdResponse: Response): Promise<any> {
-  const textContent = await Promise.resolve(householdResponse.text())
-  if (textContent.length === 0) {
-    return {};
+  try {
+    const jsonContent = await Promise.resolve(householdResponse.json());
+    return jsonContent;
+  } catch (err) {
+    return "";
   }
-  return await Promise.resolve(householdResponse.json());
 }
 
 // TODO: Check https://nextjs.org/docs/app/api-reference/file-conventions/route
@@ -24,8 +25,8 @@ async function getResponseContent(householdResponse: Response): Promise<any> {
 //  Weiterhin besteht aber das TODO: springHandler sowie Context Typen
 const springHandler = async (req, context: { params }) => {
   const jwtLiteral = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, raw: true });
-  const token = jwtLiteral.split(":")[0];
-  if (token) {
+  if (jwtLiteral) {
+    const token = jwtLiteral.split(":")[0];
     const url: string = context.params['segments'].join("/");
     const householdResponse = await fetch(`${process.env.BACKEND_API_URL}/${url}`, {
       headers: {
