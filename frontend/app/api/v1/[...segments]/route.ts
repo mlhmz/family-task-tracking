@@ -1,7 +1,5 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
-import { json } from "stream/consumers";
 
 function setResponseHeaders(headers: Headers, originHeaders: Headers) {
   headers.set("WWW-Authenticate", originHeaders.get("WWW-Authenticate") ?? "");
