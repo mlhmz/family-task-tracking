@@ -1,6 +1,22 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+import { json } from "stream/consumers";
+
+function setResponseHeaders(headers: Headers, originHeaders: Headers) {
+  headers.set("WWW-Authenticate", originHeaders.get("WWW-Authenticate") ?? "");
+  if (originHeaders.has("date")) {
+    headers.set("date", originHeaders.get("date") ?? `${new Date().toISOString}`)
+  }
+}
+
+async function getResponseContent(householdResponse: Response): Promise<any> {
+  const textContent = await Promise.resolve(householdResponse.text())
+  if (textContent.length === 0) {
+    return {};
+  }
+  return await Promise.resolve(householdResponse.json());
+}
 
 // TODO: Check https://nextjs.org/docs/app/api-reference/file-conventions/route
 //  NextResponse != NextApiHandler (NextApiRequest, NextApiResponse): 
@@ -19,10 +35,12 @@ const springHandler = async (req, context: { params }) => {
       },
     })
     try {
-      return NextResponse.json(
-        await Promise.resolve(householdResponse.json()),
+      const response = NextResponse.json(
+        await getResponseContent(householdResponse),
         { status: householdResponse.status },
       );
+      setResponseHeaders(response.headers, householdResponse.headers);
+      return response;
     } catch (error) {
       return NextResponse.json({ error: `${error}` }, { status: 500 });
     }
@@ -32,3 +50,4 @@ const springHandler = async (req, context: { params }) => {
 };
 
 export { springHandler as GET, springHandler as POST, springHandler as PUT, springHandler as DELETE };
+
