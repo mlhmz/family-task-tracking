@@ -17,12 +17,12 @@ async function getResponseContent(householdResponse: Response): Promise<any> {
   }
 }
 
-// TODO: Check https://nextjs.org/docs/app/api-reference/file-conventions/route
+// Check https://nextjs.org/docs/app/api-reference/file-conventions/route
 //  NextResponse != NextApiHandler (NextApiRequest, NextApiResponse): 
 //  NextRequest & Response ist das neue NextApiRequest & Response
 //  In der Doc wird NextResponse als Return Value benutzt, hier NextApiHandler
 //  NextApiHandler arbeitet nicht mit Context
-//  Weiterhin besteht aber das TODO: springHandler sowie Context Typen
+//  TODO: Typesafety
 const springHandler = async (req, context: { params }) => {
   const jwtLiteral = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, raw: true });
   if (jwtLiteral) {
