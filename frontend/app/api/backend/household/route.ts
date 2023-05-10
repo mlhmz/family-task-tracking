@@ -7,7 +7,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
   const jwtLiteral = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, raw: true });
   const token = jwtLiteral.split(":")[0];
   if (token) {
-    const householdResponse = await fetch("http://localhost:8081/api/v1/household", {
+    const householdResponse = await fetch(`${process.env.BACKEND_API_URL}/household`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
