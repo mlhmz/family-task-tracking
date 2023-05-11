@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useContext } from "react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,12 +13,15 @@ import { cn } from "@/lib/utils";
 
 import { Icons } from "@/components/icons";
 
+import { HouseholdContext } from "@/app/household-context";
+
 interface MainNavProps {
   items?: NavItem[];
 }
 
 export const MainNav = ({ items }: MainNavProps) => {
   const { status } = useSession();
+  const { isHouseholdEmpty } = useContext(HouseholdContext);
   const pathname = usePathname();
   return (
     <div className="flex gap-6 md:gap-10">
@@ -26,7 +29,7 @@ export const MainNav = ({ items }: MainNavProps) => {
         <Icons.home className="h-6 w-6" />
         <span className="hidden text-xl font-bold sm:inline-block">{siteConfig.name}</span>
       </Link>
-      {status === "authenticated" && items?.length ? (
+      {status === "authenticated" && !isHouseholdEmpty && items?.length ? (
         <nav className="hidden gap-6 md:flex">
           {items?.map(
             (item, index) =>
