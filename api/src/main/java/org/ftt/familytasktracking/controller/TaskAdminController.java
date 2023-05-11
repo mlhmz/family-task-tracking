@@ -82,6 +82,37 @@ public class TaskAdminController {
         return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, false).toResponseDto();
     }
 
+    @Operation(summary = "Updates a Assignee for a Task by it's UUID and it's Authorization-Token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found task and updated it",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session Id is invalid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "403", description = "The profile is unprivileged",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Task to update couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Assignee to update couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
+
+    @PatchMapping("/{taskId}/assignee")
+    public ResponseEntity<TaskResponseDto> updateAssigneeForTask(@PathVariable(value = "taskId") UUID taskUuid, @AuthenticationPrincipal Jwt jwt, @RequestBody TaskRequestDto dto) {
+        TaskModel taskModel = this.taskService.buildModelFromTaskRequestDto(dto);
+        TaskResponseDto responseDto = this.taskService.setAssigneeForTask(taskModel, taskUuid, jwt);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
     @Operation(summary = "Deletes a Task by it's UUID and it's Authorization-Token")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Found task and deleted it",
