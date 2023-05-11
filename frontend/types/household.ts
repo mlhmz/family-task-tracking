@@ -4,3 +4,7 @@ interface HouseholdResponse {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+interface HouseholdRequest {
+  householdName?: string;
+}
