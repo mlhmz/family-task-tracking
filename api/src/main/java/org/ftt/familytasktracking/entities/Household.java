@@ -38,9 +38,6 @@ public class Household {
     private LocalDateTime updatedAt;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TaskRoutine> taskRoutines;
-
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Profile> profiles;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -10,6 +10,9 @@ import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QTask;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.exceptions.WebRtException;
+import org.ftt.familytasktracking.hooks.TaskFinishedUpdateHook;
+import org.ftt.familytasktracking.hooks.TaskPointsUpdateHook;
+import org.ftt.familytasktracking.hooks.TaskUpdateDoneHook;
 import org.ftt.familytasktracking.hooks.TaskUpdateHook;
 import org.ftt.familytasktracking.mappers.TaskMapper;
 import org.ftt.familytasktracking.models.TaskModel;
@@ -21,13 +24,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-    private final List<TaskUpdateHook> taskUpdateHooks = List.of();
+    private final List<TaskUpdateHook> taskUpdateHooks = new ArrayList<>();
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
     private final ProfileService profileService;
@@ -39,6 +43,7 @@ public class TaskServiceImpl implements TaskService {
         this.taskRepository = taskRepository;
         this.profileService = profileService;
         this.householdService = householdService;
+        addUpdateHooksToArrayList();
     }
 
     @Override
@@ -115,6 +120,16 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.deleteTaskByUuidAndHousehold(taskId, household);
     }
 
+    @Override
+    public TaskModel buildModelFromTaskEntity(Task entity) {
+        return new TaskModel(entity, taskMapper);
+    }
+
+    @Override
+    public TaskModel buildModelFromTaskRequestDto(TaskRequestDto dto) {
+        return new TaskModel(dto, taskMapper);
+    }
+
     private void updateTargetTask(@NonNull Task updateTask, @NonNull Task targetTask, boolean safe) {
         if (safe) {
             this.taskMapper.safeUpdateTask(updateTask, targetTask);
@@ -134,14 +149,10 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    @Override
-    public TaskModel buildModelFromTaskEntity(Task entity) {
-        return new TaskModel(entity, taskMapper);
-    }
-
-    @Override
-    public TaskModel buildModelFromTaskRequestDto(TaskRequestDto dto) {
-        return new TaskModel(dto, taskMapper);
+    private void addUpdateHooksToArrayList() {
+        taskUpdateHooks.add(new TaskUpdateDoneHook());
+        taskUpdateHooks.add(new TaskPointsUpdateHook());
+        taskUpdateHooks.add(new TaskFinishedUpdateHook());
     }
 
     @Override
