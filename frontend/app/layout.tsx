@@ -15,6 +15,7 @@ import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import AuthContext from "./auth-context";
+import HouseholdContextProvider from "./household-context";
 
 export const metadata: Metadata = {
   title: {
@@ -51,6 +52,7 @@ interface RootLayoutProps {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await getSession(headers().get("cookie") ?? "");
+
   return (
     <>
       <html lang="en" suppressHydrationWarning>
@@ -59,8 +61,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
               <AuthContext session={session}>
-                <SiteHeader />
-                <div className="flex-1">{children}</div>
+                <HouseholdContextProvider>
+                  <SiteHeader />
+                  <div className="flex-1">{children}</div>
+                </HouseholdContextProvider>
               </AuthContext>
             </div>
             <TailwindIndicator />
