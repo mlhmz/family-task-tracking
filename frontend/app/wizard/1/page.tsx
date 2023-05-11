@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 
 async function createHousehold(householdRequest: HouseholdRequest, router: AppRouterInstance) {
   const response = await fetch("/api/v1/admin/household", {
@@ -35,7 +36,7 @@ export default function FirstWizardPage() {
   }, [household]);
 
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-2">
+    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
       <h1 className="m-auto text-6xl">✨</h1>
       <h3>Step 1</h3>
       <h2 className="text-2xl font-bold">Create a Household</h2>
@@ -45,6 +46,7 @@ export default function FirstWizardPage() {
         value={household.householdName}
         maxLength={255}
       />
+      <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
       <Button className="m-auto" onClick={() => createHousehold(household, router)}>
         Next
       </Button>
