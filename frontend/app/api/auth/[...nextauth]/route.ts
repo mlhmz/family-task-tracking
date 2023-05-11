@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs";
 import NextAuth, { NextAuthOptions, TokenSet } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import KeycloakProvider from "next-auth/providers/keycloak";
@@ -6,11 +7,11 @@ const refreshToken = async (token: JWT) => {
   try {
     // https://{KEYCLOAK_URL}/realms/{REALM}/.well-known/openid-configuration
     // We need the `token_endpoint`.
-    const response = await fetch(`${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
+    const response = await fetch(`${env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        client_id: process.env.KEYCLOAK_CLIENT_ID ?? "",
-        client_secret: process.env.KEYCLOAK_CLIENT_SECRET ?? "",
+        client_id: env.KEYCLOAK_CLIENT_ID ?? "",
+        client_secret: env.KEYCLOAK_CLIENT_SECRET ?? "",
         grant_type: "refresh_token",
         refresh_token: `${token.refresh_token}`,
       }),
@@ -40,9 +41,9 @@ const refreshToken = async (token: JWT) => {
 export const authOptions: NextAuthOptions = {
   providers: [
     KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID ?? "",
-      issuer: process.env.KEYCLOAK_ISSUER ?? "",
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET ?? "",
+      clientId: env.KEYCLOAK_CLIENT_ID ?? "",
+      issuer: env.KEYCLOAK_ISSUER ?? "",
+      clientSecret: env.KEYCLOAK_CLIENT_SECRET ?? "",
     }),
   ],
   callbacks: {

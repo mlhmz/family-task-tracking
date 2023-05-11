@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { Metadata } from "next";
 import { headers } from "next/dist/client/components/headers";
 
+import { env } from "@/env.mjs";
 import { Session } from "next-auth";
 
 import { siteConfig } from "@/config/site";
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 async function getSession(cookie: string): Promise<Session> {
-  const response = await fetch(`${process.env.LOCAL_AUTH_URL}/api/auth/session`, {
+  const response = await fetch(`${env.LOCAL_AUTH_URL}/api/auth/session`, {
     headers: {
       cookie,
     },
