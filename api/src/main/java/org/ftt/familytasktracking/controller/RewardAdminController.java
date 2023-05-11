@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.dtos.RewardRequestDto;
 import org.ftt.familytasktracking.dtos.RewardResponseDto;
@@ -75,11 +76,13 @@ public class RewardAdminController {
             )}
     )
     @PutMapping("/{id}")
-    public RewardResponseDto updateRewardByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
-                                                      @AuthenticationPrincipal Jwt jwt,
-                                                      @RequestBody RewardRequestDto dto) {
+    public RewardResponseDto updateRewardByUuidAndJwt(
+            @PathVariable(value = "id") UUID uuid,
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestBody RewardRequestDto dto,
+            @RequestHeader(ApplicationConfigProperties.SESSION_ID_KEY) UUID sessionId) {
         RewardModel model = this.rewardService.buildModelFromRewardRequestDto(dto);
-        return this.rewardService.updateRewardByUuidAndJwt(model, uuid, jwt, false).toResponseDto();
+        return this.rewardService.updateRewardByUuidAndJwt(model, uuid, jwt, sessionId, false).toResponseDto();
     }
 
     @Operation(summary = "Deletes a Reward by it's UUID and it's Authorization-Token")

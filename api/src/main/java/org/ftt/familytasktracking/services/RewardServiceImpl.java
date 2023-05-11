@@ -4,29 +4,54 @@ import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.RewardRequestDto;
 import org.ftt.familytasktracking.dtos.RewardResponseDto;
 import org.ftt.familytasktracking.entities.Household;
+import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Reward;
 import org.ftt.familytasktracking.exceptions.WebRtException;
+import org.ftt.familytasktracking.hooks.RewardRedeemedHook;
+import org.ftt.familytasktracking.hooks.RewardUpdateHook;
 import org.ftt.familytasktracking.mappers.RewardMapper;
 import org.ftt.familytasktracking.models.RewardModel;
+import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.ftt.familytasktracking.repositories.RewardRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class RewardServiceImpl implements RewardService {
-
+    private final List<RewardUpdateHook> rewardUpdateHooks = new ArrayList<>();
     private final RewardMapper rewardMapper;
     private final RewardRepository rewardRepository;
     private final HouseholdService householdService;
+    private final ProfileAuthService profileAuthService;
+    private final ProfileRepository profileRepository;
 
-    public RewardServiceImpl(RewardMapper rewardMapper, RewardRepository rewardRepository, HouseholdService householdService) {
+    public RewardServiceImpl(RewardMapper rewardMapper, RewardRepository rewardRepository,
+                             HouseholdService householdService, ProfileAuthService profileAuthService,
+                             ProfileRepository profileRepository) {
         this.rewardMapper = rewardMapper;
         this.rewardRepository = rewardRepository;
         this.householdService = householdService;
+        this.profileAuthService = profileAuthService;
+        this.profileRepository = profileRepository;
+        addUpdateHooksToArrayList();
+    }
+    /**
+     * Executes all {@link RewardUpdateHook}-Hooks
+     *
+     * @param targetReward {@link Reward} that the hooks should execute on
+     */
+    private void executeUpdateHooks(Reward targetReward, Profile profile, ProfileRepository profileRepository) {
+        for (RewardUpdateHook rewardUpdateHook : rewardUpdateHooks) {
+            rewardUpdateHook.executeUpdateHook(targetReward, profile, profileRepository);
+        }
+    }
+    private void addUpdateHooksToArrayList() {
+        rewardUpdateHooks.add(new RewardRedeemedHook());
     }
 
     @Override
@@ -46,13 +71,12 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     public RewardModel updateRewardByUuidAndJwt(@NonNull RewardModel updateRewardModel, @NonNull UUID uuid,
-                                                @NonNull Jwt jwt, boolean safe) {
+                                                @NonNull Jwt jwt, UUID sessionId, boolean safe) {
         Reward updateReward = updateRewardModel.toEntity();
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
+        Profile profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
         updateTargetReward(updateReward, targetReward, safe);
-/**
- * TODO: updateReward Hooks einbauen,
- **/
+        executeUpdateHooks(targetReward, profile, this.profileRepository);
         return buildModelFromRewardEntity(
                 this.rewardRepository.save(targetReward)
         );

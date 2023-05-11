@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.dtos.RewardRequestDto;
 import org.ftt.familytasktracking.dtos.RewardResponseDto;
@@ -74,11 +75,13 @@ public class RewardController {
             )}
     )
     @PutMapping("/{id}")
-    public RewardResponseDto safeUpdateRewardByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
-                                                          @AuthenticationPrincipal Jwt jwt,
-                                                          @RequestBody RewardRequestDto dto) {
+    public RewardResponseDto safeUpdateRewardByUuidAndJwt(
+            @PathVariable(value = "id") UUID uuid,
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestBody RewardRequestDto dto,
+            @RequestHeader(ApplicationConfigProperties.SESSION_ID_KEY) UUID sessionId) {
         RewardModel model = this.rewardService.buildModelFromRewardRequestDto(dto);
-        return this.rewardService.updateRewardByUuidAndJwt(model, uuid, jwt, true).toResponseDto();
+        return this.rewardService.updateRewardByUuidAndJwt(model, uuid, jwt, sessionId,true).toResponseDto();
     }
 
     private List<RewardResponseDto> mapModelCollectionToDtoCollection(List<RewardModel> models) {

@@ -36,7 +36,7 @@ public interface RewardService {
      * @return Updated Task as {@link RewardModel}
      */
     RewardModel updateRewardByUuidAndJwt(@NonNull RewardModel updateReward, @NonNull UUID uuid,
-                                         @NonNull Jwt jwt, boolean safe);
+                                         @NonNull Jwt jwt, UUID sessionId, boolean safe);
 
 
     /**
