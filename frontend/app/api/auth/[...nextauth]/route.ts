@@ -32,7 +32,6 @@ const refreshToken = async (token: JWT) => {
       refresh_token: tokenSet.refresh_token ?? token.refresh_token,
     };
   } catch (error) {
-    console.error("Error refreshing access token", error);
     // The error property will be used client-side to handle the refresh token error
     return { ...token, error: "RefreshAccessTokenError" as const };
   }
