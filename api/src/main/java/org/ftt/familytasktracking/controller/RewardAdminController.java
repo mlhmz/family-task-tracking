@@ -79,7 +79,7 @@ public class RewardAdminController {
                                                       @AuthenticationPrincipal Jwt jwt,
                                                       @RequestBody RewardRequestDto dto) {
         RewardModel model = this.rewardService.buildModelFromRewardRequestDto(dto);
-        return this.rewardService.updateRewardByUuidAndJwt(model, uuid, jwt).toResponseDto();
+        return this.rewardService.updateRewardByUuidAndJwt(model, uuid, jwt, false).toResponseDto();
     }
 
     @Operation(summary = "Deletes a Reward by it's UUID and it's Authorization-Token")

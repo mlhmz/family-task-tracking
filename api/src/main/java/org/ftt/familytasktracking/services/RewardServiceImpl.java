@@ -45,10 +45,14 @@ public class RewardServiceImpl implements RewardService {
     }
 
     @Override
-    public RewardModel updateRewardByUuidAndJwt(@NonNull RewardModel updateRewardModel, @NonNull UUID uuid, @NonNull Jwt jwt) {
+    public RewardModel updateRewardByUuidAndJwt(@NonNull RewardModel updateRewardModel, @NonNull UUID uuid,
+                                                @NonNull Jwt jwt, boolean safe) {
         Reward updateReward = updateRewardModel.toEntity();
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
-        this.rewardMapper.updateReward(updateReward, targetReward);
+        updateTargetReward(updateReward, targetReward, safe);
+/**
+ * TODO: updateReward Hooks einbauen,
+ **/
         return buildModelFromRewardEntity(
                 this.rewardRepository.save(targetReward)
         );
@@ -82,5 +86,13 @@ public class RewardServiceImpl implements RewardService {
     @Override
     public RewardModel buildModelFromRewardRequestDto(RewardRequestDto dto) {
         return null;
+    }
+
+    private void updateTargetReward(@NonNull Reward updateReward, @NonNull Reward targetReward, boolean safe) {
+        if (safe) {
+            this.rewardMapper.safeUpdateReward(updateReward, targetReward);
+        } else {
+            this.rewardMapper.updateReward(updateReward, targetReward);
+        }
     }
 }
