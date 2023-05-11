@@ -1,5 +1,8 @@
 package org.ftt.familytasktracking.dtos;
 
 public record RewardRequestDto(
-        String name
-) { }
+        Integer cost,
+        String name,
+        String description
+) {
+}
