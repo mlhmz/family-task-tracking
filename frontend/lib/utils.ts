@@ -1,5 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
+
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -13,7 +14,7 @@ export function parseJwt(token: string) {
 function setResponseHeaders(headers: Headers, originHeaders: Headers) {
   headers.set("WWW-Authenticate", originHeaders.get("WWW-Authenticate") ?? "");
   if (originHeaders.has("date")) {
-    headers.set("date", originHeaders.get("date") ?? `${new Date().toISOString}`)
+    headers.set("date", originHeaders.get("date") ?? `${new Date().toISOString}`);
   }
 }
 
@@ -27,10 +28,9 @@ async function getResponseContent(householdResponse: Response): Promise<any> {
 }
 
 export async function getJSONResponse(originResponse: Response) {
-  const response = NextResponse.json(
-    await getResponseContent(originResponse),
-    { status: originResponse.status }
-  );
+  const response = NextResponse.json(await getResponseContent(originResponse), {
+    status: originResponse.status,
+  });
   setResponseHeaders(response.headers, originResponse.headers);
   return response;
 }

@@ -1,13 +1,16 @@
-import { getJSONResponse, getNoContentResponse } from "@/lib/utils";
-import { ApiHandler } from "@/types/handlers";
-import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+
+import { getToken } from "next-auth/jwt";
+
+import { ApiHandler } from "@/types/handlers";
+
+import { getJSONResponse, getNoContentResponse } from "@/lib/utils";
 
 const springHandler: ApiHandler = async (request, context) => {
   const jwtLiteral = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET, raw: true });
   if (jwtLiteral) {
     const token = jwtLiteral.split(":")[0];
-    const uri = context.params['segments'].join("/");
+    const uri = context.params["segments"].join("/");
     const householdResponse = await fetch(`${process.env.BACKEND_API_URL}/${uri}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -16,8 +19,8 @@ const springHandler: ApiHandler = async (request, context) => {
       body: request.body,
       method: request.method,
       // @ts-ignore
-      duplex: 'half'
-    })
+      duplex: "half",
+    });
     try {
       if (householdResponse.status != 204) {
         return await getJSONResponse(householdResponse);
@@ -32,4 +35,10 @@ const springHandler: ApiHandler = async (request, context) => {
   }
 };
 
-export { springHandler as GET, springHandler as POST, springHandler as PUT, springHandler as PATCH, springHandler as DELETE };
+export {
+  springHandler as GET,
+  springHandler as POST,
+  springHandler as PUT,
+  springHandler as PATCH,
+  springHandler as DELETE,
+};
