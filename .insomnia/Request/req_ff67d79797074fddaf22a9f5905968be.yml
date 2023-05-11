@@ -1,7 +1,7 @@
 _id: req_ff67d79797074fddaf22a9f5905968be
 type: Request
 parentId: fld_9a298bb815f94cf19bd561a852458599
-modified: 1680364246487
+modified: 1683749474497
 created: 1679769772991
 url: "{{ _.api }}/{{ _.api_base_path }}/admin/household"
 name: Create Household
@@ -22,6 +22,7 @@ headers:
     name: "{{ _.session_id_header }}"
     value: "{{ _.session_id }}"
     description: ""
+    disabled: true
 authentication:
   type: oauth2
   grantType: password
