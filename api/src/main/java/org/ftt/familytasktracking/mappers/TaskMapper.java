@@ -39,6 +39,12 @@ public interface TaskMapper {
     @Mapping(target = "household", ignore = true)
     void updateTask(Task updateTask, @MappingTarget Task targetTask);
 
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "done", ignore = true)
+    @Mapping(target = "household", ignore = true)
+    void updateTaskAssignee(Task updateTask, @MappingTarget Task targetTask);
+
 
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "description", ignore = true)

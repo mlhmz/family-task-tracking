@@ -3,6 +3,7 @@ package org.ftt.familytasktracking.services;
 import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
+import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.models.TaskModel;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -78,4 +79,15 @@ public interface TaskService {
      * @return Built {@link TaskModel} entity containing the dto payload
      */
     TaskModel buildModelFromTaskRequestDto(TaskRequestDto dto);
+
+    /**
+     * Builds a Model from a TaskRequestDto and injects the services TaskMapper
+     *
+     * @param updateTaskModel {@link TaskModel} with new assignee
+     * @param targetTaskUuid {@link UUID} of the Task to update
+     * @param jwt {@link Jwt} of the Household
+     * @return Built {@link TaskResponseDto} entity containing the dto payload
+     */
+    TaskResponseDto setAssigneeForTask(TaskModel updateTaskModel, UUID targetTaskUuid, Jwt jwt);
+
 }
