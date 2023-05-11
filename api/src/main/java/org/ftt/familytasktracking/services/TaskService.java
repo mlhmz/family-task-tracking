@@ -3,7 +3,6 @@ package org.ftt.familytasktracking.services;
 import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
-import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.models.TaskModel;
 import org.springframework.security.oauth2.jwt.Jwt;
