@@ -5,14 +5,15 @@ import { useEffect, useState } from "react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { PermissionType } from "@/types/permission-type";
 import { ProfileRequest } from "@/types/profile";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+
 async function createProfile(profileRequest: ProfileRequest, router: AppRouterInstance) {
-  const response = await fetch("/api/v1/admin/profiles", {
+  await fetch("/api/v1/admin/profiles", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -20,11 +21,14 @@ async function createProfile(profileRequest: ProfileRequest, router: AppRouterIn
     method: "POST",
     body: JSON.stringify(profileRequest),
   });
-  console.log((await response.json()))
+  router.push("/wizard/3");
 }
 
 export default function SecondWizardPage() {
-  const [profile, setProfile] = useState<ProfileRequest>({ name: "", permissionType: PermissionType.Admin } as ProfileRequest);
+  const [profile, setProfile] = useState<ProfileRequest>({
+    name: "",
+    permissionType: PermissionType.Admin,
+  } as ProfileRequest);
   const router = useRouter();
 
   const onAdministratorNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
