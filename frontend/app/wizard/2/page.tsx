@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { useRouter } from "next/navigation";
 
 import { PermissionType } from "@/types/permission-type";
-import { ProfileRequest } from "@/types/profile";
+import { ProfileRequest, ProfileResponse } from "@/types/profile";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { useProfile } from "@/hooks/fetch/use-profile";
 
-async function createProfile(profileRequest: ProfileRequest, router: AppRouterInstance) {
-  await fetch("/api/v1/admin/profiles", {
+async function createProfile(profileRequest: ProfileRequest) {
+  const response = await fetch("/api/v1/admin/profiles", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -21,24 +21,32 @@ async function createProfile(profileRequest: ProfileRequest, router: AppRouterIn
     method: "POST",
     body: JSON.stringify(profileRequest),
   });
-  router.push("/wizard/3");
+  const profileResponse = await response.json() as ProfileResponse;
+  return profileResponse;
 }
 
 export default function SecondWizardPage() {
-  const [profile, setProfile] = useState<ProfileRequest>({
+  const [profileRequest, setProfileRequest] = useState<ProfileRequest>({
     name: "",
     permissionType: PermissionType.Admin,
   } as ProfileRequest);
+  const [profileResponse, setProfileResponse] = useState<ProfileResponse>({} as ProfileResponse);
+  const {isLoggedIn, setProfileAuthRequest} = useProfile();
   const router = useRouter();
 
   const onAdministratorNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfile({ name: e.target.value, permissionType: profile.permissionType });
+    setProfileRequest({ name: e.target.value, permissionType: profileRequest.permissionType });
   };
 
   useEffect(() => {
-    console.log(profile.name);
-    console.log(profile);
-  }, [profile]);
+    setProfileAuthRequest({profileUuid: profileResponse.uuid})
+  }, [profileResponse, setProfileAuthRequest])
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/wizard/3");
+    }
+  }, [isLoggedIn, router])
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -48,11 +56,12 @@ export default function SecondWizardPage() {
       <Input
         placeholder="Administrators Name"
         onChange={onAdministratorNameInputChange}
-        value={profile.name}
+        value={profileRequest.name}
         maxLength={255}
       />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-      <Button className="m-auto" onClick={() => createProfile(profile, router)}>
+      <Button className="m-auto" onClick={() => createProfile(profileRequest)
+        .then(response => setProfileResponse(response))}>
         Next
       </Button>
     </div>

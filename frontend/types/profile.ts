@@ -16,7 +16,7 @@ export interface ProfileResponse {
 }
 
 export interface ProfileAuthRequest {
-  uuid?: string;
+  profileUuid?: string;
   password?: string;
 }
 

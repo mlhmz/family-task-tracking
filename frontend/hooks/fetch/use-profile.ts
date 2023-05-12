@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { cookies } from "next/dist/client/components/headers";
-
 import { useCookies } from "react-cookie";
 
 import { ProfileAuthRequest, ProfileAuthResponse, ProfileResponse } from "@/types/profile";
@@ -12,7 +10,7 @@ async function authProfile(profileAuthRequest: ProfileAuthRequest) {
     body: JSON.stringify(profileAuthRequest),
   });
   const profileAuthResponse = (await response.json()) as ProfileAuthResponse;
-  return profileAuthResponse;
+  return { ...profileAuthResponse, status: response.status };
 }
 
 async function fetchProfile(sessionId?: string) {
@@ -26,27 +24,37 @@ async function fetchProfile(sessionId?: string) {
   };
 }
 
-export const useProfile = (profileAuthRequest?: ProfileAuthRequest) => {
+export const useProfile = () => {
   const [profileInstance, setProfileInstance] = useState({} as ProfileResponse);
+  const [profileAuthRequest, setProfileAuthRequest] = useState({} as ProfileAuthRequest);
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [sessionId, setSessionId, removeSessionId] = useCookies(["session-id"]);
+  const [sessionId, setSessionId] = useCookies(["session-id"]);
+
+  useEffect(() => {
+    async function getProfileSession() {
+      const authResponse = await authProfile(profileAuthRequest);
+      if (authResponse && authResponse.status == 200) {
+        setSessionId("session-id", authResponse.sessionId)
+        setLoggedIn(true);
+      }
+    }
+    getProfileSession();
+  }, [profileAuthRequest, setSessionId]);
 
   useEffect(() => {
     async function getProfile() {
-      if (profileAuthRequest && !sessionId) {
-        const authResponse = await authProfile(profileAuthRequest);
-        setSessionId("session-id", authResponse.sessionId, { expires: authResponse.expiresAt });
+      if (sessionId) {
+        const profile = await fetchProfile(sessionId["session-id"]);
+        setLoggedIn(profile.status == 200);
+        setProfileInstance({ ...profile, sessionId: sessionId["session-id"] });
       }
-      // TODO: Bessere Lösung finden
-      const profile = await fetchProfile(String(sessionId));
-      setLoggedIn(profile.status == 200);
-      setProfileInstance(profile);
     }
     getProfile();
   }, [sessionId, setSessionId, profileAuthRequest]);
 
   return {
     profileInstance,
+    setProfileAuthRequest,
     isLoggedIn,
   };
 };
