@@ -16,6 +16,7 @@ const springHandler: ApiHandler = async (request, context) => {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "session-id": `${request.headers.get("session-id") ?? ""}`
       },
       body: request.body,
       method: request.method,
