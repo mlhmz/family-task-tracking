@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -99,6 +100,7 @@ public class TaskAdminController {
                             schema = @Schema(implementation = ErrorDetails.class))}
             )}
     )
+    @Transactional
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTaskById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt) {

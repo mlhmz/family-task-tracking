@@ -40,19 +40,6 @@ public class RewardServiceImpl implements RewardService {
         this.profileRepository = profileRepository;
         addUpdateHooksToArrayList();
     }
-    /**
-     * Executes all {@link RewardUpdateHook}-Hooks
-     *
-     * @param targetReward {@link Reward} that the hooks should execute on
-     */
-    private void executeUpdateHooks(Reward targetReward, Profile profile, ProfileRepository profileRepository) {
-        for (RewardUpdateHook rewardUpdateHook : rewardUpdateHooks) {
-            rewardUpdateHook.executeUpdateHook(targetReward, profile, profileRepository);
-        }
-    }
-    private void addUpdateHooksToArrayList() {
-        rewardUpdateHooks.add(new RewardRedeemedHook());
-    }
 
     @Override
     public RewardResponseDto createReward(RewardRequestDto dto, Jwt jwt) {
@@ -76,7 +63,7 @@ public class RewardServiceImpl implements RewardService {
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
         Profile profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
         updateTargetReward(updateReward, targetReward, safe);
-        executeUpdateHooks(targetReward, profile, this.profileRepository);
+        executeUpdateHooks(targetReward, profile, safe);
         return buildModelFromRewardEntity(
                 this.rewardRepository.save(targetReward)
         );
@@ -109,7 +96,7 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     public RewardModel buildModelFromRewardRequestDto(RewardRequestDto dto) {
-        return null;
+        return new RewardModel(dto, rewardMapper);
     }
 
     private void updateTargetReward(@NonNull Reward updateReward, @NonNull Reward targetReward, boolean safe) {
@@ -118,5 +105,14 @@ public class RewardServiceImpl implements RewardService {
         } else {
             this.rewardMapper.updateReward(updateReward, targetReward);
         }
+    }
+
+    private void executeUpdateHooks(Reward targetReward, Profile profile, Boolean safe) {
+        for (RewardUpdateHook rewardUpdateHook : rewardUpdateHooks) {
+            rewardUpdateHook.executeUpdateHook(targetReward, profile, safe, this.profileRepository);
+        }
+    }
+    private void addUpdateHooksToArrayList() {
+        rewardUpdateHooks.add(new RewardRedeemedHook());
     }
 }
