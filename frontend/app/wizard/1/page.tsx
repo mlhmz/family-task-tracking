@@ -47,9 +47,10 @@ export default function FirstWizardPage() {
       <Button
         className={buttonVariants({ size: "sm" })}
         onClick={() =>
-          createHousehold(household).then((response) => {
-            response && response.status == 200 && router.push("/wizard/2");
-          })}>
+          createHousehold(household).then(
+            (response) => response && response.status == 200 && router.push("/wizard/2"),
+          )
+        }>
         Next
       </Button>
     </div>

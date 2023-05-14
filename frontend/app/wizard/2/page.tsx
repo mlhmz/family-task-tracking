@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import { PermissionType } from "@/types/permission-type";
 import { ProfileRequest, ProfileResponse } from "@/types/profile";
 
+import { useProfile } from "@/hooks/fetch/use-profile";
+
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { useProfile } from "@/hooks/fetch/use-profile";
 
 async function createProfile(profileRequest: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
@@ -21,7 +22,7 @@ async function createProfile(profileRequest: ProfileRequest) {
     method: "POST",
     body: JSON.stringify(profileRequest),
   });
-  const profileResponse = await response.json() as ProfileResponse;
+  const profileResponse = (await response.json()) as ProfileResponse;
   return profileResponse;
 }
 
@@ -30,7 +31,7 @@ export default function SecondWizardPage() {
     name: "",
     permissionType: PermissionType.Admin,
   } as ProfileRequest);
-  const {isLoggedIn, setProfileAuthRequest} = useProfile();
+  const { isLoggedIn, setProfileAuthRequest } = useProfile();
   const router = useRouter();
 
   const onAdministratorNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +42,7 @@ export default function SecondWizardPage() {
     if (isLoggedIn) {
       router.push("/wizard/3");
     }
-  }, [isLoggedIn, router])
+  }, [isLoggedIn, router]);
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -55,8 +56,13 @@ export default function SecondWizardPage() {
         maxLength={255}
       />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-      <Button className={buttonVariants({ size: "sm" })} onClick={() => createProfile(profileRequest)
-        .then(response => setProfileAuthRequest({profileUuid: response.uuid}))}>
+      <Button
+        className={buttonVariants({ size: "sm" })}
+        onClick={() =>
+          createProfile(profileRequest).then((response) =>
+            setProfileAuthRequest({ profileUuid: response.uuid }),
+          )
+        }>
         Next
       </Button>
     </div>

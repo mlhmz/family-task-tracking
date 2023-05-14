@@ -5,6 +5,7 @@ import { createContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useHousehold } from "@/hooks/fetch/use-household";
+
 import { LoadingScreen } from "@/components/loading-screen";
 
 export interface HouseholdContextProps {

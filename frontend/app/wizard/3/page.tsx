@@ -21,7 +21,7 @@ async function changePassword(profileInstance: ProfileResponse, password?: strin
     method: "PUT",
     body: JSON.stringify(request),
   });
-  return { status: response.status }
+  return { status: response.status };
 }
 
 export default function ThirdWizardPage() {
@@ -40,10 +40,13 @@ export default function ThirdWizardPage() {
       <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
       <Input placeholder="PIN" type="password" onChange={onPinInputChange} value={password} maxLength={255} />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-      <Button className={buttonVariants({ size: "sm" })} onClick={() => changePassword(profileInstance, password)
-        .then(response => {
-          response.status == 200 && router.push("/wizard/finished");
-        })}>
+      <Button
+        className={buttonVariants({ size: "sm" })}
+        onClick={() =>
+          changePassword(profileInstance, password).then(
+            (response) => response.status == 200 && router.push("/wizard/finished"),
+          )
+        }>
         Next
       </Button>
     </div>
