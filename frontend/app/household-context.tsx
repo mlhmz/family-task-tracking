@@ -5,6 +5,7 @@ import { createContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useHousehold } from "@/hooks/fetch/use-household";
+import { LoadingScreen } from "@/components/loading-screen";
 
 export interface HouseholdContextProps {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ export interface HouseholdContextContent {
 export const HouseholdContext = createContext<HouseholdContextContent>({} as HouseholdContextContent);
 
 export default function HouseholdContextProvider({ children }: HouseholdContextProps) {
-  const { household, isHouseholdEmpty } = useHousehold();
+  const { isHouseholdFetched, household, isHouseholdEmpty } = useHousehold();
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function HouseholdContextProvider({ children }: HouseholdContextP
     isHouseholdEmpty && router.push("/wizard");
   }, [household, isHouseholdEmpty, router]);
 
-  return (
+  return isHouseholdFetched ? (
     <HouseholdContext.Provider
       value={{
         householdResponse: household,
@@ -34,5 +35,7 @@ export default function HouseholdContextProvider({ children }: HouseholdContextP
       }}>
       {children}
     </HouseholdContext.Provider>
+  ) : (
+    <LoadingScreen textContent="Fetching household..." />
   );
 }
