@@ -8,7 +8,7 @@ import { ProfileAuthRequest, ProfileResponse } from "@/types/profile";
 
 import { useProfile } from "@/hooks/fetch/use-profile";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
@@ -47,7 +47,7 @@ export default function ThirdWizardPage() {
       <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
       <Input placeholder="PIN" type="password" onChange={onPinInputChange} value={password} maxLength={255} />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-      <Button className="m-auto" onClick={() => changePassword(profileInstance, password)
+      <Button className={buttonVariants({ size: "sm" })} onClick={() => changePassword(profileInstance, password)
         .then(response => setPasswordChanged(response.status == 200))}>
         Next
       </Button>

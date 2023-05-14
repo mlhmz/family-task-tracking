@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { PermissionType } from "@/types/permission-type";
 import { ProfileRequest, ProfileResponse } from "@/types/profile";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useProfile } from "@/hooks/fetch/use-profile";
@@ -60,7 +60,7 @@ export default function SecondWizardPage() {
         maxLength={255}
       />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-      <Button className="m-auto" onClick={() => createProfile(profileRequest)
+      <Button className={buttonVariants({ size: "sm" })} onClick={() => createProfile(profileRequest)
         .then(response => setProfileResponse(response))}>
         Next
       </Button>

@@ -23,7 +23,6 @@ export default function HouseholdContextProvider({ children }: HouseholdContextP
   const router = useRouter();
 
   useEffect(() => {
-    console.log(household);
     isHouseholdEmpty && router.push("/wizard");
   }, [household, isHouseholdEmpty, router]);
 

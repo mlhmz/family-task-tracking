@@ -2,14 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-async function createHousehold(householdRequest: HouseholdRequest, router: AppRouterInstance) {
+interface CreateHouseholdResponse {
+  data?: HouseholdResponse;
+  status: number;
+}
+
+async function createHousehold(householdRequest: HouseholdRequest): Promise<CreateHouseholdResponse> {
   const response = await fetch("/api/v1/admin/household", {
     headers: {
       Accept: "application/json",
@@ -18,13 +22,18 @@ async function createHousehold(householdRequest: HouseholdRequest, router: AppRo
     method: "POST",
     body: JSON.stringify(householdRequest),
   });
-  if (response.status == 200) {
-    router.push("/wizard/2");
-  }
+  const household = response.status == 200 ? ((await response.json()) as HouseholdResponse) : undefined;
+  return {
+    data: household,
+    status: response.status,
+  };
 }
 
 export default function FirstWizardPage() {
   const [household, setHousehold] = useState<HouseholdRequest>({ householdName: "" } as HouseholdRequest);
+  const [householdResponse, setHouseholdResponse] = useState<CreateHouseholdResponse>(
+    {} as CreateHouseholdResponse,
+  );
   const router = useRouter();
 
   const onHouseholdInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,8 +41,10 @@ export default function FirstWizardPage() {
   };
 
   useEffect(() => {
-    console.log(household);
-  }, [household]);
+    if (householdResponse.data && householdResponse.status == 200) {
+      router.push("/wizard/2");
+    }
+  }, [householdResponse, router]);
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -47,7 +58,13 @@ export default function FirstWizardPage() {
         maxLength={255}
       />
       <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
-      <Button className="m-auto" onClick={() => createHousehold(household, router)}>
+      <Button
+        className={buttonVariants({ size: "sm" })}
+        onClick={() =>
+          createHousehold(household).then((response) =>
+            setHouseholdResponse({ ...response, status: response.status }),
+          )
+        }>
         Next
       </Button>
     </div>
