@@ -30,17 +30,12 @@ export default function SecondWizardPage() {
     name: "",
     permissionType: PermissionType.Admin,
   } as ProfileRequest);
-  const [profileResponse, setProfileResponse] = useState<ProfileResponse>({} as ProfileResponse);
   const {isLoggedIn, setProfileAuthRequest} = useProfile();
   const router = useRouter();
 
   const onAdministratorNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfileRequest({ name: e.target.value, permissionType: profileRequest.permissionType });
   };
-
-  useEffect(() => {
-    setProfileAuthRequest({profileUuid: profileResponse.uuid})
-  }, [profileResponse, setProfileAuthRequest])
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -61,7 +56,7 @@ export default function SecondWizardPage() {
       />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
       <Button className={buttonVariants({ size: "sm" })} onClick={() => createProfile(profileRequest)
-        .then(response => setProfileResponse(response))}>
+        .then(response => setProfileAuthRequest({profileUuid: response.uuid}))}>
         Next
       </Button>
     </div>

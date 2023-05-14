@@ -26,19 +26,12 @@ async function changePassword(profileInstance: ProfileResponse, password?: strin
 
 export default function ThirdWizardPage() {
   const [password, setPassword] = useState("");
-  const [isPasswordChanged, setPasswordChanged] = useState(false);
   const { profileInstance } = useProfile();
   const router = useRouter();
 
   const onPinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
-
-  useEffect(() => {
-    if (isPasswordChanged) {
-      router.push("/wizard/finished");
-    }
-  }, [isPasswordChanged, router]);
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -48,7 +41,9 @@ export default function ThirdWizardPage() {
       <Input placeholder="PIN" type="password" onChange={onPinInputChange} value={password} maxLength={255} />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
       <Button className={buttonVariants({ size: "sm" })} onClick={() => changePassword(profileInstance, password)
-        .then(response => setPasswordChanged(response.status == 200))}>
+        .then(response => {
+          response.status == 200 && router.push("/wizard/finished");
+        })}>
         Next
       </Button>
     </div>
