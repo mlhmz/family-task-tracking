@@ -17,7 +17,7 @@ async function createHousehold(householdRequest: HouseholdRequest) {
     method: "POST",
     body: JSON.stringify(householdRequest),
   });
-  const household = response.status == 200 ? ((await response.json()) as HouseholdResponse) : undefined;
+  const household = (await response.json()) as HouseholdResponse;
   return {
     ...household,
     status: response.status,

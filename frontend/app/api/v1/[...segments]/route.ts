@@ -12,18 +12,18 @@ const springHandler: ApiHandler = async (request, context) => {
   if (jwtLiteral) {
     const token = jwtLiteral.split(":")[0];
     const uri = context.params["segments"].join("/");
-    const householdResponse = await fetch(`${env.BACKEND_API_URL}/${uri}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "session-id": `${request.headers.get("session-id") ?? ""}`
-      },
-      body: request.body,
-      method: request.method,
-      // @ts-ignore
-      duplex: "half",
-    });
     try {
+      const householdResponse = await fetch(`${env.BACKEND_API_URL}/${uri}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "session-id": `${request.headers.get("session-id") ?? ""}`,
+        },
+        body: request.body,
+        method: request.method,
+        // @ts-ignore
+        duplex: "half",
+      });
       if (householdResponse.status != 204) {
         return await getJSONResponse(householdResponse);
       } else {

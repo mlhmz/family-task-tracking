@@ -23,7 +23,7 @@ async function getResponseContent(householdResponse: Response): Promise<any> {
     const jsonContent = await Promise.resolve(householdResponse.json());
     return jsonContent;
   } catch (err) {
-    return "";
+    return {};
   }
 }
 

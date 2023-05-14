@@ -32,24 +32,22 @@ export const useProfile = () => {
 
   useEffect(() => {
     async function getProfileSession() {
-      const authResponse = await authProfile(profileAuthRequest);
+      const authResponse = profileAuthRequest.profileUuid && (await authProfile(profileAuthRequest));
       if (authResponse && authResponse.status == 200) {
-        setSessionId("session-id", authResponse.sessionId)
+        setSessionId("session-id", authResponse.sessionId);
         setLoggedIn(true);
       }
     }
-    getProfileSession();
-  }, [profileAuthRequest, setSessionId]);
+    !sessionId["session-id"] && getProfileSession();
+  }, [profileAuthRequest, setSessionId, sessionId]);
 
   useEffect(() => {
     async function getProfile() {
-      if (sessionId) {
-        const profile = await fetchProfile(sessionId["session-id"]);
-        setLoggedIn(profile.status == 200);
-        setProfileInstance({ ...profile, sessionId: sessionId["session-id"] });
-      }
+      const profile = await fetchProfile(sessionId["session-id"]);
+      setLoggedIn(profile.status == 200);
+      setProfileInstance({ ...profile, sessionId: sessionId["session-id"] });
     }
-    getProfile();
+    sessionId["session-id"] && getProfile();
   }, [sessionId, setSessionId, profileAuthRequest]);
 
   return {
