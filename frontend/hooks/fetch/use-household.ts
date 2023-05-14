@@ -12,17 +12,20 @@ async function fetchHousehold() {
 export const useHousehold = () => {
   const [household, setHousehold] = useState({} as HouseholdResponse);
   const [isHouseholdEmpty, setIsHouseholdEmpty] = useState(false);
+  const [isHouseholdFetched, setIsHouseholdFetched] = useState(false);
 
   useEffect(() => {
     async function getHousehold() {
       const householdResponse = await fetchHousehold();
       setHousehold(householdResponse);
       setIsHouseholdEmpty(householdResponse.status == 404);
+      setIsHouseholdFetched(true);
     }
     getHousehold();
   }, [setHousehold]);
 
   return {
+    isHouseholdFetched,
     isHouseholdEmpty,
     household,
   };
