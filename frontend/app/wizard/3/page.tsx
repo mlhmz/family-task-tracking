@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { ProfileAuthRequest } from "@/types/profile";
+import { ProfileAuthRequest, ProfileResponse } from "@/types/profile";
 
 import { useProfile } from "@/hooks/fetch/use-profile";
 
@@ -12,18 +12,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-async function changePassword(profileUuid?: string, password?: string) {
-  const request: ProfileAuthRequest = { profileUuid: profileUuid, password };
+async function changePassword(profileInstance: ProfileResponse, password?: string) {
+  const request: ProfileAuthRequest = { profileUuid: profileInstance.uuid, password };
   const response = await fetch("/api/v1/profiles/auth", {
+    headers: {
+      "session-id": profileInstance.sessionId ?? "",
+    },
     method: "PUT",
     body: JSON.stringify(request),
   });
-  console.log(`Changing Password ${response.status}`)
+  return { status: response.status }
 }
 
 export default function ThirdWizardPage() {
   const [password, setPassword] = useState("");
-  const { profileInstance, isLoggedIn } = useProfile();
+  const [isPasswordChanged, setPasswordChanged] = useState(false);
+  const { profileInstance } = useProfile();
   const router = useRouter();
 
   const onPinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,10 +35,10 @@ export default function ThirdWizardPage() {
   };
 
   useEffect(() => {
-    console.log(password);
-    console.log(profileInstance);
-    console.log(isLoggedIn);
-  }, [isLoggedIn, password, profileInstance]);
+    if (isPasswordChanged) {
+      router.push("/wizard/finished");
+    }
+  }, [isPasswordChanged, router]);
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -43,7 +47,8 @@ export default function ThirdWizardPage() {
       <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
       <Input placeholder="PIN" type="password" onChange={onPinInputChange} value={password} maxLength={255} />
       <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-      <Button className="m-auto" onClick={() => changePassword(profileInstance.uuid, password)}>
+      <Button className="m-auto" onClick={() => changePassword(profileInstance, password)
+        .then(response => setPasswordChanged(response.status == 200))}>
         Next
       </Button>
     </div>
