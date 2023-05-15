@@ -15,9 +15,6 @@ import { Progress } from "@/components/ui/progress";
 async function changePassword(profileInstance: ProfileResponse, password?: string) {
   const request: ProfileAuthRequest = { profileUuid: profileInstance.uuid, password };
   const response = await fetch("/api/v1/profiles/auth", {
-    headers: {
-      "session-id": profileInstance.sessionId ?? "",
-    },
     method: "PUT",
     body: JSON.stringify(request),
   });

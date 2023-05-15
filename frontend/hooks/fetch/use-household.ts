@@ -11,8 +11,8 @@ import { assertIsHouseholdResponse } from "@/lib/guards";
 async function fetchHousehold() {
   const response = await fetch("/api/v1/household");
   if (!response.ok) {
-    if (response.status == 204) {
-      throw new Error("No content");
+    if (response.status == 404) {
+      throw new Error("No household");
     }
   }
   const household = await response.json();
@@ -33,7 +33,7 @@ export const useHousehold = () => {
       setHousehold(data);
       setIsHouseholdEmpty(false);
     }
-    if (error && error instanceof Error && error.message == "No content") {
+    if (error && error instanceof Error && error.message == "No household") {
       setIsHouseholdEmpty(true);
     }
   }, [data, error]);

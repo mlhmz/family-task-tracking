@@ -1,17 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 
 import { PermissionType } from "@/types/permission-type";
-import { ProfileRequest, ProfileResponse } from "@/types/profile";
-
-import { useProfile } from "@/hooks/fetch/use-profile";
+import { ProfileAuthRequest, ProfileRequest, ProfileResponse } from "@/types/profile";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+
+async function authProfile(profileAuthRequest: ProfileAuthRequest) {
+  await fetch("/api/v1/profiles/auth", {
+    method: "POST",
+    body: JSON.stringify(profileAuthRequest),
+  });
+}
 
 async function createProfile(profileRequest: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
@@ -31,18 +36,11 @@ export default function SecondWizardPage() {
     name: "",
     permissionType: PermissionType.Admin,
   } as ProfileRequest);
-  const { isLoggedIn, setProfileAuthRequest } = useProfile();
   const router = useRouter();
 
   const onAdministratorNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfileRequest({ name: e.target.value, permissionType: profileRequest.permissionType });
   };
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/wizard/3");
-    }
-  }, [isLoggedIn, router]);
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -59,9 +57,11 @@ export default function SecondWizardPage() {
       <Button
         className={buttonVariants({ size: "sm" })}
         onClick={() =>
-          createProfile(profileRequest).then((response) =>
-            setProfileAuthRequest({ profileUuid: response.uuid }),
-          )
+          createProfile(profileRequest).then((response) => {
+            authProfile({ profileUuid: response.uuid }).then((res) => {
+              router.push("/wizard/3");
+            });
+          })
         }>
         Next
       </Button>
