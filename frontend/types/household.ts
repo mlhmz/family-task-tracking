@@ -1,10 +1,10 @@
-interface HouseholdResponse {
+export interface HouseholdResponse {
   uuid?: string;
   householdName?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface HouseholdRequest {
+export interface HouseholdRequest {
   householdName?: string;
 }

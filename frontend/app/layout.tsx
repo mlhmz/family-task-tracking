@@ -17,6 +17,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import AuthContext from "./auth-context";
 import HouseholdContextProvider from "./household-context";
+import QueryClientProvider from "./query-client";
 
 export const metadata: Metadata = {
   title: {
@@ -60,15 +61,17 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="relative flex min-h-screen flex-col">
-              <AuthContext session={session}>
-                <HouseholdContextProvider>
-                  <SiteHeader />
-                  <div className="flex-1">{children}</div>
-                </HouseholdContextProvider>
-              </AuthContext>
-            </div>
-            <TailwindIndicator />
+            <QueryClientProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <AuthContext session={session}>
+                  <HouseholdContextProvider>
+                    <SiteHeader />
+                    <div className="flex-1">{children}</div>
+                  </HouseholdContextProvider>
+                </AuthContext>
+              </div>
+              <TailwindIndicator />
+            </QueryClientProvider>
           </ThemeProvider>
         </body>
       </html>

@@ -1,31 +1,44 @@
+"use client";
+
 import { useEffect, useState } from "react";
+
+import { useQuery } from "@tanstack/react-query";
+
+import { HouseholdResponse } from "@/types/household";
+
+import { assertIsHouseholdResponse } from "@/lib/guards";
 
 async function fetchHousehold() {
   const response = await fetch("/api/v1/household");
-  const household = (await response.json()) as HouseholdResponse;
-  return {
-    ...household,
-    status: response.status,
-  };
+  if (!response.ok) {
+    if (response.status == 204) {
+      throw new Error("No content");
+    }
+  }
+  const household = await response.json();
+  assertIsHouseholdResponse(household);
+  return household;
 }
 
 export const useHousehold = () => {
   const [household, setHousehold] = useState({} as HouseholdResponse);
   const [isHouseholdEmpty, setIsHouseholdEmpty] = useState(false);
-  const [isHouseholdFetched, setIsHouseholdFetched] = useState(false);
+  const { data, error } = useQuery({
+    queryKey: ["household"],
+    queryFn: fetchHousehold,
+  });
 
   useEffect(() => {
-    async function getHousehold() {
-      const householdResponse = await fetchHousehold();
-      setHousehold(householdResponse);
-      setIsHouseholdEmpty(householdResponse.status == 404);
-      setIsHouseholdFetched(true);
+    if (data) {
+      setHousehold(data);
+      setIsHouseholdEmpty(false);
     }
-    getHousehold();
-  }, [setHousehold]);
+    if (error && error instanceof Error && error.message == "No content") {
+      setIsHouseholdEmpty(true);
+    }
+  }, [data, error]);
 
   return {
-    isHouseholdFetched,
     isHouseholdEmpty,
     household,
   };

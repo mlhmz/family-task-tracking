@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -39,7 +39,7 @@ export default function ThirdWizardPage() {
       <h3>Step 3</h3>
       <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
       <Input placeholder="PIN" type="password" onChange={onPinInputChange} value={password} maxLength={255} />
-      <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
+      <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
       <Button
         className={buttonVariants({ size: "sm" })}
         onClick={() =>

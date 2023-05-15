@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { useRouter } from "next/navigation";
+
+import { useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+
+import { HouseholdRequest, HouseholdResponse } from "@/types/household";
+
+import { assertIsHouseholdResponse } from "@/lib/guards";
+
+import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-async function createHousehold(householdRequest: HouseholdRequest) {
+const postHousehold = async (householdRequest: HouseholdRequest) => {
   const response = await fetch("/api/v1/admin/household", {
     headers: {
       Accept: "application/json",
@@ -17,42 +24,51 @@ async function createHousehold(householdRequest: HouseholdRequest) {
     method: "POST",
     body: JSON.stringify(householdRequest),
   });
-  const household = (await response.json()) as HouseholdResponse;
-  return {
-    ...household,
-    status: response.status,
-  };
-}
+
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.message) throw new Error(error.message);
+    throw new Error("Problem fetching data");
+  }
+  const household = await response.json();
+  assertIsHouseholdResponse(household);
+  return household;
+};
+
+const schema = z.object({
+  householdName: z.string().min(1).max(255),
+});
 
 export default function FirstWizardPage() {
-  const [household, setHousehold] = useState<HouseholdRequest>({ householdName: "" } as HouseholdRequest);
   const router = useRouter();
+  const { register, handleSubmit, formState } = useZodForm({ schema });
+  const { mutate, isLoading, error } = useMutation({
+    mutationFn: postHousehold,
+    onSuccess: (householdResponse: HouseholdResponse) => {
+      router.push("/wizard/2");
+    },
+  });
 
-  const onHouseholdInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHousehold({ householdName: e.target.value });
-  };
+  const onSubmit = (formData: HouseholdRequest) => mutate(formData);
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
       <h1 className="m-auto text-6xl">✨</h1>
       <h3>Step 1</h3>
       <h2 className="text-2xl font-bold">Create a Household</h2>
-      <Input
-        placeholder="Household Name"
-        onChange={onHouseholdInputChange}
-        value={household.householdName}
-        maxLength={255}
-      />
-      <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
-      <Button
-        className={buttonVariants({ size: "sm" })}
-        onClick={() =>
-          createHousehold(household).then(
-            (response) => response && response.status == 200 && router.push("/wizard/2"),
-          )
-        }>
-        Next
-      </Button>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
+          <Input placeholder="Household Name" {...register("householdName")} />
+          {formState.errors.householdName && (
+            <p className="text-destructive">{formState.errors.householdName.message}</p>
+          )}
+          <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
+          <Button className={buttonVariants({ size: "sm" })} type="submit">
+            Next
+          </Button>
+          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
+        </fieldset>
+      </form>
     </div>
   );
 }
