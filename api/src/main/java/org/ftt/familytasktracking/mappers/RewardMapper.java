@@ -22,8 +22,4 @@ public interface RewardMapper {
     @Mapping(target = "household", ignore = true)
     void updateReward(Reward updateReward, @MappingTarget Reward targetReward);
 
-
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "redeemed", source = "redeemed")
-    void safeUpdateReward(Reward updateReward, @MappingTarget Reward targetReward);
 }

@@ -7,8 +7,6 @@ import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Reward;
 import org.ftt.familytasktracking.exceptions.WebRtException;
-import org.ftt.familytasktracking.hooks.RewardRedeemedHook;
-import org.ftt.familytasktracking.hooks.RewardUpdateHook;
 import org.ftt.familytasktracking.mappers.RewardMapper;
 import org.ftt.familytasktracking.models.RewardModel;
 import org.ftt.familytasktracking.repositories.ProfileRepository;
@@ -17,13 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class RewardServiceImpl implements RewardService {
-    private final List<RewardUpdateHook> rewardUpdateHooks = new ArrayList<>();
     private final RewardMapper rewardMapper;
     private final RewardRepository rewardRepository;
     private final HouseholdService householdService;
@@ -38,7 +34,6 @@ public class RewardServiceImpl implements RewardService {
         this.householdService = householdService;
         this.profileAuthService = profileAuthService;
         this.profileRepository = profileRepository;
-        addUpdateHooksToArrayList();
     }
 
     @Override
@@ -62,11 +57,15 @@ public class RewardServiceImpl implements RewardService {
         Reward updateReward = updateRewardModel.toEntity();
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
         Profile profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
-        updateTargetReward(updateReward, targetReward, safe);
-        executeUpdateHooks(targetReward, profile, safe);
-        return buildModelFromRewardEntity(
-                this.rewardRepository.save(targetReward)
-        );
+        if(safe || targetReward.getRedeemed()) {
+            throw new WebRtException(HttpStatus.FORBIDDEN, "Missing privilege or reward already redeemed.");
+        }else if(isRedeemed(targetReward, profile)) {
+            this.rewardMapper.updateReward(updateReward, targetReward);
+            return buildModelFromRewardEntity(
+                    this.rewardRepository.save(targetReward)
+            );
+        }
+        return buildModelFromRewardEntity(targetReward);
     }
 
     @Override
@@ -99,20 +98,17 @@ public class RewardServiceImpl implements RewardService {
         return new RewardModel(dto, rewardMapper);
     }
 
-    private void updateTargetReward(@NonNull Reward updateReward, @NonNull Reward targetReward, boolean safe) {
-        if (safe) {
-            this.rewardMapper.safeUpdateReward(updateReward, targetReward);
-        } else {
-            this.rewardMapper.updateReward(updateReward, targetReward);
+
+    private boolean isRedeemed(Reward targetReward, Profile profile){
+        if(profile.getPoints() >= targetReward.getCost()) {
+            profile.setPoints(profile.getPoints() - targetReward.getCost());
+            this.profileRepository.save(profile);
+            return true;
+        }else {
+            targetReward.setRedeemed(false);
+            throw new WebRtException(HttpStatus.FORBIDDEN,
+                    String.format("The profile '%s' has not enough points for '%s'.", profile.getName(), targetReward.getName()));
         }
     }
 
-    private void executeUpdateHooks(Reward targetReward, Profile profile, Boolean safe) {
-        for (RewardUpdateHook rewardUpdateHook : rewardUpdateHooks) {
-            rewardUpdateHook.executeUpdateHook(targetReward, profile, safe, this.profileRepository);
-        }
-    }
-    private void addUpdateHooksToArrayList() {
-        rewardUpdateHooks.add(new RewardRedeemedHook());
-    }
 }
