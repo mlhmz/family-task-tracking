@@ -17,6 +17,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import AuthContext from "./auth-context";
 import HouseholdContextProvider from "./household-context";
+import ProfileContextProvider from "./profile-context";
 import QueryClientProvider from "./query-client";
 
 export const metadata: Metadata = {
@@ -65,8 +66,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <div className="relative flex min-h-screen flex-col">
                 <AuthContext session={session}>
                   <HouseholdContextProvider>
-                    <SiteHeader />
-                    <div className="flex-1">{children}</div>
+                    <ProfileContextProvider>
+                      <SiteHeader />
+                      <div className="flex-1">{children}</div>
+                    </ProfileContextProvider>
                   </HouseholdContextProvider>
                 </AuthContext>
               </div>

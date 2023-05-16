@@ -1,16 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
 import { ProfileAuthRequest, ProfileResponse } from "@/types/profile";
 
-import { useProfile } from "@/hooks/fetch/use-profile";
-
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { ProfileContext } from "@/app/profile-context";
 
 async function changePassword(profileInstance: ProfileResponse, password?: string) {
   const request: ProfileAuthRequest = { profileUuid: profileInstance.uuid, password };
@@ -23,7 +22,7 @@ async function changePassword(profileInstance: ProfileResponse, password?: strin
 
 export default function ThirdWizardPage() {
   const [password, setPassword] = useState("");
-  const { profileInstance } = useProfile();
+  const profile = useContext(ProfileContext);
   const router = useRouter();
 
   const onPinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +39,7 @@ export default function ThirdWizardPage() {
       <Button
         className={buttonVariants({ size: "sm" })}
         onClick={() =>
-          changePassword(profileInstance, password).then(
+          changePassword(profile.profileInstance, password).then(
             (response) => response.status == 200 && router.push("/wizard/finished"),
           )
         }>
