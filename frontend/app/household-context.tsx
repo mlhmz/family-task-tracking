@@ -8,8 +8,6 @@ import { HouseholdResponse } from "@/types/household";
 
 import { useHousehold } from "@/hooks/fetch/use-household";
 
-import { LoadingScreen } from "@/components/loading-screen";
-
 export interface HouseholdContextProps {
   children: React.ReactNode;
 }
@@ -22,7 +20,7 @@ export interface HouseholdContextContent {
 export const HouseholdContext = createContext<HouseholdContextContent>({} as HouseholdContextContent);
 
 export default function HouseholdContextProvider({ children }: HouseholdContextProps) {
-  const { isHouseholdFetched, household, isHouseholdEmpty } = useHousehold();
+  const { household, isHouseholdEmpty } = useHousehold();
   const router = useRouter();
 
   useEffect(() => {
