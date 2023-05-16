@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PermissionType } from "@/types/permission-type";
-import { ProfileAuthRequest, ProfileRequest, ProfileResponse } from "@/types/profile";
+import { ProfileAuthRequest, ProfileRequest, Profile } from "@/types/profile";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ async function createProfile(profileRequest: ProfileRequest) {
     method: "POST",
     body: JSON.stringify(profileRequest),
   });
-  const profileResponse = (await response.json()) as ProfileResponse;
+  const profileResponse = (await response.json()) as Profile;
   return profileResponse;
 }
 

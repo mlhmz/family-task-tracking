@@ -4,14 +4,14 @@ import { useContext, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { ProfileAuthRequest, ProfileResponse } from "@/types/profile";
+import { ProfileAuthRequest, Profile } from "@/types/profile";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ProfileContext } from "@/app/profile-context";
 
-async function changePassword(profileInstance: ProfileResponse, password?: string) {
+async function changePassword(profileInstance: Profile, password?: string) {
   const request: ProfileAuthRequest = { profileUuid: profileInstance.uuid, password };
   const response = await fetch("/api/v1/profiles/auth", {
     method: "PUT",

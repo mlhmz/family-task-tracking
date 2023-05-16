@@ -1,7 +1,7 @@
 "use client";
 
 import { useProfile } from "@/hooks/fetch/use-profile";
-import { ProfileResponse } from "@/types/profile";
+import { Profile } from "@/types/profile";
 import React, { createContext } from "react";
 
 export interface ProfileContextProps {
@@ -9,7 +9,7 @@ export interface ProfileContextProps {
 }
 
 export interface ProfileContextContent {
-    profileInstance: ProfileResponse
+    profileInstance: Profile
 }
 
 export const ProfileContext = createContext<ProfileContextContent>({} as ProfileContextContent);

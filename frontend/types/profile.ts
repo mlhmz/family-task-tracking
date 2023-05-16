@@ -6,7 +6,8 @@ export interface ProfileRequest {
   permissionType?: PermissionType;
 }
 
-export interface ProfileResponse {
+export interface Profile {
+  imageUrl?: string;
   uuid?: string;
   sessionId?: string;
   name?: string;
