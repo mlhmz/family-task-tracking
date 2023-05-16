@@ -1,7 +1,10 @@
 "use client";
 
+import { useContext } from "react";
+
 import Link from "next/link";
 
+import { AvatarImage } from "@radix-ui/react-avatar";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { siteConfig } from "@/config/site";
@@ -11,15 +14,15 @@ import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useContext } from "react";
+
 import { ProfileContext } from "@/app/profile-context";
+
 import { Avatar } from "./ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "./ui/context-menu";
 
 export function SiteHeader() {
   const { status } = useSession();
-  const { profileInstance } = useContext(ProfileContext);
+  const { data } = useContext(ProfileContext);
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -57,17 +60,20 @@ export function SiteHeader() {
                 Sign In
               </div>
             )}
-            
-            <ContextMenu>
+            {data ? (
+              <ContextMenu>
                 <ContextMenuTrigger>
-                <Avatar className="rounded-md">
-                  <AvatarImage src={profileInstance.imageUrl}></AvatarImage>
-                </Avatar>
+                  <Avatar className="rounded-md">
+                    <AvatarImage src={data.imageUrl}></AvatarImage>
+                  </Avatar>
                 </ContextMenuTrigger>
                 <ContextMenuContent>
                   <ContextMenuItem>Switch profile</ContextMenuItem>
                 </ContextMenuContent>
               </ContextMenu>
+            ) : (
+              <></>
+            )}
           </nav>
         </div>
       </div>

@@ -11,8 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ProfileContext } from "@/app/profile-context";
 
-async function changePassword(profileInstance: Profile, password?: string) {
-  const request: ProfileAuthRequest = { profileUuid: profileInstance.uuid, password };
+async function changePassword(uuid?: string, password?: string) {
+  const request: ProfileAuthRequest = { profileUuid: uuid, password };
   const response = await fetch("/api/v1/profiles/auth", {
     method: "PUT",
     body: JSON.stringify(request),
@@ -22,13 +22,17 @@ async function changePassword(profileInstance: Profile, password?: string) {
 
 export default function ThirdWizardPage() {
   const [password, setPassword] = useState("");
-  const profile = useContext(ProfileContext);
+  const { data } = useContext(ProfileContext);
   const router = useRouter();
 
   const onPinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
+  if (!data) {
+    // TODO: add skeleton
+    return <h1>No profile</h1>
+  }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
       <h1 className="m-auto text-6xl">🔐</h1>
@@ -39,7 +43,7 @@ export default function ThirdWizardPage() {
       <Button
         className={buttonVariants({ size: "sm" })}
         onClick={() =>
-          changePassword(profile.profileInstance, password).then(
+          changePassword(data.uuid, password).then(
             (response) => response.status == 200 && router.push("/wizard/finished"),
           )
         }>

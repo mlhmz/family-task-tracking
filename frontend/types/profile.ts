@@ -7,7 +7,6 @@ export interface ProfileRequest {
 }
 
 export interface Profile {
-  imageUrl?: string;
   uuid?: string;
   sessionId?: string;
   name?: string;

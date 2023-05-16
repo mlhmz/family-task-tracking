@@ -2,6 +2,8 @@
 
 import { useContext } from "react";
 
+import Avatar from "boring-avatars";
+
 import { getTranslatedPTValue } from "@/types/permission-type";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,19 +12,25 @@ import { Button } from "@/components/ui/button";
 import { ProfileContext } from "../profile-context";
 
 export default function Profile() {
-  const { profileInstance } = useContext(ProfileContext);
+  const { data } = useContext(ProfileContext);
 
+  if (!data || !data.uuid) {
+    return <h1>No profile</h1>;
+  }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
-      <img className="m-auto rounded-md" src={profileInstance.imageUrl} />
-      <h1 className="text-2xl font-bold">{profileInstance.name}'s Profile</h1>
+      <Avatar
+        size={180}
+        name={data.uuid}
+        variant="beam"
+        colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+      />
+      <h1 className="text-2xl font-bold">{data.name}&apos;s Profile</h1>
       <div id="badges" className="flex flex-row gap-1">
         <Badge variant={"secondary"}>
-          {profileInstance.permissionType
-            ? getTranslatedPTValue(profileInstance.permissionType)
-            : "Unavailable"}
+          {data.permissionType ? getTranslatedPTValue(data.permissionType) : "Unavailable"}
         </Badge>
-        <Badge variant={"secondary"}>{profileInstance.points} Points</Badge>
+        <Badge variant={"secondary"}>{data.points} Points</Badge>
       </div>
       <Button>Edit profile</Button>
     </div>
