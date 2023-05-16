@@ -15,12 +15,15 @@ async function fetchProfile() {
 }
 
 function getJdenticonImageUrlFromUuid(uuid?: string) {
-  const svgString = toSvg(uuid ?? "0", 100, {backColor: "#ffffff"});
-  console.log(svgString);
-  const baseString = Buffer.from(
-    decodeURIComponent(encodeURIComponent(svgString)),
-  ).toString("base64");
-  return `data:image/svg+xml;base64,${baseString}`;
+  if (uuid) {
+    const svgString = toSvg(uuid, 100, {backColor: "#ffffff"});
+    const baseString = Buffer.from(
+      decodeURIComponent(encodeURIComponent(svgString)),
+    ).toString("base64");
+    return `data:image/svg+xml;base64,${baseString}`;
+  } else {
+    return "";
+  }
 }
 
 export const useProfile = () => {
