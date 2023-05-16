@@ -40,6 +40,12 @@ public interface TaskMapper {
     @Mapping(target = "household", ignore = true)
     void updateTask(Task updateTask, @MappingTarget Task targetTask);
 
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "taskState", ignore = true)
+    @Mapping(target = "household", ignore = true)
+    void updateTaskAssignee(Task updateTask, @MappingTarget Task targetTask);
+
     default void safeUpdateTask(Task updateTask, @MappingTarget Task targetTask) {
         if (TaskState.DONE == updateTask.getTaskState()) {
             targetTask.setTaskState(TaskState.DONE);

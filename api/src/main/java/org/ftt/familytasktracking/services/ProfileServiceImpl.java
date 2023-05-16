@@ -95,6 +95,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public void existsByProfile(Profile profile) {
+        if (!this.profileRepository.existsById(profile.getUuid())) {
+            this.throwProfileNotFoundWebRtException(profile.getUuid());
+        }
+    }
+
+    @Override
     public ProfileModel buildModelFromProfileEntity(Profile profile) {
         return new ProfileModel(profile, profileMapper);
     }
