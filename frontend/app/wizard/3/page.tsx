@@ -59,9 +59,7 @@ export default function ThirdWizardPage() {
         <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
         <Input placeholder="PIN" type="password" {...register("password")} />
         <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
-        {formState.errors.password && (
-            <p className="text-destructive">{formState.errors.password.message}</p>
-          )}
+        {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
         <Button className={buttonVariants({ size: "sm" })} type="submit">
           Next
         </Button>

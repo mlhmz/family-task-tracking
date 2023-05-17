@@ -1,15 +1,14 @@
 "use client";
 
-
+import { useProfiles } from "@/hooks/fetch/use-profiles";
 
 import ProfileSelector from "@/components/profile-selector";
-import { useProfiles } from "@/hooks/fetch/use-profiles";
 
 export default function ProfileAuth() {
   const { data } = useProfiles();
 
   if (!data) {
-    return <h1>No data</h1>
+    return <h1>No data</h1>;
   }
   return (
     <div className="m-auto my-5 flex w-full flex-col gap-2">

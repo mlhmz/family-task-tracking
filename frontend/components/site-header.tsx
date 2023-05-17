@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import Avatar from "boring-avatars";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { twMerge } from "tailwind-merge";
 
 import { siteConfig } from "@/config/site";
 
@@ -25,7 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { twMerge } from "tailwind-merge";
 
 export function SiteHeader() {
   const { status } = useSession();
@@ -50,20 +50,26 @@ export function SiteHeader() {
             {status === "authenticated" && (
               <div
                 onClick={() => signOut()}
-                className={twMerge(buttonVariants({
-                  size: "sm",
-                  variant: "ghost",
-                }), "cursor-pointer")}>
+                className={twMerge(
+                  buttonVariants({
+                    size: "sm",
+                    variant: "ghost",
+                  }),
+                  "cursor-pointer",
+                )}>
                 Sign Out
               </div>
             )}
             {status === "unauthenticated" && (
               <div
                 onClick={() => signIn()}
-                className={twMerge(buttonVariants({
-                  size: "sm",
-                  variant: "ghost",
-                }), "cursor-pointer")}>
+                className={twMerge(
+                  buttonVariants({
+                    size: "sm",
+                    variant: "ghost",
+                  }),
+                  "cursor-pointer",
+                )}>
                 Sign In
               </div>
             )}

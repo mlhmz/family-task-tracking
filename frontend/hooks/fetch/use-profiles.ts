@@ -1,5 +1,6 @@
-import { Profile } from "@/types/profile";
 import { useQuery } from "@tanstack/react-query";
+
+import { Profile } from "@/types/profile";
 
 async function fetchProfiles() {
   const response = await fetch("/api/v1/profiles");
@@ -10,6 +11,6 @@ async function fetchProfiles() {
 export const useProfiles = () => {
   return useQuery({
     queryKey: ["profiles"],
-    queryFn: fetchProfiles
+    queryFn: fetchProfiles,
   });
-}
+};

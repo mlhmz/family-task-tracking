@@ -44,7 +44,7 @@ export default function FirstWizardPage() {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { mutate, isLoading, error } = useMutation({
     mutationFn: postHousehold,
-    onSuccess: (householdResponse: HouseholdResponse) => {
+    onSuccess: (householdResponse) => {
       router.push("/wizard/2");
     },
   });
