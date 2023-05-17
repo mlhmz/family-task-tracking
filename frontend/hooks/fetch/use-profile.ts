@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { assertIsProfile } from "@/lib/guards";
 
 async function fetchProfile(uuid?: string) {
-  const response = await fetch(`/api/v1/profiles/${uuid ?? "profile"}`);
+  const response = await fetch(`/api/v1/profiles/${uuid ? uuid : "profile"}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -21,9 +21,11 @@ async function fetchProfile(uuid?: string) {
 
 export const useProfile = (uuid?: string) => {
   const { status } = useSession();
+  const qKey = uuid ? ["profile", {uuid: uuid}] : ["profile"]
   return useQuery({
-    queryKey: ["profile"],
+    queryKey: qKey,
     queryFn: () => fetchProfile(uuid),
     enabled: status === "authenticated",
+    retry: 1,
   });
 };

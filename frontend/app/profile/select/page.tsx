@@ -3,9 +3,16 @@
 import { useProfiles } from "@/hooks/fetch/use-profiles";
 
 import ProfileSelector from "@/components/profile-selector";
+import { useLogoutProfile } from "@/hooks/use-logout-profile";
+import { useEffect } from "react";
 
 export default function ProfileAuth() {
   const { data } = useProfiles();
+  const { logoutProfile } = useLogoutProfile();
+
+  useEffect(() => {
+    logoutProfile();
+  }, [logoutProfile]);
 
   if (!data) {
     return <h1>No data</h1>;

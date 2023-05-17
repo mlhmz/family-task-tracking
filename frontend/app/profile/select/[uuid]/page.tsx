@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { z } from "zod";
 
@@ -28,7 +28,7 @@ async function authProfile(authRequest: ProfileAuthRequest) {
 }
 
 const schema = z.object({
-  password: z.string().min(1).max(255),
+  password: z.string().min(1).max(255).optional(),
 });
 
 export default function ProfileLogin({ params }) {
@@ -38,9 +38,11 @@ export default function ProfileLogin({ params }) {
     mutationFn: authProfile,
     onSuccess: () => {
       router.push("/dashboard");
+      queryClient.invalidateQueries(["profile"])
     },
   });
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
 
@@ -60,6 +62,7 @@ export default function ProfileLogin({ params }) {
       <h1 className="text-center text-xl">{data.name}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="m-auto flex flex-col gap-2">
         {data.passwordProtected && <Input placeholder="PIN" type="password" {...register("password")} />}
+        {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
         <Button type="submit" className="self-center">
           Login
         </Button>

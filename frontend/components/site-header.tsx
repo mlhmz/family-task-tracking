@@ -10,6 +10,8 @@ import { twMerge } from "tailwind-merge";
 
 import { siteConfig } from "@/config/site";
 
+import { useLogoutProfile } from "@/hooks/use-logout-profile";
+
 import { buttonVariants } from "@/components/ui/button";
 
 import { Icons } from "@/components/icons";
@@ -30,6 +32,13 @@ import {
 export function SiteHeader() {
   const { status } = useSession();
   const { data, isSuccess } = useContext(ProfileContext);
+  const { logoutProfile } = useLogoutProfile();
+
+  const handleLogout = () => {
+    signOut();
+    logoutProfile();
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -49,7 +58,7 @@ export function SiteHeader() {
             <ThemeToggle />
             {status === "authenticated" && (
               <div
-                onClick={() => signOut()}
+                onClick={handleLogout}
                 className={twMerge(
                   buttonVariants({
                     size: "sm",
@@ -73,7 +82,7 @@ export function SiteHeader() {
                 Sign In
               </div>
             )}
-            {isSuccess && (
+            {isSuccess && data.uuid && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar
@@ -87,7 +96,7 @@ export function SiteHeader() {
                   <DropdownMenuLabel>{data.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Link href="/profile/auth">Switch profile</Link>
+                    <Link href="/profile/select">Switch profile</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
