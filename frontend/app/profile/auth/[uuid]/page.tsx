@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { z } from "zod";
 
-import { Profile, ProfileAuthRequest } from "@/types/profile";
+import { ProfileAuthRequest } from "@/types/profile";
 
 import { useProfile } from "@/hooks/fetch/use-profile";
 import { useZodForm } from "@/hooks/use-zod-form";
