@@ -15,7 +15,7 @@ export default function ProfileAuth() {
       <h1 className="text-center text-2xl font-bold">Select a Profile</h1>
       <div className="flex flex-wrap justify-center gap-2">
         {data?.map((profile) => (
-          <ProfileSelector profile={profile} routeToProfile={true} key={profile.uuid} />
+          <ProfileSelector profile={profile} key={profile.uuid} />
         ))}
       </div>
     </div>

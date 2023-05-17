@@ -6,29 +6,24 @@ import { Profile } from "@/types/profile";
 
 interface ProfileSelectorProps {
   profile: Profile;
-  routeToProfile: boolean;
 }
 
-export default function ProfileSelector(props: ProfileSelectorProps) {
+export default function ProfileSelector({ profile }: ProfileSelectorProps) {
   const router = useRouter();
-
-  function routeToProfileAuth() {
-    props.routeToProfile && router.push(`/profile/auth/${props.profile.uuid}`);
-  }
 
   return (
     <div className="flex flex-col gap-3">
       <div
         className="m-auto w-full cursor-pointer rounded-full bg-secondary hover:brightness-90"
-        onClick={() => routeToProfileAuth()}>
+        onClick={() => router.push(`/profile/auth/${profile.uuid}`)}>
         <Avatar
           size={180}
-          name={props.profile.uuid}
+          name={profile.uuid}
           variant="beam"
           colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
         />
       </div>
-      <p className="text-l text-center">{props.profile.name}</p>
+      <p className="text-l text-center">{profile.name}</p>
     </div>
   );
 }
