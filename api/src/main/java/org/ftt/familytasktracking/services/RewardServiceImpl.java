@@ -57,15 +57,16 @@ public class RewardServiceImpl implements RewardService {
         Reward updateReward = updateRewardModel.toEntity();
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
         Profile profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
-        if(safe || targetReward.getRedeemed()) {
-            throw new WebRtException(HttpStatus.FORBIDDEN, "Missing privilege or reward already redeemed.");
-        }else if(isRedeemed(targetReward, profile)) {
+        if(!safe) {
+            // Privileged User am Werk, sprich updateReward ohne weitere Logik
             this.rewardMapper.updateReward(updateReward, targetReward);
-            return buildModelFromRewardEntity(
-                    this.rewardRepository.save(targetReward)
-            );
+        }else if(updateReward.getRedeemed()) {
+            // Unprivileged User am Werk, führe Redeem Reward aus
+            this.redeemReward(targetReward, profile);
         }
-        return buildModelFromRewardEntity(targetReward);
+        return buildModelFromRewardEntity(
+                this.rewardRepository.save(targetReward)
+        );
     }
 
     @Override
@@ -99,13 +100,15 @@ public class RewardServiceImpl implements RewardService {
     }
 
 
-    private boolean isRedeemed(Reward targetReward, Profile profile){
+    private void redeemReward(Reward targetReward, Profile profile){
+        if(targetReward.getRedeemed()){
+            throw new WebRtException(HttpStatus.FORBIDDEN, "The reward was already redeemed");
+        }
         if(profile.getPoints() >= targetReward.getCost()) {
             profile.setPoints(profile.getPoints() - targetReward.getCost());
             this.profileRepository.save(profile);
-            return true;
+            targetReward.setRedeemed(true);
         }else {
-            targetReward.setRedeemed(false);
             throw new WebRtException(HttpStatus.FORBIDDEN,
                     String.format("The profile '%s' has not enough points for '%s'.", profile.getName(), targetReward.getName()));
         }
