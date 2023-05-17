@@ -58,9 +58,9 @@ export default function ProfileLogin({ params }) {
         />
       </div>
       <h1 className="text-center text-xl">{data.name}</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="m-auto flex flex-col gap-2">
         {data.passwordProtected && <Input placeholder="PIN" type="password" {...register("password")} />}
-        <Button type="submit">Login</Button>
+        <Button type="submit" className="self-center">Login</Button>
       </form>
       <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
     </div>
