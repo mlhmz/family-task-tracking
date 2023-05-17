@@ -39,7 +39,6 @@ export const useHousehold = () => {
     }
     if (error && error instanceof Error && error.message == "No household") {
       setIsHouseholdEmpty(true);
-      router.push("/wizard");
     }
   }, [data, error, setIsHouseholdEmpty, router]);
 

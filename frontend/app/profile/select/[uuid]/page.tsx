@@ -38,7 +38,7 @@ export default function ProfileLogin({ params }) {
     mutationFn: authProfile,
     onSuccess: () => {
       router.push("/dashboard");
-      queryClient.invalidateQueries(["profile"])
+      queryClient.invalidateQueries(["profile"]);
     },
   });
   const router = useRouter();

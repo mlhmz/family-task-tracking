@@ -1,13 +1,15 @@
 "use client";
 
-import { useProfiles } from "@/hooks/fetch/use-profiles";
+import { useContext, useEffect } from "react";
+
+import { useLogoutProfile } from "@/hooks/use-logout-profile";
 
 import ProfileSelector from "@/components/profile-selector";
-import { useLogoutProfile } from "@/hooks/use-logout-profile";
-import { useEffect } from "react";
+
+import { ProfilesContext } from "@/app/profiles-context";
 
 export default function ProfileAuth() {
-  const { data } = useProfiles();
+  const { data } = useContext(ProfilesContext);
   const { logoutProfile } = useLogoutProfile();
 
   useEffect(() => {

@@ -1,10 +1,13 @@
 "use client";
 
-import { createContext, useEffect, ReactNode, useContext } from "react";
+import { ReactNode, createContext, useContext, useEffect } from "react";
+
+import { useRouter } from "next/navigation";
+
+import { PermissionType } from "@/types/permission-type";
 
 import { useProfile } from "@/hooks/fetch/use-profile";
-import { PermissionType } from "@/types/permission-type";
-import { useRouter } from "next/navigation";
+
 import { HouseholdContext } from "./household-context";
 
 export interface ProfileContextProps {

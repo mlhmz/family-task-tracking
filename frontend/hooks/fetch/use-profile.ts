@@ -19,9 +19,12 @@ async function fetchProfile(uuid?: string) {
   return profile;
 }
 
+/**
+ * Fetches a profile by uuid if provided else by the session id
+ */
 export const useProfile = (uuid?: string) => {
   const { status } = useSession();
-  const qKey = uuid ? ["profile", {uuid: uuid}] : ["profile"]
+  const qKey = uuid ? ["profile", { uuid: uuid }] : ["profile"];
   return useQuery({
     queryKey: qKey,
     queryFn: () => fetchProfile(uuid),

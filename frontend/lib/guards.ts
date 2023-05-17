@@ -1,7 +1,7 @@
 "use client";
 
 import { HouseholdResponse } from "@/types/household";
-import { Profile } from "@/types/profile";
+import { Profile, ProfileAuthResponse } from "@/types/profile";
 
 export function assertIsHouseholdResponse(response: any): asserts response is HouseholdResponse {
   if (!response) {
@@ -48,5 +48,23 @@ export function assertIsProfile(response: any): asserts response is Profile {
   }
   if (response.passwordProtected && typeof response.passwordProtected !== "boolean") {
     throw new Error("Profile.passwordProtected is not a boolean");
+  }
+}
+
+export function assertIsProfileAuthResponse(response: any): asserts response is ProfileAuthResponse {
+  if (!response) {
+    throw new Error("ProfileAuthResponse is undefined");
+  }
+  if (typeof response !== "object") {
+    throw new Error("ProfileAuthResponse is not an object");
+  }
+  if (response.sessionId && typeof response.sessionId !== "string") {
+    throw new Error("ProfileAuthResponse.sessionId is not a string");
+  }
+  if (response.profileId && typeof response.profileId !== "string") {
+    throw new Error("ProfileAuthResponse.profileId is not a string");
+  }
+  if (response.expiresAt && typeof response.expiresAt !== "string") {
+    throw new Error("ProfileAuthResponse.expiresAt is not a string");
   }
 }

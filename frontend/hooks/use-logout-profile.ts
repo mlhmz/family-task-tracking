@@ -5,11 +5,10 @@ export const useLogoutProfile = () => {
   const [_value, _updateCookie, deleteCookie] = useCookie("session-id");
   const queryClient = useQueryClient();
 
-
   const logoutProfile = () => {
     deleteCookie();
-    queryClient.cancelQueries(["profile"])
+    queryClient.cancelQueries(["profile"]);
     queryClient.setQueryData(["profile"], {});
-  }
+  };
   return { logoutProfile };
-}
+};

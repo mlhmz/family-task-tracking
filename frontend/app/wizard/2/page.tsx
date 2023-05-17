@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
-import { ProfileAuthRequest, ProfileRequest } from "@/types/profile";
+import { PermissionType } from "@/types/permission-type";
+import { Profile, ProfileAuthRequest, ProfileAuthResponse, ProfileRequest } from "@/types/profile";
 
-import { assertIsProfile } from "@/lib/guards";
+import { assertIsProfile, assertIsProfileAuthResponse } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
@@ -15,10 +16,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-async function authProfile(profileAuthRequest: ProfileAuthRequest) {
+async function authProfile(profile?: Profile) {
+  const request = { profileUuid: profile ? profile.uuid : "" };
   const response = await fetch("/api/v1/profiles/auth", {
     method: "POST",
-    body: JSON.stringify(profileAuthRequest),
+    body: JSON.stringify(request),
   });
 
   if (!response.ok) {
@@ -26,6 +28,9 @@ async function authProfile(profileAuthRequest: ProfileAuthRequest) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem authenticating profile");
   }
+  const authResponse = (await response.json()) as ProfileAuthResponse;
+  assertIsProfileAuthResponse(authResponse);
+  return authResponse;
 }
 
 async function createProfile(profileRequest: ProfileRequest) {
@@ -67,15 +72,16 @@ export default function SecondWizardPage() {
   });
 
   const { error: authError } = useQuery({
-    queryKey: ["profile", "auth"],
-    queryFn: () => data && authProfile({ profileUuid: data.uuid }),
+    queryKey: ["profile-auth"],
+    queryFn: () => authProfile(data),
     onSuccess: () => {
-      router.push("/wizard/2");
+      router.push("/wizard/3");
     },
-    enabled: isMutateSuccess,
+    enabled: isMutateSuccess && !!data,
   });
 
-  const onSubmit = (formData: ProfileRequest) => mutate(formData);
+  const onSubmit = (formData: ProfileRequest) =>
+    mutate({ ...formData, permissionType: PermissionType.Admin });
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">

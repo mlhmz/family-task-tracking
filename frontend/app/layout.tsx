@@ -16,8 +16,10 @@ import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import AuthContext from "./auth-context";
+import AuthGuard from "./auth-guard";
 import HouseholdContextProvider from "./household-context";
 import ProfileContextProvider from "./profile-context";
+import ProfilesContextProvider from "./profiles-context";
 import QueryClientProvider from "./query-client";
 
 export const metadata: Metadata = {
@@ -67,8 +69,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <AuthContext session={session}>
                   <HouseholdContextProvider>
                     <ProfileContextProvider>
-                      <SiteHeader />
-                      <div className="flex-1">{children}</div>
+                      <ProfilesContextProvider>
+                        <AuthGuard>
+                          <SiteHeader />
+                          <div className="flex-1">{children}</div>
+                        </AuthGuard>
+                      </ProfilesContextProvider>
                     </ProfileContextProvider>
                   </HouseholdContextProvider>
                 </AuthContext>
