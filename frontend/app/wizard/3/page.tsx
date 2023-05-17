@@ -4,13 +4,15 @@ import { useContext, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { Profile, ProfileAuthRequest } from "@/types/profile";
+import { ProfileAuthRequest } from "@/types/profile";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { ProfileContext } from "@/app/profile-context";
+import WizardSkeleton from "@/components/wizard-skeleton";
 
 async function changePassword(uuid?: string, password?: string) {
   const request: ProfileAuthRequest = { profileUuid: uuid, password };
@@ -31,8 +33,7 @@ export default function ThirdWizardPage() {
   };
 
   if (!data) {
-    // TODO: add skeleton
-    return <h1>No profile</h1>;
+    return <WizardSkeleton />
   }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
