@@ -17,23 +17,23 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const isAnyAdminProfileAvailable = useCallback(() => {
-    const bool = profiles.data?.some((profile) => profile.permissionType == PermissionType.Admin);
-    console.log(bool);
-    return bool;
+    if (Array.isArray(profiles.data)) {
+      const bool = profiles.data?.some((profile) => profile.permissionType == PermissionType.Admin);
+      console.log("Is any admin profile available" + bool);
+      return bool;
+    } else {
+      return true
+    }
   }, [profiles]);
 
   useEffect(() => {
     if (household.isHouseholdEmpty) {
-      console.log("Household empty");
       router.push("/wizard");
-    } else if (!isAnyAdminProfileAvailable) {
-      console.log("No admin");
+    } else if (!isAnyAdminProfileAvailable()) {
       router.push("/wizard/2");
     } else if (profile.isError) {
-      console.log("No bitches");
       router.push("/profile/select");
     } else if (profile.data?.permissionType === PermissionType.Admin && !profile.data?.passwordProtected) {
-      console.log("No password");
       router.push("/wizard/3");
     }
   }, [household, isAnyAdminProfileAvailable, profile, profiles, router]);
