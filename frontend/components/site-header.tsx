@@ -25,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { twMerge } from "tailwind-merge";
 
 export function SiteHeader() {
   const { status } = useSession();
@@ -49,20 +50,20 @@ export function SiteHeader() {
             {status === "authenticated" && (
               <div
                 onClick={() => signOut()}
-                className={buttonVariants({
+                className={twMerge(buttonVariants({
                   size: "sm",
                   variant: "ghost",
-                })}>
+                }), "cursor-pointer")}>
                 Sign Out
               </div>
             )}
             {status === "unauthenticated" && (
               <div
                 onClick={() => signIn()}
-                className={buttonVariants({
+                className={twMerge(buttonVariants({
                   size: "sm",
                   variant: "ghost",
-                })}>
+                }), "cursor-pointer")}>
                 Sign In
               </div>
             )}
