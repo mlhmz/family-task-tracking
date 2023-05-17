@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PermissionType } from "@/types/permission-type";
-import { ProfileAuthRequest, ProfileRequest, Profile } from "@/types/profile";
+import { Profile, ProfileAuthRequest, ProfileRequest } from "@/types/profile";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

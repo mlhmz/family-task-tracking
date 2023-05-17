@@ -7,6 +7,6 @@ export function getTranslatedPTValue(permissionType: PermissionType) {
   if (permissionType == PermissionType.Admin) {
     return "Privileged";
   } else {
-    return "Unprivileged"
+    return "Unprivileged";
   }
 }

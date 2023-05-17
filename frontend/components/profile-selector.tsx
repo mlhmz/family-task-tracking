@@ -1,21 +1,26 @@
+import { useRouter } from "next/navigation";
 
 import Avatar from "boring-avatars";
 
 import { Profile } from "@/types/profile";
-import { useRouter } from "next/navigation";
 
 interface ProfileSelectorProps {
   profile: Profile;
+  routeToProfile: boolean;
 }
 
 export default function ProfileSelector(props: ProfileSelectorProps) {
   const router = useRouter();
 
+  function routeToProfileAuth() {
+    props.routeToProfile && router.push(`/profile/auth/${props.profile.uuid}`);
+  }
+
   return (
     <div className="flex flex-col gap-3" key={props.profile.uuid}>
       <div
         className="m-auto w-full cursor-pointer rounded-full bg-secondary hover:brightness-90"
-        onClick={() => router.push(`/profile/auth/${props.profile.uuid}`)}>
+        onClick={() => routeToProfileAuth()}>
         <Avatar
           size={180}
           name={props.profile.uuid}

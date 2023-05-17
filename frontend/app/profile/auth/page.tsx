@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { useRouter } from "next/navigation";
-
+import { Profile } from "@/types/profile";
 
 import ProfileSelector from "@/components/profile-selector";
-import { Profile } from "@/types/profile";
 
 async function fetchProfiles() {
   const response = await fetch("/api/v1/profiles");
@@ -16,7 +14,6 @@ async function fetchProfiles() {
 
 export default function ProfileAuth() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const router = useRouter();
 
   useEffect(() => {
     async function fetch() {
@@ -31,7 +28,7 @@ export default function ProfileAuth() {
       <h1 className="text-center text-2xl font-bold">Select a Profile</h1>
       <div className="m-auto flex flex-row flex-wrap justify-center gap-2">
         {profiles.map((profile) => (
-          <ProfileSelector profile={profile} />
+          <ProfileSelector profile={profile} routeToProfile={true} />
         ))}
       </div>
     </div>

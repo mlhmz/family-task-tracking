@@ -4,7 +4,7 @@ import { useContext } from "react";
 
 import Link from "next/link";
 
-import { AvatarImage } from "@radix-ui/react-avatar";
+import Avatar from "boring-avatars";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { siteConfig } from "@/config/site";
@@ -17,8 +17,14 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 import { ProfileContext } from "@/app/profile-context";
 
-import { Avatar } from "./ui/avatar";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "./ui/context-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export function SiteHeader() {
   const { status } = useSession();
@@ -60,19 +66,24 @@ export function SiteHeader() {
                 Sign In
               </div>
             )}
-            {data ? (
-              <ContextMenu>
-                <ContextMenuTrigger>
-                  <Avatar className="rounded-md">
-                    <AvatarImage src={data.imageUrl}></AvatarImage>
-                  </Avatar>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem>Switch profile</ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
-            ) : (
-              <></>
+            {data && (
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Avatar
+                    size={50}
+                    name={data.uuid}
+                    variant="beam"
+                    colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>{data.name}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link href="/profile/auth">Switch profile</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </nav>
         </div>

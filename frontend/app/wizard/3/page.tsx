@@ -4,11 +4,12 @@ import { useContext, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { ProfileAuthRequest, Profile } from "@/types/profile";
+import { Profile, ProfileAuthRequest } from "@/types/profile";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+
 import { ProfileContext } from "@/app/profile-context";
 
 async function changePassword(uuid?: string, password?: string) {
@@ -31,7 +32,7 @@ export default function ThirdWizardPage() {
 
   if (!data) {
     // TODO: add skeleton
-    return <h1>No profile</h1>
+    return <h1>No profile</h1>;
   }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
