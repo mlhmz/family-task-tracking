@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
-import { HouseholdResponse } from "@/types/household";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 import { assertIsHouseholdResponse } from "@/lib/guards";
 
@@ -21,25 +22,29 @@ async function fetchHousehold() {
 }
 
 export const useHousehold = () => {
-  const [household, setHousehold] = useState({} as HouseholdResponse);
   const [isHouseholdEmpty, setIsHouseholdEmpty] = useState(false);
+  const { status } = useSession();
   const { data, error } = useQuery({
     queryKey: ["household"],
     queryFn: fetchHousehold,
+    enabled: status === "authenticated",
+    retry: false,
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     if (data) {
-      setHousehold(data);
       setIsHouseholdEmpty(false);
     }
     if (error && error instanceof Error && error.message == "No household") {
       setIsHouseholdEmpty(true);
+      router.push("/wizard");
     }
-  }, [data, error]);
+  }, [data, error, setIsHouseholdEmpty, router]);
 
   return {
     isHouseholdEmpty,
-    household,
+    household: data,
   };
 };

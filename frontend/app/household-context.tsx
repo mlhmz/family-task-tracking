@@ -13,7 +13,7 @@ export interface HouseholdContextProps {
 }
 
 export interface HouseholdContextContent {
-  householdResponse: HouseholdResponse;
+  household?: HouseholdResponse;
   isHouseholdEmpty: boolean;
 }
 
@@ -21,16 +21,11 @@ export const HouseholdContext = createContext<HouseholdContextContent>({} as Hou
 
 export default function HouseholdContextProvider({ children }: HouseholdContextProps) {
   const { household, isHouseholdEmpty } = useHousehold();
-  const router = useRouter();
-
-  useEffect(() => {
-    isHouseholdEmpty && router.push("/wizard");
-  }, [household, isHouseholdEmpty, router]);
 
   return (
     <HouseholdContext.Provider
       value={{
-        householdResponse: household,
+        household: household,
         isHouseholdEmpty: isHouseholdEmpty,
       }}>
       {children}
