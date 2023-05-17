@@ -17,7 +17,7 @@ export default function ProfileSelector(props: ProfileSelectorProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3" key={props.profile.uuid}>
+    <div className="flex flex-col gap-3">
       <div
         className="m-auto w-full cursor-pointer rounded-full bg-secondary hover:brightness-90"
         onClick={() => routeToProfileAuth()}>
