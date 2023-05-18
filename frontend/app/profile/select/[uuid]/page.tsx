@@ -13,6 +13,8 @@ import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCallback, useEffect } from "react";
 
 async function authProfile(authRequest: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {
@@ -46,11 +48,26 @@ export default function ProfileLogin({ params }) {
 
   const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
 
+  useEffect(() => {
+    if (data && !data?.passwordProtected) {
+      mutate({ profileUuid: data?.uuid })
+    }
+  }, [data, mutate])
+
   if (!data || !data.uuid) {
-    return <h1>No profile</h1>;
+    return (
+      <div className="m-auto my-5 flex w-1/3 flex-col items-center gap-5">
+        <div className="m-auto">
+          <Skeleton className="h-[180px] w-[180px] rounded-full" />
+        </div>
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-[40px] w-[240px]" />
+        <Skeleton className="h-10 w-16" />
+      </div>
+    );
   }
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
+    <div className="m-auto my-5 flex flex-col items-center gap-5">
       <div className="m-auto">
         <Avatar
           size={180}
@@ -59,14 +76,14 @@ export default function ProfileLogin({ params }) {
           colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
         />
       </div>
-      <h1 className="text-center text-xl">{data.name}</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="m-auto flex flex-col gap-2">
-        {data.passwordProtected && <Input placeholder="PIN" type="password" {...register("password")} />}
+      <h1 className="text-xl">{data.name}</h1>
+      { data.passwordProtected && (
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-5">
+        <Input placeholder="PIN" type="password" {...register("password")} />
         {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
-        <Button type="submit" className="self-center">
-          Login
-        </Button>
+        <Button type="submit">Login</Button>
       </form>
+      )}
       <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
     </div>
   );
