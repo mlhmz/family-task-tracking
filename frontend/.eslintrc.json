@@ -6,10 +6,11 @@
     "prettier",
     "plugin:tailwindcss/recommended"
   ],
-  "plugins": ["tailwindcss"],
+  "plugins": ["@tanstack/eslint-plugin-query", "tailwindcss"],
   "rules": {
     "@next/next/no-html-link-for-pages": "off",
     "react/jsx-key": "off",
+    "@tanstack/query/prefer-query-object-syntax": "error",
     "tailwindcss/no-custom-classname": "off"
   },
   "settings": {

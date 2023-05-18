@@ -4,8 +4,6 @@ import { ReactNode, useCallback, useContext, useEffect } from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
-import { useQueryClient } from "@tanstack/react-query";
-
 import { PermissionType } from "@/types/permission-type";
 
 import { HouseholdContext } from "./household-context";
