@@ -8,14 +8,16 @@ import { getTranslatedPTValue } from "@/types/permission-type";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { ProfileContext } from "../profile-context";
+import ProfileSkeleton from "@/components/profile-skeleton";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
 
   if (!data || !data.uuid) {
-    return <h1>No profile</h1>;
+    return <ProfileSkeleton />
   }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
