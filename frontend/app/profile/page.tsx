@@ -10,13 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import ProfileSkeleton from "@/components/profile-skeleton";
+
 import { ProfileContext } from "../profile-context";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
 
   if (!data || !data.uuid) {
-    return <ProfileSkeleton />
+    return <ProfileSkeleton />;
   }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">

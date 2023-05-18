@@ -2,11 +2,11 @@ import {
   Accessibility,
   Home,
   Laptop,
+  Loader2,
   LucideProps,
   Moon,
   SunMedium,
   Twitter,
-  Loader2,
   type Icon as LucideIcon,
 } from "lucide-react";
 

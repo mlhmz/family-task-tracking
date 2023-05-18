@@ -16,8 +16,8 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import ProfileSelectSkeleton from "@/components/profile-select-skeleton";
 import { Icons } from "@/components/icons";
+import ProfileSelectSkeleton from "@/components/profile-select-skeleton";
 
 async function authProfile(authRequest: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {

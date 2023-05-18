@@ -15,10 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
+import { Icons } from "@/components/icons";
 import WizardSkeleton from "@/components/wizard-skeleton";
 
 import { ProfileContext } from "@/app/profile-context";
-import { Icons } from "@/components/icons";
 
 async function changePassword(request: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {
@@ -63,7 +63,9 @@ export default function ThirdWizardPage() {
         <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
           <Input placeholder="PIN" type="password" {...register("password")} />
           <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
-          {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
+          {formState.errors.password && (
+            <p className="text-destructive">{formState.errors.password.message}</p>
+          )}
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>

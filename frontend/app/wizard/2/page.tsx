@@ -12,10 +12,11 @@ import { isProfile, isProfileAuthResponse } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+
+import { Icons } from "@/components/icons";
 
 async function authProfile(profile?: Profile) {
   const request = { profileUuid: profile ? profile.uuid : "" };
