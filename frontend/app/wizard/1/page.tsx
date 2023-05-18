@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { HouseholdRequest, HouseholdResponse } from "@/types/household";
@@ -44,10 +44,12 @@ export default function FirstWizardPage() {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { mutate, isLoading, error } = useMutation({
     mutationFn: postHousehold,
-    onSuccess: (householdResponse) => {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["household"]);
       router.push("/wizard/2");
     },
   });
+  const queryClient = useQueryClient();
 
   const onSubmit = (formData: HouseholdRequest) => mutate(formData);
 

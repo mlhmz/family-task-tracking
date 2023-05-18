@@ -2,7 +2,9 @@
 
 import { ReactNode, useCallback, useContext, useEffect } from "react";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import { PermissionType } from "@/types/permission-type";
 
@@ -15,28 +17,35 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   const profile = useContext(ProfileContext);
   const profiles = useContext(ProfilesContext);
   const router = useRouter();
+  const pathName = usePathname();
 
   const isAnyAdminProfileAvailable = useCallback(() => {
     if (Array.isArray(profiles.data)) {
-      const bool = profiles.data?.some((profile) => profile.permissionType == PermissionType.Admin);
-      console.log("Is any admin profile available" + bool);
-      return bool;
+      return profiles.data?.some((profile) => profile.permissionType == PermissionType.Admin);
     } else {
-      return true
+      return true;
     }
   }, [profiles]);
 
   useEffect(() => {
-    if (household.isHouseholdEmpty) {
-      router.push("/wizard");
-    } else if (!isAnyAdminProfileAvailable()) {
-      router.push("/wizard/2");
-    } else if (profile.isError) {
-      router.push("/profile/select");
-    } else if (profile.data?.permissionType === PermissionType.Admin && !profile.data?.passwordProtected) {
-      router.push("/wizard/3");
+    if (!pathName.match("/wizard.*")) {
+      if (household.isHouseholdEmpty) {
+        router.push("/wizard");
+      } else if (!isAnyAdminProfileAvailable()) {
+        router.push("/wizard/2");
+      } else if (!pathName.match("/profile/select.*")) {
+        if (profile.isError) {
+          router.push("/profile/select");
+        } else if (
+          profile.data?.permissionType === PermissionType.Admin &&
+          !profile.data?.passwordProtected &&
+          !pathName.match("/profile/select.*")
+        ) {
+          router.push("/wizard/3");
+        }
+      }
     }
-  }, [household, isAnyAdminProfileAvailable, profile, profiles, router]);
+  }, [household, isAnyAdminProfileAvailable, profile, profiles, router, pathName]);
 
   return <>{children}</>;
 }

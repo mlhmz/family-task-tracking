@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
@@ -40,11 +40,13 @@ export default function ThirdWizardPage() {
   const { mutate, error } = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
+      queryClient.invalidateQueries(["profile"])
       router.push("/wizard/finished");
     },
   });
   const { data } = useContext(ProfileContext);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
 

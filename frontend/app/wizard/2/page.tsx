@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -75,10 +75,12 @@ export default function SecondWizardPage() {
     queryKey: ["profile-auth"],
     queryFn: () => authProfile(data),
     onSuccess: () => {
+      queryClient.invalidateQueries(["profiles"]);
       router.push("/wizard/3");
     },
     enabled: isMutateSuccess && !!data,
   });
+  const queryClient = useQueryClient();
 
   const onSubmit = (formData: ProfileRequest) =>
     mutate({ ...formData, permissionType: PermissionType.Admin });
