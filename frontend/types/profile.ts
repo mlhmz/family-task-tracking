@@ -8,11 +8,12 @@ export interface ProfileRequest {
 
 export interface Profile {
   uuid?: string;
-  sessionId?: string;
   name?: string;
   points?: number;
   permissionType?: PermissionType;
   passwordProtected?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ProfileAuthRequest {

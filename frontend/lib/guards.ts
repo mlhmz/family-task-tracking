@@ -59,19 +59,21 @@ const parseProfile = (value: unknown): Profile | null => {
     typeof value === "object" &&
     value &&
     value.hasOwnProperty("uuid") &&
-    value.hasOwnProperty("sessionId") &&
     value.hasOwnProperty("name") &&
     value.hasOwnProperty("points") &&
     value.hasOwnProperty("permissionType") &&
-    value.hasOwnProperty("passwordProtected")
+    value.hasOwnProperty("passwordProtected") &&
+    value.hasOwnProperty("createdAt") &&
+    value.hasOwnProperty("updatedAt")
   ) {
     return {
       uuid: typeof value.uuid === "string" ? value.uuid : undefined,
-      sessionId: typeof value.sessionId === "string" ? value.sessionId : undefined,
       name: typeof value.name === "string" ? value.name : undefined,
       points: typeof value.points === "number" ? value.points : undefined,
       permissionType: isPermissionType(value.permissionType) ? value.permissionType : undefined,
       passwordProtected: typeof value.passwordProtected === "boolean" ? value.passwordProtected : undefined,
+      createdAt: typeof value.createdAt === "string" ? value.createdAt : undefined,
+      updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : undefined,
     };
   }
   return null;
