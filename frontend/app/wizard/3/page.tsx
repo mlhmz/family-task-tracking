@@ -62,7 +62,7 @@ export default function ThirdWizardPage() {
         <Input placeholder="PIN" type="password" {...register("password")} />
         <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
         {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
-        <Button className={buttonVariants({ size: "sm" })} type="submit">
+        <Button size={"sm"} type="submit">
           Next
         </Button>
         <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>

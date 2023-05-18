@@ -12,7 +12,7 @@ import { siteConfig } from "@/config/site";
 
 import { useLogoutProfile } from "@/hooks/use-logout-profile";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
@@ -57,30 +57,14 @@ export function SiteHeader() {
             </Link>
             <ThemeToggle />
             {status === "authenticated" && (
-              <div
-                onClick={handleLogout}
-                className={twMerge(
-                  buttonVariants({
-                    size: "sm",
-                    variant: "ghost",
-                  }),
-                  "cursor-pointer",
-                )}>
+              <Button size={"sm"} variant={"ghost"} onClick={handleLogout}>
                 Sign Out
-              </div>
+              </Button>
             )}
             {status === "unauthenticated" && (
-              <div
-                onClick={() => signIn()}
-                className={twMerge(
-                  buttonVariants({
-                    size: "sm",
-                    variant: "ghost",
-                  }),
-                  "cursor-pointer",
-                )}>
+              <Button size={"sm"} variant={"ghost"} onClick={() => signIn()}>
                 Sign In
-              </div>
+              </Button>
             )}
             {isSuccess && data.uuid && (
               <DropdownMenu>

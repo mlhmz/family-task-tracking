@@ -95,7 +95,7 @@ export default function SecondWizardPage() {
           <Input placeholder="Administrator Name" {...register("name")} />
           {formState.errors.name && <p className="text-destructive">{formState.errors.name.message}</p>}
           <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
-          <Button className={buttonVariants({ size: "sm" })} type="submit">
+          <Button size={"sm"} type="submit">
             Next
           </Button>
           <>

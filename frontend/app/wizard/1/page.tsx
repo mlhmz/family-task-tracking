@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
-import { HouseholdRequest, HouseholdResponse } from "@/types/household";
+import { HouseholdRequest } from "@/types/household";
 
 import { assertIsHouseholdResponse } from "@/lib/guards";
 
@@ -65,7 +65,7 @@ export default function FirstWizardPage() {
             <p className="text-destructive">{formState.errors.householdName.message}</p>
           )}
           <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
-          <Button className={buttonVariants({ size: "sm" })} type="submit">
+          <Button size={"sm"} type="submit">
             Next
           </Button>
           <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
