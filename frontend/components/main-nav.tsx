@@ -1,7 +1,5 @@
 "use client";
 
-import { useContext } from "react";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,7 +13,14 @@ import { cn } from "@/lib/utils";
 
 import { Icons } from "@/components/icons";
 
-import { HouseholdContext } from "@/app/household-context";
+const Home = () => {
+  return (
+    <>
+      <Icons.home className="h-6 w-6" />
+      <span className="hidden text-xl font-bold sm:inline-block">{siteConfig.name}</span>
+    </>
+  );
+};
 
 interface MainNavProps {
   items?: NavItem[];
@@ -23,15 +28,21 @@ interface MainNavProps {
 
 export const MainNav = ({ items }: MainNavProps) => {
   const { status } = useSession();
-  const { isHouseholdEmpty } = useContext(HouseholdContext);
   const pathname = usePathname();
+  const isWizard = pathname.match("/wizard.*");
+
   return (
     <div className="flex gap-6 md:gap-10">
-      <Link href="/" className="hidden items-center space-x-2 md:flex">
-        <Icons.home className="h-6 w-6" />
-        <span className="hidden text-xl font-bold sm:inline-block">{siteConfig.name}</span>
-      </Link>
-      {status === "authenticated" && !isHouseholdEmpty && items?.length ? (
+      {isWizard ? (
+        <div className="hidden items-center space-x-2 md:flex">
+          <Home />
+        </div>
+      ) : (
+        <Link href="/" className="hidden items-center space-x-2 md:flex">
+          <Home />
+        </Link>
+      )}
+      {status === "authenticated" && !isWizard && items?.length ? (
         <nav className="hidden gap-6 md:flex">
           {items?.map(
             (item, index) =>
