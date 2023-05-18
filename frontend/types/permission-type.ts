@@ -4,7 +4,7 @@ export enum PermissionType {
 }
 
 export function getTranslatedPTValue(permissionType: PermissionType) {
-  if (permissionType == PermissionType.Admin) {
+  if (permissionType === PermissionType.Admin) {
     return "Privileged";
   } else {
     return "Unprivileged";

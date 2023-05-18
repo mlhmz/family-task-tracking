@@ -12,7 +12,7 @@ import { assertIsHouseholdResponse } from "@/lib/guards";
 async function fetchHousehold() {
   const response = await fetch("/api/v1/household");
   if (!response.ok) {
-    if (response.status == 404) {
+    if (response.status === 404) {
       throw new Error("No household");
     }
   }
