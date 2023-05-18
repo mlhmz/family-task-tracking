@@ -8,7 +8,7 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileAuthResponse, ProfileRequest } from "@/types/profile";
 
-import { assertIsProfile, assertIsProfileAuthResponse } from "@/lib/guards";
+import { isProfile, isProfileAuthResponse } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
@@ -30,7 +30,7 @@ async function authProfile(profile?: Profile) {
     throw new Error("Problem authenticating profile");
   }
   const authResponse = (await response.json()) as ProfileAuthResponse;
-  assertIsProfileAuthResponse(authResponse);
+  if (!isProfileAuthResponse(authResponse)) throw new Error("Problem authenticating profile");
   return authResponse;
 }
 
@@ -51,7 +51,7 @@ async function createProfile(profileRequest: ProfileRequest) {
   }
 
   const profile = await response.json();
-  assertIsProfile(profile);
+  if (!isProfile(profile)) throw new Error("Problem creating profile");
   return profile;
 }
 

@@ -1,8 +1,8 @@
 export interface HouseholdResponse {
   uuid?: string;
   householdName?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface HouseholdRequest {

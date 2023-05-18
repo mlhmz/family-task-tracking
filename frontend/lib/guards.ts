@@ -1,70 +1,99 @@
 "use client";
 
 import { HouseholdResponse } from "@/types/household";
+import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileAuthResponse } from "@/types/profile";
 
-export function assertIsHouseholdResponse(response: any): asserts response is HouseholdResponse {
-  if (!response) {
-    throw new Error("HouseholdResponse is undefined");
-  }
-  if (typeof response !== "object") {
-    throw new Error("HouseholdResponse is not an object");
-  }
-  if (response.uuid && typeof response.uuid !== "string") {
-    throw new Error("HouseholdResponse.uuid is not a string");
-  }
-  if (response.householdName && typeof response.householdName !== "string") {
-    throw new Error("HouseholdResponse.householdName is not a string");
-  }
-  if (response.createdAt && typeof response.createdAt !== "string") {
-    throw new Error("HouseholdResponse.createdAt is not a string");
-  }
-  if (response.updatedAt && typeof response.updatedAt !== "string") {
-    throw new Error("HouseholdResponse.updatedAt is not a string");
+// This is a hack to add hasOwnProperty to Object
+declare global {
+  interface Object {
+    hasOwnProperty<K extends string>(key: K): this is Record<K, unknown>;
   }
 }
 
-export function assertIsProfile(response: any): asserts response is Profile {
-  if (!response) {
-    throw new Error("Profile is undefined");
-  }
-  if (typeof response !== "object") {
-    throw new Error("Profile is not an object");
-  }
-  if (response.uuid && typeof response.uuid !== "string") {
-    throw new Error("Profile.uuid is not a string");
-  }
-  if (response.sessionId && typeof response.sessionId !== "string") {
-    throw new Error("Profile.sessionId is not a string");
-  }
-  if (response.name && typeof response.name !== "string") {
-    throw new Error("Profile.name is not a string");
-  }
-  if (response.points && typeof response.points !== "number") {
-    throw new Error("Profile.points is not a number");
-  }
-  if (response.permissionType && typeof response.permissionType !== "string") {
-    throw new Error("Profile.permissionType is not a string");
-  }
-  if (response.passwordProtected && typeof response.passwordProtected !== "boolean") {
-    throw new Error("Profile.passwordProtected is not a boolean");
-  }
-}
+// Parser is a function which takes unknown and returns T or null
+type Parser<T> = (val: unknown) => T | null;
 
-export function assertIsProfileAuthResponse(response: any): asserts response is ProfileAuthResponse {
-  if (!response) {
-    throw new Error("ProfileAuthResponse is undefined");
+// createTypeGuard is a function which takes a parser and returns a new function
+// The returned function is a safe type guard for T
+const createTypeGuard =
+  <T>(parse: Parser<T>) =>
+  (value: unknown): value is T => {
+    // By assuming that parser returns only T or null
+    // We can say that value from parser is T when it is not a null
+    return parse(value) !== null;
+  };
+
+const parsePermissionType = (value: unknown): PermissionType | null => {
+  if (typeof value === "string" && (value === "ADMIN" || value === "MEMBER")) {
+    return value as PermissionType;
   }
-  if (typeof response !== "object") {
-    throw new Error("ProfileAuthResponse is not an object");
+  return null;
+};
+
+export const isPermissionType = createTypeGuard<PermissionType>(parsePermissionType);
+
+const parseHouseholdResponse = (value: unknown): HouseholdResponse | null => {
+  if (
+    typeof value === "object" &&
+    value &&
+    value.hasOwnProperty("uuid") &&
+    value.hasOwnProperty("householdName") &&
+    value.hasOwnProperty("createdAt") &&
+    value.hasOwnProperty("updatedAt")
+  ) {
+    return {
+      uuid: typeof value.uuid === "string" ? value.uuid : undefined,
+      householdName: typeof value.householdName === "string" ? value.householdName : undefined,
+      createdAt: typeof value.createdAt === "string" ? value.createdAt : undefined,
+      updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : undefined,
+    };
   }
-  if (response.sessionId && typeof response.sessionId !== "string") {
-    throw new Error("ProfileAuthResponse.sessionId is not a string");
+  return null;
+};
+
+export const isHouseholdReponse = createTypeGuard<HouseholdResponse>(parseHouseholdResponse);
+
+const parseProfile = (value: unknown): Profile | null => {
+  if (
+    typeof value === "object" &&
+    value &&
+    value.hasOwnProperty("uuid") &&
+    value.hasOwnProperty("sessionId") &&
+    value.hasOwnProperty("name") &&
+    value.hasOwnProperty("points") &&
+    value.hasOwnProperty("permissionType") &&
+    value.hasOwnProperty("passwordProtected")
+  ) {
+    return {
+      uuid: typeof value.uuid === "string" ? value.uuid : undefined,
+      sessionId: typeof value.sessionId === "string" ? value.sessionId : undefined,
+      name: typeof value.name === "string" ? value.name : undefined,
+      points: typeof value.points === "number" ? value.points : undefined,
+      permissionType: isPermissionType(value.permissionType) ? value.permissionType : undefined,
+      passwordProtected: typeof value.passwordProtected === "boolean" ? value.passwordProtected : undefined,
+    };
   }
-  if (response.profileId && typeof response.profileId !== "string") {
-    throw new Error("ProfileAuthResponse.profileId is not a string");
+  return null;
+};
+
+export const isProfile = createTypeGuard<Profile>(parseProfile);
+
+const parseProfileAuthResponse = (value: unknown): ProfileAuthResponse | null => {
+  if (
+    typeof value === "object" &&
+    value &&
+    value.hasOwnProperty("sessionId") &&
+    value.hasOwnProperty("profileId") &&
+    value.hasOwnProperty("expiresAt")
+  ) {
+    return {
+      sessionId: typeof value.sessionId === "string" ? value.sessionId : undefined,
+      profileId: typeof value.profileId === "string" ? value.profileId : undefined,
+      expiresAt: typeof value.expiresAt === "string" ? value.expiresAt : undefined,
+    };
   }
-  if (response.expiresAt && typeof response.expiresAt !== "string") {
-    throw new Error("ProfileAuthResponse.expiresAt is not a string");
-  }
-}
+  return null;
+};
+
+export const isProfileAuthResponse = createTypeGuard<ProfileAuthResponse>(parseProfileAuthResponse);

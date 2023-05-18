@@ -23,5 +23,5 @@ export interface ProfileAuthRequest {
 export interface ProfileAuthResponse {
   sessionId?: string;
   profileId?: string;
-  expiresAt?: Date;
+  expiresAt?: string;
 }

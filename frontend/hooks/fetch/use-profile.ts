@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-import { assertIsProfile } from "@/lib/guards";
+import { isProfile } from "@/lib/guards";
 
 async function fetchProfile(uuid?: string) {
   const response = await fetch(`/api/v1/profiles/${uuid ? uuid : "profile"}`);
@@ -15,7 +15,7 @@ async function fetchProfile(uuid?: string) {
   }
 
   const profile = await response.json();
-  assertIsProfile(profile);
+  if (!isProfile(profile)) throw new Error("Problem fetching data");
   return profile;
 }
 
