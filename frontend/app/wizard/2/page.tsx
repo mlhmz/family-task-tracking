@@ -60,6 +60,7 @@ const schema = z.object({
 
 export default function SecondWizardPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const {
     data,
@@ -80,7 +81,6 @@ export default function SecondWizardPage() {
     },
     enabled: isMutateSuccess && !!data,
   });
-  const queryClient = useQueryClient();
 
   const onSubmit = (formData: ProfileRequest) =>
     mutate({ ...formData, permissionType: PermissionType.Admin });

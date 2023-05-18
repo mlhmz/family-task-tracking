@@ -40,7 +40,7 @@ export default function ThirdWizardPage() {
   const { mutate, error } = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
-      queryClient.invalidateQueries(["profile"])
+      queryClient.invalidateQueries(["profile"]);
       router.push("/wizard/finished");
     },
   });

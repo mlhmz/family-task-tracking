@@ -2,13 +2,7 @@
 
 import { ReactNode, createContext, useContext, useEffect } from "react";
 
-import { useRouter } from "next/navigation";
-
-import { PermissionType } from "@/types/permission-type";
-
 import { useProfile } from "@/hooks/fetch/use-profile";
-
-import { HouseholdContext } from "./household-context";
 
 export interface ProfileContextProps {
   children: ReactNode;

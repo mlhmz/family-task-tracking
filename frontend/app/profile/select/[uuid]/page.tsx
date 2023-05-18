@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +16,6 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCallback, useEffect } from "react";
 
 async function authProfile(authRequest: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {
@@ -36,7 +37,7 @@ const schema = z.object({
 export default function ProfileLogin({ params }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { data } = useProfile(params.uuid);
-  const { mutate, isLoading, error } = useMutation({
+  const { mutate, error } = useMutation({
     mutationFn: authProfile,
     onSuccess: () => {
       router.push("/dashboard");
@@ -50,9 +51,9 @@ export default function ProfileLogin({ params }) {
 
   useEffect(() => {
     if (data && !data?.passwordProtected) {
-      mutate({ profileUuid: data?.uuid })
+      mutate({ profileUuid: data?.uuid });
     }
-  }, [data, mutate])
+  }, [data, mutate]);
 
   if (!data || !data.uuid) {
     return (
@@ -77,12 +78,14 @@ export default function ProfileLogin({ params }) {
         />
       </div>
       <h1 className="text-xl">{data.name}</h1>
-      { data.passwordProtected && (
+      {data.passwordProtected && (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-5">
-        <Input placeholder="PIN" type="password" {...register("password")} />
-        {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
-        <Button type="submit">Login</Button>
-      </form>
+          <Input placeholder="PIN" type="password" {...register("password")} />
+          {formState.errors.password && (
+            <p className="text-destructive">{formState.errors.password.message}</p>
+          )}
+          <Button type="submit">Login</Button>
+        </form>
       )}
       <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
     </div>

@@ -1,8 +1,6 @@
 "use client";
 
-import { createContext, useEffect } from "react";
-
-import { useRouter } from "next/navigation";
+import { createContext } from "react";
 
 import { HouseholdResponse } from "@/types/household";
 
