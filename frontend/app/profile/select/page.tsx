@@ -4,7 +4,8 @@ import { useContext, useEffect } from "react";
 
 import { useLogoutProfile } from "@/hooks/use-logout-profile";
 
-import ProfileSelectSkeleton from "@/components/profile-select-skeleton";
+import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
+
 import ProfileSelector from "@/components/profile-selector";
 
 import { ProfilesContext } from "@/app/profiles-context";

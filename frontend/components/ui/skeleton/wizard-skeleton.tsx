@@ -1,6 +1,6 @@
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "./skeleton";
 
-export default function WizardSkeleton() {
+export const WizardSkeleton = () => {
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
       <Skeleton className="m-auto h-10 w-10" />
@@ -13,4 +13,4 @@ export default function WizardSkeleton() {
       <Skeleton className="h-10 w-full" />
     </div>
   );
-}
+};

@@ -8,8 +8,7 @@ import { getTranslatedPTValue } from "@/types/permission-type";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import ProfileSkeleton from "@/components/profile-skeleton";
+import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import { ProfileContext } from "../profile-context";
 

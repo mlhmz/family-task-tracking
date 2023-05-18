@@ -1,6 +1,6 @@
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "./skeleton";
 
-export default function ProfileSelectSkeleton() {
+export const ProfileSelectSkeleton = () => {
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col items-center gap-5">
       <div className="m-auto">
@@ -11,4 +11,4 @@ export default function ProfileSelectSkeleton() {
       <Skeleton className="h-10 w-16" />
     </div>
   );
-}
+};
