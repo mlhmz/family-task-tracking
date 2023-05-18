@@ -4,9 +4,12 @@ import { useContext, useEffect } from "react";
 
 import { useLogoutProfile } from "@/hooks/use-logout-profile";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
 import ProfileSelector from "@/components/profile-selector";
 
 import { ProfilesContext } from "@/app/profiles-context";
+import ProfileSelectSkeleton from "@/components/profile-select-skeleton";
 
 export default function ProfileAuth() {
   const { data } = useContext(ProfilesContext);
@@ -17,7 +20,7 @@ export default function ProfileAuth() {
   }, [logoutProfile]);
 
   if (!data) {
-    return <h1>No data</h1>;
+    return <ProfileSelectSkeleton />;
   }
   return (
     <div className="m-auto my-5 flex w-full flex-col gap-2">

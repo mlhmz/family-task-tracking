@@ -16,6 +16,7 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProfileSelectSkeleton from "@/components/profile-select-skeleton";
 
 async function authProfile(authRequest: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {
@@ -56,16 +57,7 @@ export default function ProfileLogin({ params }) {
   }, [data, mutate]);
 
   if (!data || !data.uuid) {
-    return (
-      <div className="m-auto my-5 flex w-1/3 flex-col items-center gap-5">
-        <div className="m-auto">
-          <Skeleton className="h-[180px] w-[180px] rounded-full" />
-        </div>
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-[40px] w-[240px]" />
-        <Skeleton className="h-10 w-16" />
-      </div>
-    );
+    return <ProfileSelectSkeleton />;
   }
   return (
     <div className="m-auto my-5 flex flex-col items-center gap-5">
