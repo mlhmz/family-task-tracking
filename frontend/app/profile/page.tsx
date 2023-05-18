@@ -8,10 +8,9 @@ import { getTranslatedPTValue } from "@/types/permission-type";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 
-import { ProfileContext } from "../profile-context";
 import ProfileSkeleton from "@/components/profile-skeleton";
+import { ProfileContext } from "../profile-context";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);

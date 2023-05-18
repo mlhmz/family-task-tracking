@@ -15,8 +15,9 @@ import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import ProfileSelectSkeleton from "@/components/profile-select-skeleton";
+import { Icons } from "@/components/icons";
 
 async function authProfile(authRequest: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {
@@ -38,7 +39,7 @@ const schema = z.object({
 export default function ProfileLogin({ params }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { data } = useProfile(params.uuid);
-  const { mutate, error } = useMutation({
+  const { mutate, error, isLoading } = useMutation({
     mutationFn: authProfile,
     onSuccess: () => {
       router.push("/dashboard");
@@ -72,11 +73,15 @@ export default function ProfileLogin({ params }) {
       <h1 className="text-xl">{data.name}</h1>
       {data.passwordProtected && (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-5">
-          <Input placeholder="PIN" type="password" {...register("password")} />
-          {formState.errors.password && (
-            <p className="text-destructive">{formState.errors.password.message}</p>
-          )}
-          <Button type="submit">Login</Button>
+          <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
+            <Input placeholder="PIN" type="password" {...register("password")} />
+            {formState.errors.password && (
+              <p className="text-destructive">{formState.errors.password.message}</p>
+            )}
+            <Button type="submit">
+              {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
+            </Button>
+          </fieldset>
         </form>
       )}
       <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>

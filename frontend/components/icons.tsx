@@ -6,6 +6,7 @@ import {
   Moon,
   SunMedium,
   Twitter,
+  Loader2,
   type Icon as LucideIcon,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ export const Icons = {
   twitter: Twitter,
   laptop: Laptop,
   accessibility: Accessibility,
+  spinner: Loader2,
   home: Home,
   logo: (props: LucideProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>

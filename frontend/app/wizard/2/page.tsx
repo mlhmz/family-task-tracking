@@ -6,13 +6,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
-import { Profile, ProfileAuthRequest, ProfileAuthResponse, ProfileRequest } from "@/types/profile";
+import { Profile, ProfileAuthResponse, ProfileRequest } from "@/types/profile";
 
 import { assertIsProfile, assertIsProfileAuthResponse } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
@@ -96,7 +97,7 @@ export default function SecondWizardPage() {
           {formState.errors.name && <p className="text-destructive">{formState.errors.name.message}</p>}
           <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
           <Button size={"sm"} type="submit">
-            Next
+            {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
           <>
             {error && error instanceof Error && <p className="text-destructive">{error.message}</p>}

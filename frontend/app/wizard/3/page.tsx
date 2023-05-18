@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -11,13 +11,14 @@ import { ProfileAuthRequest } from "@/types/profile";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
 import WizardSkeleton from "@/components/wizard-skeleton";
 
 import { ProfileContext } from "@/app/profile-context";
+import { Icons } from "@/components/icons";
 
 async function changePassword(request: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {
@@ -37,7 +38,7 @@ const schema = z.object({
 
 export default function ThirdWizardPage() {
   const { register, handleSubmit, formState } = useZodForm({ schema });
-  const { mutate, error } = useMutation({
+  const { mutate, error, isLoading } = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
@@ -59,12 +60,14 @@ export default function ThirdWizardPage() {
         <h1 className="m-auto text-6xl">🔐</h1>
         <h3>Step 3</h3>
         <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
-        <Input placeholder="PIN" type="password" {...register("password")} />
-        <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
-        {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
-        <Button size={"sm"} type="submit">
-          Next
-        </Button>
+        <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
+          <Input placeholder="PIN" type="password" {...register("password")} />
+          <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
+          {formState.errors.password && <p className="text-destructive">{formState.errors.password.message}</p>}
+          <Button size={"sm"} type="submit">
+            {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
+          </Button>
+        </fieldset>
         <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
       </form>
     </div>

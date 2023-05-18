@@ -11,9 +11,11 @@ import { assertIsHouseholdResponse } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+
+import { Icons } from "@/components/icons";
 
 const postHousehold = async (householdRequest: HouseholdRequest) => {
   const response = await fetch("/api/v1/admin/household", {
@@ -66,7 +68,7 @@ export default function FirstWizardPage() {
           )}
           <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
           <Button size={"sm"} type="submit">
-            Next
+            {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
           <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
