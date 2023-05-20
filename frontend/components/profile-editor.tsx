@@ -1,4 +1,6 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+"use client";
+
+import { Dispatch, useEffect } from "react";
 
 import { MutationFunction, useMutation } from "@tanstack/react-query";
 import { z } from "zod";
@@ -15,7 +17,7 @@ import { Switch } from "./ui/switch";
 
 interface ProfileEditorProps {
   safe: boolean;
-  data: Profile;
+  initialData?: Profile;
   mutationFunction: MutationFunction<Response, ProfileRequest>;
   onSuccess: Dispatch<void>;
 }
@@ -26,7 +28,7 @@ const schema = z.object({
   permissionType: z.enum([PermissionType.Admin, PermissionType.Member]).optional(),
 });
 
-export default function ProfileEditor({ safe, data, mutationFunction, onSuccess }: ProfileEditorProps) {
+export default function ProfileEditor({ safe, initialData, mutationFunction, onSuccess }: ProfileEditorProps) {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: mutationFunction,
@@ -34,15 +36,18 @@ export default function ProfileEditor({ safe, data, mutationFunction, onSuccess 
   });
 
   useEffect(() => {
-    if (data.name) {
-      setValue("name", data.name);
+    const setData = (profile) => {
+      if (profile.name) {
+        setValue("name", profile.name);
+      }
+      if (!safe && profile.points) {
+        setValue("points", profile.points);
+      }
+      if (!safe && profile.permissionType) {
+        setValue("permissionType", profile.permissionType);
+      }
     }
-    if (!safe && data.points) {
-      setValue("points", data.points);
-    }
-    if (!safe && data.permissionType) {
-      setValue("permissionType", data.permissionType);
-    }
+    initialData && setData(initialData);
   }, []);
 
   const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
@@ -62,7 +67,7 @@ export default function ProfileEditor({ safe, data, mutationFunction, onSuccess 
               <input disabled={true} className="hidden" {...register("permissionType")} />
               <div className="flex gap-2">
                 <Switch
-                  defaultChecked={data.permissionType == PermissionType.Admin}
+                  defaultChecked={initialData && initialData.permissionType == PermissionType.Admin}
                   onCheckedChange={onCheckedChange}
                   id="privileged-switch"
                 />

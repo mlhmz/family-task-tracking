@@ -65,7 +65,7 @@ export default function Profile() {
           <DialogHeader>Edit Profile</DialogHeader>
           <ProfileEditor
             safe={true}
-            data={data}
+            initialData={data}
             mutationFunction={editProfile}
             onSuccess={() => {
               queryClient.invalidateQueries(["profile"]);
