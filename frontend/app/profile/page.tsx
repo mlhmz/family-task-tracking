@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import Avatar from "boring-avatars";
 
@@ -11,9 +11,11 @@ import { Button } from "@/components/ui/button";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import { ProfileContext } from "../profile-context";
+import ProfileEditor from "@/components/profile-editor";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
+  const [showEditor, setShowEditor] = useState(false);
 
   if (!data || !data.uuid) {
     return <ProfileSkeleton />;
@@ -37,7 +39,8 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <Button>Edit profile</Button>
+      <Button onClick={() => setShowEditor(!showEditor)}>Edit profile</Button>
+      <ProfileEditor safe={true} data={data} showEditor={showEditor} setShowEditor={setShowEditor} />
     </div>
   );
 }
