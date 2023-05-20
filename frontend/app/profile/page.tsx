@@ -2,6 +2,7 @@
 
 import { useContext, useState } from "react";
 
+import { useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 
 import { getTranslatedPTValue } from "@/types/permission-type";
@@ -9,12 +10,12 @@ import { ProfileRequest } from "@/types/profile";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import ProfileEditor from "@/components/profile-editor";
 
 import { ProfileContext } from "../profile-context";
-import { useQueryClient } from "@tanstack/react-query";
 
 async function editProfile(request: ProfileRequest) {
   const response = await fetch("/api/v1/profiles/profile", {
@@ -31,7 +32,7 @@ async function editProfile(request: ProfileRequest) {
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
-  const [showEditor, setShowEditor] = useState(false);
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
   if (!data || !data.uuid) {
@@ -56,14 +57,23 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <Button onClick={() => setShowEditor(!showEditor)}>Edit profile</Button>
-      {showEditor && <ProfileEditor
-        safe={false}
-        data={data}
-        mutationFunction={editProfile}
-        onSuccess={() => queryClient.invalidateQueries(["profile"])}
-        onClose={() => setShowEditor(!showEditor)}
-      />}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button>Edit profile</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>Edit Profile</DialogHeader>
+          <ProfileEditor
+            safe={true}
+            data={data}
+            mutationFunction={editProfile}
+            onSuccess={() => {
+              queryClient.invalidateQueries(["profile"]);
+              setOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

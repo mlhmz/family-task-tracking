@@ -18,7 +18,6 @@ interface ProfileEditorProps {
   data: Profile;
   mutationFunction: MutationFunction<Response, ProfileRequest>;
   onSuccess: Dispatch<void>;
-  onClose: Dispatch<void>;
 }
 
 const schema = z.object({
@@ -27,13 +26,7 @@ const schema = z.object({
   permissionType: z.enum([PermissionType.Admin, PermissionType.Member]).optional(),
 });
 
-export default function ProfileEditor({
-  safe,
-  data,
-  mutationFunction,
-  onSuccess,
-  onClose
-}: ProfileEditorProps) {
+export default function ProfileEditor({ safe, data, mutationFunction, onSuccess }: ProfileEditorProps) {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: mutationFunction,
@@ -61,9 +54,6 @@ export default function ProfileEditor({
   return (
     <div>
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
-        <a className="cursor-pointer self-end" onClick={() => onClose()}>
-          <Icons.x />
-        </a>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
           <Input placeholder="Name" {...register("name")} />
           {!safe && (
