@@ -57,14 +57,13 @@ export default function Profile() {
         </div>
       </div>
       <Button onClick={() => setShowEditor(!showEditor)}>Edit profile</Button>
-      <ProfileEditor
+      {showEditor && <ProfileEditor
         safe={false}
         data={data}
-        showEditor={showEditor}
-        setShowEditor={setShowEditor}
         mutationFunction={editProfile}
         onSuccess={() => queryClient.invalidateQueries(["profile"])}
-      />
+        onClose={() => setShowEditor(!showEditor)}
+      />}
     </div>
   );
 }
