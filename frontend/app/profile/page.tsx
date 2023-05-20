@@ -5,17 +5,34 @@ import { useContext, useState } from "react";
 import Avatar from "boring-avatars";
 
 import { getTranslatedPTValue } from "@/types/permission-type";
+import { ProfileRequest } from "@/types/profile";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
-import { ProfileContext } from "../profile-context";
 import ProfileEditor from "@/components/profile-editor";
+
+import { ProfileContext } from "../profile-context";
+import { useQueryClient } from "@tanstack/react-query";
+
+async function editProfile(request: ProfileRequest) {
+  const response = await fetch("/api/v1/profiles/profile", {
+    method: "PUT",
+    body: JSON.stringify(request),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.message) throw new Error(error.message);
+    throw new Error("Problem fetching data");
+  }
+  return response;
+}
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
   const [showEditor, setShowEditor] = useState(false);
+  const queryClient = useQueryClient();
 
   if (!data || !data.uuid) {
     return <ProfileSkeleton />;
@@ -40,7 +57,14 @@ export default function Profile() {
         </div>
       </div>
       <Button onClick={() => setShowEditor(!showEditor)}>Edit profile</Button>
-      <ProfileEditor safe={true} data={data} showEditor={showEditor} setShowEditor={setShowEditor} />
+      <ProfileEditor
+        safe={false}
+        data={data}
+        showEditor={showEditor}
+        setShowEditor={setShowEditor}
+        mutationFunction={editProfile}
+        onSuccess={() => queryClient.invalidateQueries(["profile"])}
+      />
     </div>
   );
 }

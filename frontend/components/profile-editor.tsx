@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MutationFunction, useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -11,43 +11,39 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { Icons } from "./icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-
-async function editProfile(request: ProfileRequest) {
-  const response = await fetch("/api/v1/profiles/profile", {
-    method: "PUT",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  return response;
-}
-
-const schema = z.object({
-  name: z.string().min(1).max(255),
-  points: z.number().min(0).optional(),
-  permissionType: z.enum([PermissionType.Admin, PermissionType.Member]).optional(),
-});
+import { Switch } from "./ui/switch";
 
 interface ProfileEditorProps {
   safe: boolean;
   data: Profile;
   showEditor: boolean;
   setShowEditor: Dispatch<SetStateAction<boolean>>;
+  mutationFunction: MutationFunction<Response, ProfileRequest>;
+  onSuccess: Dispatch<void>;
 }
 
-export default function ProfileEditor({ safe, data, showEditor, setShowEditor }: ProfileEditorProps) {
+const schema = z.object({
+  name: z.string().min(1).max(255),
+  points: z.number().optional(),
+  permissionType: z.enum([PermissionType.Admin, PermissionType.Member]).optional(),
+});
+
+export default function ProfileEditor({
+  safe,
+  data,
+  showEditor,
+  setShowEditor,
+  mutationFunction,
+  onSuccess,
+}: ProfileEditorProps) {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
   const { mutate, error, isLoading } = useMutation({
-    mutationFn: editProfile,
+    mutationFn: mutationFunction,
     onSuccess: () => {
-      queryClient.invalidateQueries(["profile"]);
       setShowEditor(false);
+      onSuccess();
     },
   });
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (data.name) {
@@ -63,6 +59,10 @@ export default function ProfileEditor({ safe, data, showEditor, setShowEditor }:
 
   const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
 
+  const onCheckedChange = (checked: boolean) => {
+    setValue("permissionType", checked ? PermissionType.Admin : PermissionType.Member);
+  };
+
   if (!showEditor) {
     return <></>;
   }
@@ -76,14 +76,26 @@ export default function ProfileEditor({ safe, data, showEditor, setShowEditor }:
           <Input placeholder="Name" {...register("name")} />
           {!safe && (
             <>
-              <Input placeholder="Points" type="number" {...register("points")} />
-              <Input placeholder="Permission Type" {...register("permissionType")} />
+              <Input placeholder="Points" type="number" {...register("points", { valueAsNumber: true })} />
+              <input disabled={true} className="hidden" {...register("permissionType")} />
+              <div className="flex gap-2">
+                <Switch
+                  defaultChecked={data.permissionType == PermissionType.Admin}
+                  onCheckedChange={onCheckedChange}
+                  id="privileged-switch"
+                />
+                <p>Privileged</p>
+              </div>
             </>
           )}
           <Button type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Save</>}
           </Button>
           {formState.errors.name && <p className="text-destructive">{formState.errors.name.message}</p>}
+          {formState.errors.points && <p className="text-destructive">{formState.errors.points.message}</p>}
+          {formState.errors.permissionType && (
+            <p className="text-destructive">{formState.errors.permissionType.message}</p>
+          )}
           <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
           <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
