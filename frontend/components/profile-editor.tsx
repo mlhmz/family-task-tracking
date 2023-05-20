@@ -16,7 +16,7 @@ import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
 
 interface ProfileEditorProps {
-  safe: boolean;
+  safe?: boolean;
   initialData?: Profile;
   mutationFunction: MutationFunction<Response, ProfileRequest>;
   onSuccess: Dispatch<void>;
@@ -28,7 +28,12 @@ const schema = z.object({
   permissionType: z.enum([PermissionType.Admin, PermissionType.Member]).optional(),
 });
 
-export default function ProfileEditor({ safe, initialData, mutationFunction, onSuccess }: ProfileEditorProps) {
+export default function ProfileEditor({
+  safe,
+  initialData,
+  mutationFunction,
+  onSuccess,
+}: ProfileEditorProps) {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: mutationFunction,
@@ -46,7 +51,7 @@ export default function ProfileEditor({ safe, initialData, mutationFunction, onS
       if (!safe && profile.permissionType) {
         setValue("permissionType", profile.permissionType);
       }
-    }
+    };
     initialData && setData(initialData);
   }, []);
 

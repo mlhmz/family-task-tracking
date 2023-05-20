@@ -3,17 +3,15 @@
 import { useContext, useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
-import Avatar from "boring-avatars";
 
-import { getTranslatedPTValue } from "@/types/permission-type";
 import { ProfileRequest } from "@/types/profile";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import ProfileEditor from "@/components/profile-editor";
+import ProfileInfo from "@/components/profile-info";
 
 import { ProfileContext } from "../profile-context";
 
@@ -40,23 +38,7 @@ export default function Profile() {
   }
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
-      <div className="flex items-center gap-5">
-        <Avatar
-          size={180}
-          name={data.uuid}
-          variant="beam"
-          colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-        />
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">{data.name}&apos;s Profile</h1>
-          <div id="badges" className="flex flex-row gap-1">
-            <Badge variant={"secondary"}>
-              {data.permissionType ? getTranslatedPTValue(data.permissionType) : "Unavailable"}
-            </Badge>
-            <Badge variant={"secondary"}>{data.points} Points</Badge>
-          </div>
-        </div>
-      </div>
+      <ProfileInfo data={data} />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button>Edit profile</Button>
@@ -64,7 +46,7 @@ export default function Profile() {
         <DialogContent>
           <DialogHeader>Edit Profile</DialogHeader>
           <ProfileEditor
-            safe={true}
+            safe
             initialData={data}
             mutationFunction={editProfile}
             onSuccess={() => {

@@ -27,7 +27,6 @@ export default function CreateProfilePage() {
       <h1 className="text-center text-2xl font-bold">Create a Profile</h1>
       <ProfileEditor
         onSuccess={() => queryClient.invalidateQueries(["profiles"])}
-        safe={false}
         mutationFunction={createProfile}
       />
     </div>
