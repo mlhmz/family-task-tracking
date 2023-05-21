@@ -19,7 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 
 async function getProfiles({ query }: { query: string }) {
   const request = new URLSearchParams({
-    query: query,
+    query: query.split(":")[1] ? query : `name:${query}`,
   });
   const response = await fetch(
     "/api/v1/profiles?" + request.toString(),
