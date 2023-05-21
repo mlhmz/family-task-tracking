@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 
 import { PermissionType } from "@/types/permission-type";
@@ -29,6 +29,9 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const queryClient = useQueryClient();
+  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: deleteProfile,
+  });
 
   // Hook to initially set the table data
   useEffect(() => {
@@ -59,7 +62,7 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
   };
 
   const deleteEverySelectedProfile = () => {
-    selectedProfiles.forEach((profile) => deleteProfile(profile.uuid ?? ""));
+    selectedProfiles.forEach((profile) => mutateDelete(profile.uuid ?? ""));
     queryClient.invalidateQueries(["profiles"]);
   };
 
@@ -73,7 +76,7 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
           </Button>
         </Link>
         <Button variant="ghost" onClick={deleteEverySelectedProfile}>
-          <Icons.trash />
+          {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
         </Button>
       </div>
       <div className="rounded-md outline outline-1 outline-border">

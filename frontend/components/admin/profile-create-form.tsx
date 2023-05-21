@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -7,14 +8,14 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { ProfileRequest } from "@/types/profile";
 
+import { isProfile } from "@/lib/guards";
+
 import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
-import { isProfile } from "@/lib/guards";
-import { useRouter } from "next/navigation";
 
 async function createProfile(request: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
@@ -43,8 +44,8 @@ export default function ProfileCreateForm() {
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createProfile,
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["profiles"])
-      router.push(`/profiles/profile/${data.uuid}`)
+      queryClient.invalidateQueries(["profiles"]);
+      router.push(`/profiles/profile/${data.uuid}`);
     },
   });
   const queryClient = useQueryClient();
@@ -64,10 +65,7 @@ export default function ProfileCreateForm() {
           <Input placeholder="Points" type="number" {...register("points", { valueAsNumber: true })} />
           <input disabled={true} className="hidden" {...register("permissionType")} />
           <div className="flex gap-2">
-            <Switch
-              onCheckedChange={onCheckedChange}
-              id="privileged-switch"
-            />
+            <Switch onCheckedChange={onCheckedChange} id="privileged-switch" />
             <p>Privileged</p>
           </div>
           <Button type="submit">
