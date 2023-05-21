@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.commons.lang3.StringUtils;
 import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
@@ -59,12 +60,11 @@ public class ProfileController {
             )}
     )
     @GetMapping
-    public List<ProfileResponseDto> getAllProfilesByJwt(@AuthenticationPrincipal Jwt jwt) {
-        List<ProfileModel> modelList = this.profileService.getAllProfilesByJwt(jwt);
-        return modelList
-                .stream()
-                .map(ProfileModel::toResponseDto)
-                .toList();
+    public List<ProfileResponseDto> getAllProfilesByJwt(@RequestParam(value = "query", required = false) String query,
+                                                        @AuthenticationPrincipal Jwt jwt) {
+        return StringUtils.isEmpty(query) ?
+                mapModelCollectionToDtoCollection(this.profileService.getAllProfilesByJwt(jwt)) :
+                mapModelCollectionToDtoCollection(this.profileService.getAllProfilesByJwtAndSearchQuery(jwt, query));
     }
 
     /**
@@ -171,5 +171,12 @@ public class ProfileController {
         ProfileModel targetModel = profileAuthService.getProfileBySession(sessionId, jwt);
         ProfileModel persistedModel = this.profileService.updateProfile(updateModel, targetModel, true);
         return persistedModel.toResponseDto();
+    }
+
+    private List<ProfileResponseDto> mapModelCollectionToDtoCollection(List<ProfileModel> modelList) {
+        return modelList
+                .stream()
+                .map(ProfileModel::toResponseDto)
+                .toList();
     }
 }
