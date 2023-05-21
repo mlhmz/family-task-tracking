@@ -8,11 +8,9 @@ export default function ProfilesPage() {
   const { data } = useProfiles();
 
   return (
-    <div>
-      <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
-        <h1 className="text-center text-2xl font-bold">Profiles</h1>
-        <ProfileDataTable data={Array.isArray(data) ? data : []} />
-      </div>
+    <div className="mx-10 my-10 flex flex-col gap-10 lg:m-auto lg:w-3/4">
+      <h1 className="text-center text-2xl font-bold">Profiles</h1>
+      <ProfileDataTable data={Array.isArray(data) ? data : []} />
     </div>
   );
 }
