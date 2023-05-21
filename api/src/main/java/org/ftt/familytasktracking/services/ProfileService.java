@@ -77,6 +77,13 @@ public interface ProfileService {
     boolean existsByUuidAndJwt(UUID uuid, Jwt jwt);
 
     /**
+     * Checks if the {@link Profile} exists
+     *
+     * @param profile {@link Profile} of the Profile
+     */
+    void existsByProfile(Profile profile);
+
+    /**
      * Builds a Model from a {@link Profile}-Entity
      *
      * @param profile {@link Profile} entity that the model is being build from

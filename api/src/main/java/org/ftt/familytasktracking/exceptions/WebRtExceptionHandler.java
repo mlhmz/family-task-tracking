@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.exceptions;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,4 +24,12 @@ public class WebRtExceptionHandler {
     public ResponseEntity<?> handleWebRtExec(WebRtException ex) {
         return new ResponseEntity<>(ex.getErrorDetails(), HttpStatusCode.valueOf(ex.getErrorDetails().httpStatus()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatusCode.valueOf(errorDetails.httpStatus()));
+    }
+
 }

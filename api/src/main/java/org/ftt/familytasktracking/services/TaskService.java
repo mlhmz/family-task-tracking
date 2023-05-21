@@ -78,4 +78,15 @@ public interface TaskService {
      * @return Built {@link TaskModel} entity containing the dto payload
      */
     TaskModel buildModelFromTaskRequestDto(TaskRequestDto dto);
+
+    /**
+     * Builds a Model from a TaskRequestDto and injects the services TaskMapper
+     *
+     * @param updateTaskModel {@link TaskModel} with new assignee
+     * @param targetTaskUuid {@link UUID} of the Task to update
+     * @param jwt {@link Jwt} of the Household
+     * @return Built {@link TaskResponseDto} entity containing the dto payload
+     */
+    TaskResponseDto setAssigneeForTask(TaskModel updateTaskModel, UUID targetTaskUuid, Jwt jwt);
+
 }
