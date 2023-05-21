@@ -55,6 +55,7 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
   const { register, handleSubmit } = useZodForm({ schema });
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
+    onSuccess: () => queryClient.invalidateQueries(["profiles"]),
   });
   const { mutate: mutateSearch, isLoading: isSearchLoading } = useMutation({
     mutationFn: getProfiles,
@@ -93,7 +94,6 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
 
   const deleteEverySelectedProfile = () => {
     selectedProfiles.forEach((profile) => mutateDelete(profile.uuid ?? ""));
-    queryClient.invalidateQueries(["profiles"]);
   };
 
   return (
