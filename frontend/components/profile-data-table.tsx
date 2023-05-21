@@ -9,19 +9,20 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 
+import { useZodForm } from "@/hooks/use-zod-form";
+
 import { Icons } from "./icons";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { useZodForm } from "@/hooks/use-zod-form";
 
 async function getProfiles({ query }: { query: string }) {
+  const request = new URLSearchParams({
+    query: query,
+  });
   const response = await fetch(
-    "/api/v1/profiles?" +
-      new URLSearchParams({
-        query: query,
-      }),
+    "/api/v1/profiles?" + request.toString(),
   );
   if (!response.ok) {
     const error = await response.json();
