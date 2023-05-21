@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
 import { Icons } from "@/components/icons";
+import { isProfile } from "@/lib/guards";
 
 async function editProfile(request: ProfileRequest, uuid?: string) {
   const response = await fetch(`/api/v1/admin/profiles/${uuid}`, {
@@ -26,7 +27,9 @@ async function editProfile(request: ProfileRequest, uuid?: string) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  return response;
+  const profile = await response.json();
+  if (!isProfile(profile)) throw new Error("Problem fetching data");
+  return profile;
 }
 
 const schema = z.object({

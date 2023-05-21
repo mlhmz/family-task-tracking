@@ -11,6 +11,7 @@ import { Icons } from "./icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Dispatch } from "react";
+import { isProfile } from "@/lib/guards";
 
 async function editProfile(request: ProfileRequest) {
   const response = await fetch(`/api/v1/profiles/profile`, {
@@ -22,7 +23,9 @@ async function editProfile(request: ProfileRequest) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  return response;
+  const profile = await response.json();
+  if (!isProfile(profile)) throw new Error("Problem fetching data");
+  return profile;
 }
 
 const schema = z.object({
