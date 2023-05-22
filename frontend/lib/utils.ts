@@ -31,3 +31,8 @@ export function getNoContentResponse(originResponse: Response) {
   setResponseHeaders(response.headers, originResponse.headers);
   return response;
 }
+
+export function formatISODateToReadable(isoDate: string) {
+  const splittedDate = isoDate.split("T"); 
+  return splittedDate[0].replaceAll("-", ".") + " " + splittedDate[1].split(".")[0];
+}

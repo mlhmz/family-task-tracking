@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 import Link from "next/link";
@@ -9,20 +11,23 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 
+import { isProfile } from "@/lib/guards";
+import { formatISODateToReadable } from "@/lib/utils";
+
 import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Icons } from "./icons";
+import ProfileFilterMenu from "./profile-filter-menu";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { isProfile } from "@/lib/guards";
 
-async function getProfiles({ query }: { query: string }) {
+async function getProfiles({ query }: { query: string[] }) {
   const request = new URLSearchParams({
-    query: query,
+    query: query.join(","),
   });
-  const response = await fetch(`/api/v1/profiles${query !== "" ? "?" + request : ""}`);
+  const response = await fetch(`/api/v1/profiles${"?" + request}`);
   if (!response.ok) {
     const error = await response.json();
     if (error.message) throw new Error(error.message);
@@ -42,12 +47,17 @@ async function deleteProfile(uuid: string) {
   return response;
 }
 
+interface SearchQuery {
+  name?: string;
+}
+
 const schema = z.object({
-  query: z.string().optional(),
+  name: z.string().optional(),
 });
 
 export default function ProfileDataTable() {
-  const [searchQuery, setSearchQuery] = useState({ query: "" });
+  const [searchQuery, setSearchQuery] = useState({ query: [""] });
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
@@ -84,7 +94,10 @@ export default function ProfileDataTable() {
     }
   };
 
-  const onSearchSubmit = (formData) => setSearchQuery({ ...formData });
+  const onSearchSubmit = (formData: SearchQuery) => {
+    setSearchQuery({ query: [] });
+    formData.name && setSearchQuery({ query: [`name:${formData.name}`] });
+  };
 
   const deleteEverySelectedProfile = () => {
     selectedProfiles.forEach((profile) => mutateDelete(profile.uuid ?? ""));
@@ -92,32 +105,40 @@ export default function ProfileDataTable() {
 
   return (
     <div>
-      <form className="my-2 flex gap-2" onSubmit={handleSubmit(onSearchSubmit)}>
-        <Input placeholder="Search..." {...register("query")} />
-        <Button variant="ghost">
-          {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
-        </Button>
-        <Link href="/profiles/create">
+      <form onSubmit={handleSubmit(onSearchSubmit)}>
+        <div className="my-2 flex gap-2">
+          <Input placeholder="Search by Name..." {...register("name")} />
           <Button variant="ghost">
-            <Icons.userplus />
+            {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
           </Button>
-        </Link>
-        <Button variant="ghost" onClick={deleteEverySelectedProfile}>
-          {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
-        </Button>
+          <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+            <Icons.filter />
+          </Button>
+          <Link href="/profiles/create">
+            <Button variant="ghost">
+              <Icons.userplus />
+            </Button>
+          </Link>
+          <Button variant="ghost" onClick={deleteEverySelectedProfile}>
+            {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
+          </Button>
+        </div>
       </form>
+      {showFilterMenu && <ProfileFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>
+              <TableHead className="w-[60px]">
                 <div className="grid place-items-center">
                   <Checkbox checked={isEveryProfileChecked()} onCheckedChange={onEveryProfileCheckedChange} />
                 </div>
               </TableHead>
-              <TableHead>&nbsp;</TableHead>
+              <TableHead className="w-[60px]">&nbsp;</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Points</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Updated At</TableHead>
               <TableHead className="text-center">Privileged</TableHead>
             </TableRow>
           </TableHeader>
@@ -131,7 +152,7 @@ export default function ProfileDataTable() {
                 </TableCell>
                 <TableCell>
                   <Link
-                    className="m-auto cursor-pointer rounded-full bg-secondary hover:brightness-90"
+                    className="inline cursor-pointer rounded-full bg-secondary hover:brightness-90"
                     href={`/profiles/profile/${profile.uuid}`}>
                     <Avatar
                       size={32}
@@ -145,6 +166,8 @@ export default function ProfileDataTable() {
                   <p>{profile.name}</p>
                 </TableCell>
                 <TableCell>{profile.points}</TableCell>
+                <TableCell>{profile.createdAt && formatISODateToReadable(profile.createdAt)}</TableCell>
+                <TableCell>{profile.updatedAt && formatISODateToReadable(profile.updatedAt)}</TableCell>
                 <TableCell>
                   <p>
                     {profile.permissionType === PermissionType.Admin ? (
