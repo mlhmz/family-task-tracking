@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Link from "next/link";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { z } from "zod";
 
@@ -19,11 +19,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 
 async function getProfiles({ query }: { query: string }) {
   const request = new URLSearchParams({
-    query: query.split(":")[1] ? query : `name:${query}`,
+    query: query,
   });
-  const response = await fetch(
-    "/api/v1/profiles?" + request.toString(),
-  );
+  const response = await fetch(`/api/v1/profiles${query !== "" ? "?" + request : ""}`);
   if (!response.ok) {
     const error = await response.json();
     if (error.message) throw new Error(error.message);
@@ -47,31 +45,26 @@ const schema = z.object({
   query: z.string().optional(),
 });
 
-export default function ProfileDataTable({ data }: { data: Profile[] }) {
-  // Will be set initially to the table data, can be overwritten by e.g. search results
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+export default function ProfileDataTable() {
+  const [searchQuery, setSearchQuery] = useState({ query: "" });
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
-  const queryClient = useQueryClient();
   const { register, handleSubmit } = useZodForm({ schema });
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
     onSuccess: () => queryClient.invalidateQueries(["profiles"]),
   });
-  const { mutate: mutateSearch, isLoading: isSearchLoading } = useMutation({
-    mutationFn: getProfiles,
-    onSuccess: (data) => setProfiles(data),
+  const { data, isLoading: isSearchLoading } = useQuery({
+    queryKey: ["profiles", searchQuery],
+    queryFn: () => getProfiles({ query: searchQuery.query }),
+    initialData: [],
   });
-
-  // Hook to initially set the table data
-  useEffect(() => {
-    setProfiles(data);
-  }, [data]);
+  const queryClient = useQueryClient();
 
   const isChecked = (profile: Profile) =>
     selectedProfiles.some((selectedProfile) => selectedProfile.uuid === profile.uuid);
 
   const isEveryProfileChecked = () => {
-    return selectedProfiles == profiles;
+    return selectedProfiles == data;
   };
 
   const onCheckedChange = (profile: Profile) => {
@@ -86,11 +79,11 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
     if (isEveryProfileChecked()) {
       setSelectedProfiles([]);
     } else {
-      setSelectedProfiles(profiles);
+      setSelectedProfiles(data);
     }
   };
 
-  const onSearchSubmit = (formData) => mutateSearch({ ...formData });
+  const onSearchSubmit = (formData) => setSearchQuery({ ...formData });
 
   const deleteEverySelectedProfile = () => {
     selectedProfiles.forEach((profile) => mutateDelete(profile.uuid ?? ""));
@@ -128,7 +121,7 @@ export default function ProfileDataTable({ data }: { data: Profile[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {profiles?.map((profile) => (
+            {data.map((profile) => (
               <TableRow key={profile.uuid}>
                 <TableCell>
                   <div className="grid place-items-center">
