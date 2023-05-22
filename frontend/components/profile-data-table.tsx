@@ -16,6 +16,7 @@ import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { isProfile } from "@/lib/guards";
 
 async function getProfiles({ query }: { query: string }) {
   const request = new URLSearchParams({
@@ -27,8 +28,8 @@ async function getProfiles({ query }: { query: string }) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  // TODO: Type Guard
-  return (await response.json()) as Profile[];
+  const profiles = (await response.json()) as Profile[];
+  return profiles.filter(isProfile);
 }
 
 async function deleteProfile(uuid: string) {
