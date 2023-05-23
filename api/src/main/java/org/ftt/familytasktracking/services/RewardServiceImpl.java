@@ -11,8 +11,8 @@ import org.ftt.familytasktracking.entities.Reward;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.RewardMapper;
 import org.ftt.familytasktracking.models.RewardModel;
-import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.ftt.familytasktracking.predicate.PredicatesBuilder;
+import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.ftt.familytasktracking.repositories.RewardRepository;
 import org.ftt.familytasktracking.search.SearchQuery;
 import org.ftt.familytasktracking.utils.SearchQueryUtils;
@@ -85,10 +85,10 @@ public class RewardServiceImpl implements RewardService {
         Reward updateReward = updateRewardModel.toEntity();
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
         Profile profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
-        if(!safe) {
+        if (!safe) {
             // Privileged User am Werk, sprich updateReward ohne weitere Logik
             this.rewardMapper.updateReward(updateReward, targetReward);
-        }else if(updateReward.getRedeemed()) {
+        } else if (Boolean.TRUE.equals(updateReward.getRedeemed())) {
             // Unprivileged User am Werk, führe Redeem Reward aus
             this.redeemReward(targetReward, profile);
         }
@@ -128,15 +128,15 @@ public class RewardServiceImpl implements RewardService {
     }
 
 
-    private void redeemReward(Reward targetReward, Profile profile){
-        if(targetReward.getRedeemed()){
+    private void redeemReward(Reward targetReward, Profile profile) {
+        if (Boolean.TRUE.equals(targetReward.getRedeemed())) {
             throw new WebRtException(HttpStatus.FORBIDDEN, "The reward was already redeemed");
         }
-        if(profile.getPoints() >= targetReward.getCost()) {
+        if (profile.getPoints() >= targetReward.getCost()) {
             profile.setPoints(profile.getPoints() - targetReward.getCost());
             this.profileRepository.save(profile);
             targetReward.setRedeemed(true);
-        }else {
+        } else {
             throw new WebRtException(HttpStatus.FORBIDDEN,
                     String.format("The profile '%s' has not enough points for '%s'.", profile.getName(), targetReward.getName()));
         }
