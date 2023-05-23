@@ -69,7 +69,7 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
   const { register, handleSubmit, setValue } = useZodForm({
     schema,
     defaultValues: {
-      pointsQuery: { activated: false },
+      pointsQuery: { activated: false, operator: ":" },
       createdAtQuery: { activated: false },
       updatedAtQuery: { activated: false },
       privilegedQuery: { activated: false, toggled: false },
@@ -122,17 +122,16 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
             </div>
             <div className="grid grid-cols-2 gap-2">
               {/* Auch das geht wohl nicht direkt mit React Hook Form */}
-              <Select onValueChange={(value) => {setValue("pointsQuery.operator", value)}}>
+              <Select defaultValue=":" onValueChange={(value) => {setValue("pointsQuery.operator", value)}}>
                 <SelectTrigger>
                   <SelectValue
-                    defaultValue={":"}
                     placeholder="Operator"
                   />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value=":">equals</SelectItem>
                   <SelectItem value=">">greater than</SelectItem>
                   <SelectItem value="<">lower than</SelectItem>
-                  <SelectItem value=":">equals</SelectItem>
                 </SelectContent>
               </Select>
               <Input placeholder="Value" {...register("pointsQuery.value")} />
