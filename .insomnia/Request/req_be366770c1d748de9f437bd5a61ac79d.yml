@@ -1,7 +1,7 @@
 _id: req_be366770c1d748de9f437bd5a61ac79d
 type: Request
 parentId: fld_802ecda018e244579a06b2433dbb8916
-modified: 1680446582094
+modified: 1683833026508
 created: 1680123404318
 url: "{{ _.api }}/{{ _.api_base_path }}/admin/profiles"
 name: Create Profile
@@ -11,7 +11,7 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"name": "Max",
+    	"name": "Malek",
     	"points": 0,
     	"permissionType": "ADMIN"
     }
@@ -24,6 +24,7 @@ headers:
     name: "{{ _.session_id_header }}"
     value: "{{ _.session_id }}"
     description: ""
+    disabled: true
 authentication:
   type: oauth2
   grantType: password

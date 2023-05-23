@@ -1,10 +1,10 @@
-_id: req_4e3c1108ca32454a8002295f896289ca
+_id: req_2f99af15928f444582e49ecc917698df
 type: Request
-parentId: fld_9a298bb815f94cf19bd561a852458599
-modified: 1683749442792
-created: 1679769248356
-url: "{{ _.api }}/{{ _.api_base_path }}/household"
-name: Get Household
+parentId: fld_b947cfb5fd594ea5a19d86f54eec2a1c
+modified: 1683831537537
+created: 1683831532007
+url: "{{ _.api }}/{{ _.api_base_path }}/rewards"
+name: Get Rewards
 description: ""
 method: GET
 body: {}
@@ -19,7 +19,7 @@ authentication:
   accessTokenUrl: "{{ _.oauth_token_url }}"
   clientId: "{{ _.oauth_client_id }}"
   scope: "{{ _.oauth_scopes }}"
-metaSortKey: -1679769248356
+metaSortKey: -1679769223295.125
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
