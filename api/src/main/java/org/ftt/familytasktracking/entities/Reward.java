@@ -40,6 +40,11 @@ public class Reward {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private LocalDateTime redeemedAt;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Profile redeemedBy;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Household household;
 
