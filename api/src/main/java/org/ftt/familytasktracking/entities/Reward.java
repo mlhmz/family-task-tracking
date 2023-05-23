@@ -2,8 +2,11 @@ package org.ftt.familytasktracking.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -30,6 +33,12 @@ public class Reward {
     private String description;
 
     private Boolean redeemed;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Household household;

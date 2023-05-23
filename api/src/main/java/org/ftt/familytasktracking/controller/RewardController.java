@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.controller;
 
+import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,10 @@ import org.ftt.familytasktracking.services.RewardService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +37,7 @@ public class RewardController {
         this.rewardService = rewardService;
     }
 
-    @Operation(summary = "Gets all Rewards by the JWT")
+    @Operation(summary = "Gets all Rewards by the JWT and an optional Search Query")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found rewards",
                     content = {@Content(mediaType = "application/json",
@@ -50,9 +55,14 @@ public class RewardController {
             )}
     )
     @GetMapping
-    public List<RewardResponseDto> getAllRewardsByJwt(@AuthenticationPrincipal Jwt jwt) {
+    public List<RewardResponseDto> getAllRewardsByJwt(@RequestParam(value = "query", required = false) String query,
+                                                      @AuthenticationPrincipal Jwt jwt) {
+        if (StringUtils.isEmpty(query)) {
+            return mapModelCollectionToDtoCollection(this.rewardService.getAllRewardsByJwt(jwt));
+        }
+
         return mapModelCollectionToDtoCollection(
-                this.rewardService.getAllRewardsByJwt(jwt)
+                this.rewardService.getAllRewardsByJwtAndSearchQuery(jwt, query)
         );
     }
 

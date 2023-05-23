@@ -1,13 +1,19 @@
 package org.ftt.familytasktracking.services;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.entities.Household;
 import org.ftt.familytasktracking.entities.Profile;
+import org.ftt.familytasktracking.entities.QProfile;
 import org.ftt.familytasktracking.enums.PermissionType;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.ProfileMapper;
 import org.ftt.familytasktracking.models.ProfileModel;
+import org.ftt.familytasktracking.predicate.PredicatesBuilder;
 import org.ftt.familytasktracking.repositories.ProfileRepository;
+import org.ftt.familytasktracking.search.SearchQuery;
+import org.ftt.familytasktracking.utils.SearchQueryUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
 /**
  * Service for all Profile related Processes
@@ -40,6 +47,28 @@ public class ProfileServiceImpl implements ProfileService {
         return this.profileRepository
                 .findAllByKeycloakUserId(keycloakUserId)
                 .stream()
+                .map(this::buildModelFromProfileEntity)
+                .toList();
+    }
+
+    @Override
+    public List<ProfileModel> getAllProfilesByJwtAndSearchQuery(@NonNull Jwt jwt, @NonNull String query) {
+        Household household = this.householdService.getHouseholdByJwt(jwt);
+        PredicatesBuilder<Profile> predicatesBuilder = new PredicatesBuilder<>(Profile.class);
+
+        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
+
+        searchQueries.forEach(predicatesBuilder::with);
+
+        BooleanExpression exp = predicatesBuilder.build();
+        QProfile profile = QProfile.profile;
+        Iterable<Profile> profiles;
+        try {
+            profiles = this.profileRepository.findAll(profile.household.eq(household).and(exp));
+        } catch (Exception exception) {
+            throw new WebRtException(HttpStatus.BAD_REQUEST, "Query Error: " + exception.getMessage());
+        }
+        return StreamSupport.stream(profiles.spliterator(), false)
                 .map(this::buildModelFromProfileEntity)
                 .toList();
     }
@@ -92,6 +121,13 @@ public class ProfileServiceImpl implements ProfileService {
     public boolean existsByUuidAndJwt(UUID uuid, Jwt jwt) {
         UUID keycloakUserId = this.keycloakService.getKeycloakUserId(jwt);
         return this.profileRepository.existsByKeycloakUserIdAndUuid(keycloakUserId, uuid);
+    }
+
+    @Override
+    public void existsByProfile(Profile profile) {
+        if (!this.profileRepository.existsById(profile.getUuid())) {
+            this.throwProfileNotFoundWebRtException(profile.getUuid());
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ftt.familytasktracking.services;
 
+import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.ProfileRequestDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.models.ProfileModel;
@@ -39,6 +40,8 @@ public interface ProfileService {
      */
     List<ProfileModel> getAllProfilesByJwt(Jwt jwt);
 
+    List<ProfileModel> getAllProfilesByJwtAndSearchQuery(@NonNull Jwt jwt, @NonNull String query);
+
     /**
      * Gets a profile of a household by the Profile UUID and the {@link Jwt}
      *
@@ -72,6 +75,13 @@ public interface ProfileService {
      * @return boolean if the Profile exists
      */
     boolean existsByUuidAndJwt(UUID uuid, Jwt jwt);
+
+    /**
+     * Checks if the {@link Profile} exists
+     *
+     * @param profile {@link Profile} of the Profile
+     */
+    void existsByProfile(Profile profile);
 
     /**
      * Builds a Model from a {@link Profile}-Entity

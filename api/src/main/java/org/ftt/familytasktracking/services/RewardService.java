@@ -20,6 +20,14 @@ public interface RewardService {
     RewardResponseDto createReward(RewardRequestDto dto, Jwt jwt);
 
     /**
+     * Gets all Rewards of a household by its jwt and a search query
+     *
+     * @param jwt {@link Jwt} of the household
+     * @return {@link List} of {@link RewardModel}
+     */
+    List<RewardModel> getAllRewardsByJwtAndSearchQuery(@NonNull Jwt jwt, @NonNull String query);
+
+    /**
      * Gets all Rewards of a household by its jwt
      *
      * @param jwt {@link Jwt} of the household
