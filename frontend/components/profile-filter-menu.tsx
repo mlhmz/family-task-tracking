@@ -56,23 +56,12 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
   const onSubmit = ({ pointsQuery, createdAtQuery, updatedAtQuery, privilegedQuery }: QueryResults) => {
     const queries: string[] = [];
 
-    if (pointsQuery?.activated) {
-      queries.push(`points${pointsQuery.operator}${pointsQuery.value}`);
-    }
-
-    if (createdAtQuery?.activated) {
-      queries.push(`createdAt>${createdAtQuery.from},createdAt<${createdAtQuery.to}`);
-    }
-
-    if (updatedAtQuery?.activated) {
-      queries.push(`updatedAt>${updatedAtQuery.from},updatedAt<${updatedAtQuery.to}`);
-    }
-
-    if (privilegedQuery?.activated) {
-      queries.push(`permissionType:${privilegedQuery.toggled ? "ADMIN" : "MEMBER"}`);
-    }
-
-    queries.length !== 0 ? sendQuery(queries.join(",")) : "";
+    pointsQuery?.activated && queries.push(`points${pointsQuery.operator}${pointsQuery.value}`);
+    createdAtQuery?.activated && queries.push(`createdAt>${createdAtQuery.from},createdAt<${createdAtQuery.to}`);
+    updatedAtQuery?.activated && queries.push(`updatedAt>${updatedAtQuery.from},updatedAt<${updatedAtQuery.to}`);
+    privilegedQuery?.activated && queries.push(`permissionType:${privilegedQuery.toggled ? "ADMIN" : "MEMBER"}`);
+    
+    queries.length !== 0 ? sendQuery(queries.join(",")) : sendQuery("");
   };
 
   return (
