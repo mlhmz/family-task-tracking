@@ -3,9 +3,11 @@ package org.ftt.familytasktracking.tasks.scheduler;
 import io.micrometer.common.util.StringUtils;
 import org.ftt.familytasktracking.entities.Task;
 import org.springframework.scheduling.support.CronExpression;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Component
 public class CronTaskScheduler implements TaskScheduler {
     @Override
     public LocalDateTime getNextExecutionFromLastExecutionDate(Task task) {
@@ -19,7 +21,7 @@ public class CronTaskScheduler implements TaskScheduler {
 
     private LocalDateTime getNextExecutionFromDate(Task task, LocalDateTime dateTime) {
         String expression = task.getCronExpression();
-        if (isTaskScheduledAndExpValid(expression)) {
+        if (Boolean.TRUE.equals(task.getScheduled()) && isTaskScheduledAndExpValid(expression)) {
             return CronExpression.parse(expression).next(dateTime);
         } else {
             return null;
