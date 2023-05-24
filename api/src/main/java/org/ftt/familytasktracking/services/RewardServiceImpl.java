@@ -5,12 +5,14 @@ import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.RewardRequestDto;
 import org.ftt.familytasktracking.dtos.RewardResponseDto;
 import org.ftt.familytasktracking.entities.Household;
+import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.QReward;
 import org.ftt.familytasktracking.entities.Reward;
 import org.ftt.familytasktracking.exceptions.WebRtException;
 import org.ftt.familytasktracking.mappers.RewardMapper;
 import org.ftt.familytasktracking.models.RewardModel;
 import org.ftt.familytasktracking.predicate.PredicatesBuilder;
+import org.ftt.familytasktracking.repositories.ProfileRepository;
 import org.ftt.familytasktracking.repositories.RewardRepository;
 import org.ftt.familytasktracking.search.SearchQuery;
 import org.ftt.familytasktracking.utils.SearchQueryUtils;
@@ -18,21 +20,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @Service
 public class RewardServiceImpl implements RewardService {
-
     private final RewardMapper rewardMapper;
     private final RewardRepository rewardRepository;
     private final HouseholdService householdService;
+    private final ProfileAuthService profileAuthService;
+    private final ProfileRepository profileRepository;
 
-    public RewardServiceImpl(RewardMapper rewardMapper, RewardRepository rewardRepository, HouseholdService householdService) {
+    public RewardServiceImpl(RewardMapper rewardMapper, RewardRepository rewardRepository,
+                             HouseholdService householdService, ProfileAuthService profileAuthService,
+                             ProfileRepository profileRepository) {
         this.rewardMapper = rewardMapper;
         this.rewardRepository = rewardRepository;
         this.householdService = householdService;
+        this.profileAuthService = profileAuthService;
+        this.profileRepository = profileRepository;
     }
 
     @Override
@@ -47,7 +55,7 @@ public class RewardServiceImpl implements RewardService {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         PredicatesBuilder<Reward> predicatesBuilder = new PredicatesBuilder<>(Reward.class);
 
-        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
+        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query, Reward.class);
 
         searchQueries.forEach(predicatesBuilder::with);
 
@@ -73,10 +81,18 @@ public class RewardServiceImpl implements RewardService {
     }
 
     @Override
-    public RewardModel updateRewardByUuidAndJwt(@NonNull RewardModel updateRewardModel, @NonNull UUID uuid, @NonNull Jwt jwt) {
+    public RewardModel updateRewardByUuidAndJwt(@NonNull RewardModel updateRewardModel, @NonNull UUID uuid,
+                                                @NonNull Jwt jwt, UUID sessionId, boolean safe) {
         Reward updateReward = updateRewardModel.toEntity();
         Reward targetReward = this.getRewardByUuidAndJwt(uuid, jwt).toEntity();
-        this.rewardMapper.updateReward(updateReward, targetReward);
+        Profile profile = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
+        if (!safe) {
+            // Privileged User am Werk, sprich updateReward ohne weitere Logik
+            this.rewardMapper.updateReward(updateReward, targetReward);
+        } else if (Boolean.TRUE.equals(updateReward.getRedeemed())) {
+            // Unprivileged User am Werk, führe Redeem Reward aus
+            this.redeemReward(targetReward, profile);
+        }
         return buildModelFromRewardEntity(
                 this.rewardRepository.save(targetReward)
         );
@@ -109,6 +125,24 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     public RewardModel buildModelFromRewardRequestDto(RewardRequestDto dto) {
-        return null;
+        return new RewardModel(dto, rewardMapper);
     }
+
+
+    private void redeemReward(Reward targetReward, Profile profile) {
+        if (Boolean.TRUE.equals(targetReward.getRedeemed())) {
+            throw new WebRtException(HttpStatus.FORBIDDEN, "The reward was already redeemed");
+        }
+        if (profile.getPoints() >= targetReward.getCost()) {
+            profile.setPoints(profile.getPoints() - targetReward.getCost());
+            this.profileRepository.save(profile);
+            targetReward.setRedeemed(true);
+            targetReward.setRedeemedBy(profile);
+            targetReward.setRedeemedAt(LocalDateTime.now());
+        } else {
+            throw new WebRtException(HttpStatus.FORBIDDEN,
+                    String.format("The profile '%s' has not enough points for '%s'.", profile.getName(), targetReward.getName()));
+        }
+    }
+
 }

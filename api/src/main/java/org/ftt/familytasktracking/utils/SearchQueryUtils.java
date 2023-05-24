@@ -1,6 +1,11 @@
 package org.ftt.familytasktracking.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ftt.familytasktracking.entities.Profile;
+import org.ftt.familytasktracking.entities.Task;
+import org.ftt.familytasktracking.enums.IntervalType;
+import org.ftt.familytasktracking.enums.PermissionType;
+import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.search.SearchQuery;
 
 import java.time.LocalDateTime;
@@ -26,13 +31,39 @@ public class SearchQueryUtils {
      * @param query Query to parse
      * @return {@link List} of {@link SearchQuery}
      */
-    public static List<SearchQuery> parseSearchQueries(String query) {
+    public static List<SearchQuery> parseSearchQueries(String query, Class<?> clazz) {
         Matcher matcher = QUERY_PATTERN.matcher(query + QUERY_SEPARATOR_CHAR);
         List<SearchQuery> searchQueries = new ArrayList<>();
         while (matcher.find()) {
-            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)), parseValueAndGetType(matcher.group(3))));
+            addSearchQueryToList(matcher, searchQueries, clazz);
         }
         return searchQueries;
+    }
+
+    /**
+     * Adds query to query list with the right type, so we can identify it with the matching query dsl path.
+     * <p>
+     * Unfortunately, we have to identify every single enum, because query dsl tries to resolve enums as an actual
+     * string.
+     *
+     * @param matcher       Matcher of the {@link #QUERY_PATTERN}
+     * @param searchQueries List of the Search Queries
+     * @param clazz         Class instance that the potential enum field belongs to
+     */
+    private static void addSearchQueryToList(Matcher matcher, List<SearchQuery> searchQueries, Class<?> clazz) {
+        if (clazz == Profile.class && "permissionType".equals(matcher.group(1))) {
+            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)),
+                    PermissionType.valueOf(matcher.group(3))));
+        } else if (clazz == Task.class && "taskState".equals(matcher.group(1))) {
+            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)),
+                    TaskState.valueOf(matcher.group(3))));
+        } else if (clazz == Task.class && "intervalType".equals(matcher.group(1))) {
+            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)),
+                    IntervalType.valueOf(matcher.group(3))));
+        } else {
+            searchQueries.add(new SearchQuery(matcher.group(1), getFirstCharacter(matcher.group(2)),
+                    parseValueAndGetType(matcher.group(3))));
+        }
     }
 
     /**

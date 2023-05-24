@@ -32,13 +32,28 @@ public class Reward {
 
     private String description;
 
+    private Boolean redeemed;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private LocalDateTime redeemedAt;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Profile redeemedBy;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Household household;
+
+    @PrePersist
+    @PreUpdate
+    private void prePersist() {
+        if (redeemed == null) {
+            redeemed = false;
+        }
+    }
 
 }

@@ -3,10 +3,7 @@ package org.ftt.familytasktracking.mappers;
 import org.ftt.familytasktracking.dtos.RewardRequestDto;
 import org.ftt.familytasktracking.dtos.RewardResponseDto;
 import org.ftt.familytasktracking.entities.Reward;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 /**
  * Mapper for the {@link Reward} and {@link RewardResponseDto} Object
@@ -18,9 +15,12 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface RewardMapper {
 
+    @Mapping(source = "redeemedBy.uuid", target = "redeemedBy")
     RewardResponseDto mapRewardToRewardDto(Reward reward);
 
     Reward mapRewardDtoToReward(RewardRequestDto rewardRequestDto);
 
+    @Mapping(target = "household", ignore = true)
     void updateReward(Reward updateReward, @MappingTarget Reward targetReward);
+
 }

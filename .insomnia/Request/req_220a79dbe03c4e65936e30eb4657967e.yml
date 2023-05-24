@@ -1,22 +1,31 @@
-_id: req_7ea7b798d4874ce2bbe40c68ba1bf9ea
+_id: req_220a79dbe03c4e65936e30eb4657967e
 type: Request
-parentId: fld_d546274f5c564b54ab917418079893ef
-modified: 1683832600822
-created: 1680197491668
-url: "{{ _.api }}/{{ _.api_base_path }}/profiles/auth"
-name: Authenticate
+parentId: fld_9662c51ec58b4137b02e5789bac3aca1
+modified: 1683836250666
+created: 1683835517294
+url: "{{ _.api }}/{{ _.api_base_path
+  }}/admin/rewards/3cf9ffcd-7d64-4b69-a328-c9e4d3a4a3d6"
+name: Update Reward
 description: ""
-method: POST
+method: PUT
 body:
   mimeType: application/json
   text: |-
     {
-    	"profileUuid": "{{ _.profile_uuid }}"
+    	"cost": 120,
+    	"name": "Toastt",
+    	"description": "Toasta",
+    	"redeemed": true
     }
 parameters: []
 headers:
   - name: Content-Type
     value: application/json
+    id: pair_01c43372afb9431ca155bfc03a13d853
+  - id: pair_e656fecc165940b3ba5deaf1175b2908
+    name: "{{ _.session_id_header }}"
+    value: "{{ _.session_id }}"
+    description: ""
 authentication:
   type: oauth2
   grantType: password
@@ -26,7 +35,8 @@ authentication:
   accessTokenUrl: "{{ _.oauth_token_url }}"
   clientId: "{{ _.oauth_client_id }}"
   scope: "{{ _.oauth_scopes }}"
-metaSortKey: -1680170635015.375
+  disabled: false
+metaSortKey: -1680324528121.75
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
