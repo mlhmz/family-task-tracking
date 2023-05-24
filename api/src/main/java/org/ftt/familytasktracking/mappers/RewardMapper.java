@@ -15,6 +15,7 @@ import org.mapstruct.*;
 )
 public interface RewardMapper {
 
+    @Mapping(source = "redeemedBy.uuid", target = "redeemedBy")
     RewardResponseDto mapRewardToRewardDto(Reward reward);
 
     Reward mapRewardDtoToReward(RewardRequestDto rewardRequestDto);

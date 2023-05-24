@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -136,6 +137,8 @@ public class RewardServiceImpl implements RewardService {
             profile.setPoints(profile.getPoints() - targetReward.getCost());
             this.profileRepository.save(profile);
             targetReward.setRedeemed(true);
+            targetReward.setRedeemedBy(profile);
+            targetReward.setRedeemedAt(LocalDateTime.now());
         } else {
             throw new WebRtException(HttpStatus.FORBIDDEN,
                     String.format("The profile '%s' has not enough points for '%s'.", profile.getName(), targetReward.getName()));

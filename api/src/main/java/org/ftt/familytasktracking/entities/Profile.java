@@ -49,6 +49,9 @@ public class Profile {
     @OneToMany(mappedBy = "assignee", targetEntity = Task.class, fetch = FetchType.LAZY)
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "redeemedBy", targetEntity = Reward.class, fetch = FetchType.LAZY)
+    private List<Reward> rewards;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Household household;
 }
