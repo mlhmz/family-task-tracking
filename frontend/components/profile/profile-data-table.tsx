@@ -16,12 +16,12 @@ import { formatISODateToReadable } from "@/lib/utils";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Icons } from "./icons";
+import { Icons } from "@/components/icons";
 import ProfileFilterMenu from "./profile-filter-menu";
-import { Button } from "./ui/button";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 async function getProfiles({ query }: { query: string }) {
   const request = new URLSearchParams({

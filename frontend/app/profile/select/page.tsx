@@ -6,7 +6,7 @@ import { useLogoutProfile } from "@/hooks/use-logout-profile";
 
 import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
 
-import ProfileSelector from "@/components/profile-selector";
+import ProfileSelector from "@/components/profile/profile-selector";
 
 import { ProfilesContext } from "@/app/profiles-context";
 

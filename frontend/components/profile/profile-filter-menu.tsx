@@ -4,11 +4,11 @@ import { z } from "zod";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Button } from "./ui/button";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Switch } from "./ui/switch";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),
@@ -39,7 +39,8 @@ type QueryResults = z.infer<typeof schema>;
 export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<string> }) {
   /**
    * According to this issue https://github.com/radix-ui/primitives/issues/1851
-   * radix ui primitive checkboxes don't have any event handlers.
+   * radix ui primitive checkboxes (and also selects) don't have any event handlers 
+   * for react-hook-form.
    *
    * Thats why this is unfortunately solved with setValue and defaultValues
    */
@@ -77,7 +78,6 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
               <h2>Points</h2>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              {/* Auch das geht wohl nicht direkt mit React Hook Form */}
               <Select
                 defaultValue=":"
                 onValueChange={(value) => {

@@ -11,9 +11,9 @@ import { isProfile } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Icons } from "./icons";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 async function editProfile(request: ProfileRequest) {
   const response = await fetch(`/api/v1/profiles/profile`, {

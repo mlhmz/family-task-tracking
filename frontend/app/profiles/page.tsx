@@ -1,4 +1,4 @@
-import ProfileDataTable from "@/components/profile-data-table";
+import ProfileDataTable from "@/components/profile/profile-data-table";
 
 export default function ProfilesPage() {
   return (

@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
-import ProfilePrivilegedEditForm from "@/components/admin/profile-privileged-edit-form";
-import ProfileInfo from "@/components/profile-info";
+import ProfilePrivilegedEditForm from "@/components/profile/admin/profile-privileged-edit-form";
+import ProfileInfo from "@/components/profile/profile-info";
 
 import { ProfileContext } from "@/app/profile-context";
 
