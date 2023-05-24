@@ -56,7 +56,7 @@ public class ProfileServiceImpl implements ProfileService {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         PredicatesBuilder<Profile> predicatesBuilder = new PredicatesBuilder<>(Profile.class);
 
-        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
+        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query, Profile.class);
 
         searchQueries.forEach(predicatesBuilder::with);
 
