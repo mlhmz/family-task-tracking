@@ -11,7 +11,7 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 
-import { isProfile } from "@/lib/guards";
+import { isProfile, isProfiles } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { useZodForm } from "@/hooks/use-zod-form";
@@ -33,8 +33,9 @@ async function getProfiles({ query }: { query: string }) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  const profiles = (await response.json()) as Profile[];
-  return profiles.filter(isProfile);
+  const profiles = await response.json();
+  if (!isProfiles(profiles)) throw new Error("Problem fetching data");
+  return profiles;
 }
 
 async function deleteProfile(uuid: string) {
@@ -47,13 +48,11 @@ async function deleteProfile(uuid: string) {
   return response;
 }
 
-interface SearchQuery {
-  name?: string;
-}
-
 const schema = z.object({
   name: z.string().optional(),
 });
+
+type SearchQueryFormResult = z.infer<typeof schema>;
 
 export default function ProfileDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: "" });
@@ -94,7 +93,7 @@ export default function ProfileDataTable() {
     }
   };
 
-  const onSearchSubmit = (formData: SearchQuery) => {
+  const onSearchSubmit = (formData: SearchQueryFormResult) => {
     setSelectedProfiles([]);
     setSearchQuery({ query: "" });
     formData.name && setSearchQuery({ query: `name:${formData.name}` });

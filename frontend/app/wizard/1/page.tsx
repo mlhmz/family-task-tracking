@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { HouseholdRequest } from "@/types/household";
 
-import { isHouseholdReponse } from "@/lib/guards";
+import { isHouseholdResponse } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
@@ -33,7 +33,7 @@ const postHousehold = async (householdRequest: HouseholdRequest) => {
     throw new Error("Problem fetching data");
   }
   const household = await response.json();
-  if (!isHouseholdReponse(household)) throw new Error("Problem fetching data");
+  if (!isHouseholdResponse(household)) throw new Error("Problem fetching data");
   return household;
 };
 

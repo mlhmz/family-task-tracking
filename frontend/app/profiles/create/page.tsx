@@ -1,5 +1,3 @@
-"use client";
-
 import ProfileCreateForm from "@/components/admin/profile-create-form";
 
 export default function CreateProfilePage() {
