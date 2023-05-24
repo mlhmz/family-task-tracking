@@ -1,6 +1,5 @@
 "use client";
 
-
 import ProfileDataTable from "@/components/profile-data-table";
 
 export default function ProfilesPage() {

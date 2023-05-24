@@ -1,6 +1,5 @@
 import { Dispatch } from "react";
 
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useZodForm } from "@/hooks/use-zod-form";
@@ -10,30 +9,6 @@ import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Switch } from "./ui/switch";
-
-interface NumberQuery {
-  activated: boolean;
-  operator: string;
-  value: string;
-}
-
-interface DateQuery {
-  activated: boolean;
-  from: string;
-  to: string;
-}
-
-interface BooleanQuery {
-  activated: boolean;
-  toggled: boolean;
-}
-
-interface QueryResults {
-  pointsQuery: NumberQuery;
-  createdAtQuery: DateQuery;
-  updatedAtQuery: DateQuery;
-  privilegedQuery: BooleanQuery;
-}
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),
@@ -59,6 +34,8 @@ const schema = z.object({
   privilegedQuery: booleanQuery.optional(),
 });
 
+type QueryResults = z.infer<typeof schema>;
+
 export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<string> }) {
   /**
    * According to this issue https://github.com/radix-ui/primitives/issues/1851
@@ -76,33 +53,26 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
     },
   });
 
-  const onSubmit = (formData: QueryResults) => {
-    console.log(formData);
-
+  const onSubmit = ({ pointsQuery, createdAtQuery, updatedAtQuery, privilegedQuery }: QueryResults) => {
     const queries: string[] = [];
 
-    if (formData.pointsQuery.activated) {
-      const pointsQuery = formData.pointsQuery;
+    if (pointsQuery?.activated) {
       queries.push(`points${pointsQuery.operator}${pointsQuery.value}`);
     }
 
-    if (formData.createdAtQuery.activated) {
-      const createdAtQuery = formData.createdAtQuery;
+    if (createdAtQuery?.activated) {
       queries.push(`createdAt>${createdAtQuery.from},createdAt<${createdAtQuery.to}`);
     }
 
-    if (formData.updatedAtQuery.activated) {
-      const updatedAtQuery = formData.updatedAtQuery;
+    if (updatedAtQuery?.activated) {
       queries.push(`updatedAt>${updatedAtQuery.from},updatedAt<${updatedAtQuery.to}`);
     }
 
-    if (formData.privilegedQuery.activated) {
-      const privilegedQuery = formData.privilegedQuery;
+    if (privilegedQuery?.activated) {
       queries.push(`permissionType:${privilegedQuery.toggled ? "ADMIN" : "MEMBER"}`);
     }
 
-    console.log(queries);
-    queries.length !== 0 && sendQuery(queries.join(","));
+    queries.length !== 0 ? sendQuery(queries.join(",")) : "";
   };
 
   return (
@@ -113,20 +83,19 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
           <div id="points" className="flex flex-col gap-2">
             <div className="flex gap-2">
               <div className="grid place-items-center">
-                <Checkbox
-                  onCheckedChange={(value: boolean) => setValue("pointsQuery.activated", value)}
-                  {...register("pointsQuery.activated")}
-                />
+                <Checkbox onCheckedChange={(value: boolean) => setValue("pointsQuery.activated", value)} />
               </div>
               <h2>Points</h2>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {/* Auch das geht wohl nicht direkt mit React Hook Form */}
-              <Select defaultValue=":" onValueChange={(value) => {setValue("pointsQuery.operator", value)}}>
+              <Select
+                defaultValue=":"
+                onValueChange={(value) => {
+                  setValue("pointsQuery.operator", value);
+                }}>
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder="Operator"
-                  />
+                  <SelectValue placeholder="Operator" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value=":">equals</SelectItem>
@@ -140,10 +109,7 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
           <div id="createdAt" className="flex flex-col gap-2">
             <div className="flex gap-2">
               <div className="grid place-items-center">
-                <Checkbox
-                  onCheckedChange={(value: boolean) => setValue("createdAtQuery.activated", value)}
-                  {...register("createdAtQuery.activated")}
-                />
+                <Checkbox onCheckedChange={(value: boolean) => setValue("createdAtQuery.activated", value)} />
               </div>
               <h2>Created At</h2>
             </div>
@@ -157,10 +123,7 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
           <div id="updatedAt" className="flex flex-col gap-2">
             <div className="flex gap-2">
               <div className="grid place-items-center">
-                <Checkbox
-                  onCheckedChange={(value: boolean) => setValue("updatedAtQuery.activated", value)}
-                  {...register("updatedAtQuery.activated")}
-                />
+                <Checkbox onCheckedChange={(value: boolean) => setValue("updatedAtQuery.activated", value)} />
               </div>
               <h2>Updated At</h2>
             </div>
@@ -176,28 +139,19 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
               <div className="grid place-items-center">
                 <Checkbox
                   onCheckedChange={(value: boolean) => setValue("privilegedQuery.activated", value)}
-                  {...register("privilegedQuery.activated")}
                 />
               </div>
               <h2>Privileged</h2>
             </div>
             <div className="flex gap-3">
               <p className="grid place-items-center text-sm font-bold">Unprivileged</p>
-              <Switch
-                onCheckedChange={(value: boolean) => setValue("privilegedQuery.toggled", value)}
-                {...register("privilegedQuery.toggled")}
-              />
+              <Switch onCheckedChange={(value: boolean) => setValue("privilegedQuery.toggled", value)} />
               <p className="grid place-items-center text-sm font-bold">Privileged</p>
             </div>
           </div>
           <Button type="submit">Apply filter</Button>
         </fieldset>
       </form>
-      {/* {Object.entries(formState.errors).map(([key, value]) => (
-        <p className="text-destructive" key={key}>
-          {value.message}
-        </p>
-      ))} */}
     </div>
   );
 }

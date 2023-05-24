@@ -60,22 +60,22 @@ export default function ProfileDataTable() {
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
+  const queryClient = useQueryClient();
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
-    onSuccess: () => queryClient.invalidateQueries(["profiles"]),
+    onSuccess: () => queryClient.invalidateQueries(["profiles", searchQuery]),
   });
   const { data, isLoading: isSearchLoading } = useQuery({
     queryKey: ["profiles", searchQuery],
     queryFn: () => getProfiles({ query: searchQuery.query }),
     initialData: [],
   });
-  const queryClient = useQueryClient();
 
   const isChecked = (profile: Profile) =>
     selectedProfiles.some((selectedProfile) => selectedProfile.uuid === profile.uuid);
 
   const isEveryProfileChecked = () => {
-    return selectedProfiles == data;
+    return selectedProfiles.length === data.length;
   };
 
   const onCheckedChange = (profile: Profile) => {
@@ -95,6 +95,7 @@ export default function ProfileDataTable() {
   };
 
   const onSearchSubmit = (formData: SearchQuery) => {
+    setSelectedProfiles([]);
     setSearchQuery({ query: "" });
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
@@ -124,7 +125,14 @@ export default function ProfileDataTable() {
           </Button>
         </div>
       </form>
-      {showFilterMenu && <ProfileFilterMenu sendQuery={(query) => setSearchQuery({ query: query })} />}
+      {showFilterMenu && (
+        <ProfileFilterMenu
+          sendQuery={(query) => {
+            setSelectedProfiles([]);
+            setSearchQuery({ query: query });
+          }}
+        />
+      )}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>

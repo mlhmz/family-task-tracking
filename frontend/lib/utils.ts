@@ -33,6 +33,6 @@ export function getNoContentResponse(originResponse: Response) {
 }
 
 export function formatISODateToReadable(isoDate: string) {
-  const splittedDate = isoDate.split("T"); 
-  return splittedDate[0].replaceAll("-", ".") + " " + splittedDate[1].split(".")[0];
+  const date = new Date(isoDate);
+  return date.toLocaleString("en-US");
 }

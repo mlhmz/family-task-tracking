@@ -1,19 +1,19 @@
 import {
   Accessibility,
+  Check,
+  Filter,
   Home,
   Laptop,
   Loader2,
   LucideProps,
   Moon,
+  Search,
   SunMedium,
+  Trash,
   Twitter,
+  UserPlus,
   X,
   type Icon as LucideIcon,
-  Check,
-  Trash,
-  UserPlus,
-  Search,
-  Filter,
 } from "lucide-react";
 
 export type Icon = LucideIcon;

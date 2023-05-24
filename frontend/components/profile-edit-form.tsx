@@ -1,17 +1,19 @@
 "use client";
 
+import { Dispatch } from "react";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { Profile, ProfileRequest } from "@/types/profile";
+
+import { isProfile } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Icons } from "./icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Dispatch } from "react";
-import { isProfile } from "@/lib/guards";
 
 async function editProfile(request: ProfileRequest) {
   const response = await fetch(`/api/v1/profiles/profile`, {

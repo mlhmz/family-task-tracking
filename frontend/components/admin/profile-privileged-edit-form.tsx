@@ -8,6 +8,8 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileRequest } from "@/types/profile";
 
+import { isProfile } from "@/lib/guards";
+
 import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
 import { Icons } from "@/components/icons";
-import { isProfile } from "@/lib/guards";
 
 async function editProfile(request: ProfileRequest, uuid?: string) {
   const response = await fetch(`/api/v1/admin/profiles/${uuid}`, {
@@ -56,7 +57,7 @@ export default function ProfilePrivilegedEditForm({
   const { mutate, error, isLoading } = useMutation({
     mutationFn: (data: ProfileRequest) => editProfile(data, initialData?.uuid),
     onSuccess: () => {
-      queryClient.invalidateQueries(["profile", { uuid: initialData?.uuid ?? "undefined"}]);
+      queryClient.invalidateQueries(["profile", { uuid: initialData?.uuid ?? "undefined" }]);
       queryClient.invalidateQueries(["profiles"]);
       closeDialog();
     },
