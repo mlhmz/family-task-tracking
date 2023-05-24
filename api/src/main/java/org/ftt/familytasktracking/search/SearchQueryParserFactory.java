@@ -1,5 +1,9 @@
 package org.ftt.familytasktracking.search;
 
+import org.ftt.familytasktracking.enums.IntervalType;
+import org.ftt.familytasktracking.enums.PermissionType;
+import org.ftt.familytasktracking.enums.TaskState;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
@@ -33,6 +37,9 @@ public class SearchQueryParserFactory {
         parsers.put(UUID.class, new UUIDSearchQueryParser<>());
         parsers.put(Integer.class, new IntegerSearchQueryParser<>());
         parsers.put(LocalDateTime.class, new DateTimeSearchQueryParser<>());
+        parsers.put(IntervalType.class, new IntervalTypeSearchQueryParser<>());
+        parsers.put(PermissionType.class, new PermissionTypeSearchQueryParser<>());
+        parsers.put(TaskState.class, new TaskStateSearchQueryParser<>());
         return parsers;
     }
 }

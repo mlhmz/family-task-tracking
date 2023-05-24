@@ -55,7 +55,7 @@ public class RewardServiceImpl implements RewardService {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         PredicatesBuilder<Reward> predicatesBuilder = new PredicatesBuilder<>(Reward.class);
 
-        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
+        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query, Reward.class);
 
         searchQueries.forEach(predicatesBuilder::with);
 

@@ -67,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         PredicatesBuilder<Task> predicatesBuilder = new PredicatesBuilder<>(Task.class);
 
-        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query);
+        List<SearchQuery> searchQueries = SearchQueryUtils.parseSearchQueries(query, Task.class);
 
         searchQueries.forEach(predicatesBuilder::with);
 
