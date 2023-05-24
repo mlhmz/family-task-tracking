@@ -52,7 +52,7 @@ const parseHouseholdResponse = (value: unknown): HouseholdResponse | null => {
   return null;
 };
 
-export const isHouseholdReponse = createTypeGuard<HouseholdResponse>(parseHouseholdResponse);
+export const isHouseholdResponse = createTypeGuard<HouseholdResponse>(parseHouseholdResponse);
 
 const parseProfile = (value: unknown): Profile | null => {
   if (
@@ -99,3 +99,13 @@ const parseProfileAuthResponse = (value: unknown): ProfileAuthResponse | null =>
 };
 
 export const isProfileAuthResponse = createTypeGuard<ProfileAuthResponse>(parseProfileAuthResponse);
+
+const parseProfiles = (value: unknown): Profile[] | null => {
+  if (Array.isArray(value)) {
+    const isProfiles = value.every((profile) => isProfile(profile));
+    if (isProfiles) return value;
+  }
+  return null;
+};
+
+export const isProfiles = createTypeGuard<Profile[]>(parseProfiles);

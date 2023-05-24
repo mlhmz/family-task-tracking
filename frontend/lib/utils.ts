@@ -31,3 +31,8 @@ export function getNoContentResponse(originResponse: Response) {
   setResponseHeaders(response.headers, originResponse.headers);
   return response;
 }
+
+export function formatISODateToReadable(isoDate: string) {
+  const date = new Date(isoDate);
+  return date.toLocaleString("en-US");
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
@@ -7,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-import { isHouseholdReponse } from "@/lib/guards";
+import { isHouseholdResponse } from "@/lib/guards";
 
 async function fetchHousehold() {
   const response = await fetch("/api/v1/household");
@@ -17,7 +15,7 @@ async function fetchHousehold() {
     }
   }
   const household = await response.json();
-  if (!isHouseholdReponse(household)) throw new Error("Problem fetching data");
+  if (!isHouseholdResponse(household)) throw new Error("Problem fetching data");
   return household;
 }
 

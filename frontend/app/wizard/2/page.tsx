@@ -78,7 +78,7 @@ export default function SecondWizardPage() {
     queryKey: ["profile-auth"],
     queryFn: () => authProfile(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["profiles"]);
+      queryClient.invalidateQueries(["profile"]);
       router.push("/wizard/3");
     },
     enabled: isMutateSuccess && !!data,
