@@ -23,9 +23,9 @@ import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
-async function getProfiles({ query }: { query: string[] }) {
+async function getProfiles({ query }: { query: string }) {
   const request = new URLSearchParams({
-    query: query.join(","),
+    query: query,
   });
   const response = await fetch(`/api/v1/profiles${"?" + request}`);
   if (!response.ok) {
@@ -56,7 +56,7 @@ const schema = z.object({
 });
 
 export default function ProfileDataTable() {
-  const [searchQuery, setSearchQuery] = useState({ query: [""] });
+  const [searchQuery, setSearchQuery] = useState({ query: "" });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
@@ -95,8 +95,8 @@ export default function ProfileDataTable() {
   };
 
   const onSearchSubmit = (formData: SearchQuery) => {
-    setSearchQuery({ query: [] });
-    formData.name && setSearchQuery({ query: [`name:${formData.name}`] });
+    setSearchQuery({ query: "" });
+    formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
   const deleteEverySelectedProfile = () => {
@@ -124,7 +124,7 @@ export default function ProfileDataTable() {
           </Button>
         </div>
       </form>
-      {showFilterMenu && <ProfileFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}
+      {showFilterMenu && <ProfileFilterMenu sendQuery={(query) => setSearchQuery({ query: query })} />}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>

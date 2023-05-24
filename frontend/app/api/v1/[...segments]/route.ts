@@ -15,7 +15,6 @@ const springHandler: ApiHandler = async (request, context) => {
     const token = jwtLiteral.split(":")[0];
     const query = !!request.url.split("?")[1] ? `?${request.url.split("?")[1]}` : "";
     const uri = context.params["segments"].join("/") + query;
-    console.log(uri);
     try {
       const serverResponse = await fetch(`${env.BACKEND_API_URL}/${uri}`, {
         headers: {
