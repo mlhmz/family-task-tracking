@@ -9,10 +9,6 @@ export const siteConfig = {
       href: "/dashboard",
     },
     {
-      title: "Profile",
-      href: "/profile",
-    },
-    {
       title: "Profiles",
       href: "/profiles",
     },
