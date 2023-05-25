@@ -4,7 +4,7 @@ import { createContext } from "react";
 
 import { HouseholdResponse } from "@/types/household";
 
-import { useHousehold } from "@/hooks/fetch/use-household";
+import { useHousehold } from "@/app/hooks/fetch/use-household";
 
 export interface HouseholdContextProps {
   children: React.ReactNode;

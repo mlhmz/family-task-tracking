@@ -9,8 +9,6 @@ import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
 
-import { useZodForm } from "@/hooks/use-zod-form";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +16,7 @@ import { WizardSkeleton } from "@/components/ui/skeleton/wizard-skeleton";
 
 import { Icons } from "@/components/icons";
 
+import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 
 async function changePassword(request: ProfileAuthRequest) {

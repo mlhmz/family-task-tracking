@@ -1,14 +1,16 @@
+"use client";
+
 import { Dispatch } from "react";
 
 import { z } from "zod";
-
-import { useZodForm } from "@/hooks/use-zod-form";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),
@@ -39,7 +41,7 @@ type QueryResults = z.infer<typeof schema>;
 export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<string> }) {
   /**
    * According to this issue https://github.com/radix-ui/primitives/issues/1851
-   * radix ui primitive checkboxes (and also selects) don't have any event handlers 
+   * radix ui primitive checkboxes (and also selects) don't have any event handlers
    * for react-hook-form.
    *
    * Thats why this is unfortunately solved with setValue and defaultValues
@@ -58,10 +60,13 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
     const queries: string[] = [];
 
     pointsQuery?.activated && queries.push(`points${pointsQuery.operator}${pointsQuery.value}`);
-    createdAtQuery?.activated && queries.push(`createdAt>${createdAtQuery.from},createdAt<${createdAtQuery.to}`);
-    updatedAtQuery?.activated && queries.push(`updatedAt>${updatedAtQuery.from},updatedAt<${updatedAtQuery.to}`);
-    privilegedQuery?.activated && queries.push(`permissionType:${privilegedQuery.toggled ? "ADMIN" : "MEMBER"}`);
-    
+    createdAtQuery?.activated &&
+      queries.push(`createdAt>${createdAtQuery.from},createdAt<${createdAtQuery.to}`);
+    updatedAtQuery?.activated &&
+      queries.push(`updatedAt>${updatedAtQuery.from},updatedAt<${updatedAtQuery.to}`);
+    privilegedQuery?.activated &&
+      queries.push(`permissionType:${privilegedQuery.toggled ? "ADMIN" : "MEMBER"}`);
+
     queries.length !== 0 ? sendQuery(queries.join(",")) : sendQuery("");
   };
 

@@ -10,14 +10,13 @@ import { twMerge } from "tailwind-merge";
 
 import { siteConfig } from "@/config/site";
 
-import { useLogoutProfile } from "@/hooks/use-logout-profile";
-
 import { Button, buttonVariants } from "@/components/ui/button";
 
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+import { useLogoutProfile } from "@/app/hooks/use-logout-profile";
 import { ProfileContext } from "@/app/profile-context";
 
 import {

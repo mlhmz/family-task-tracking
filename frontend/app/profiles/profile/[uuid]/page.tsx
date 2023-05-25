@@ -4,16 +4,16 @@ import { useContext, useState } from "react";
 
 import { PermissionType } from "@/types/permission-type";
 
-import { useProfile } from "@/hooks/fetch/use-profile";
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
-import ProfilePrivilegedEditForm from "@/components/profile/admin/profile-privileged-edit-form";
-import ProfileInfo from "@/components/profile/profile-info";
+import ProfileInfo from "@/components/common/profile/profile-info";
 
+import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { ProfileContext } from "@/app/profile-context";
+
+import ProfilePrivilegedEditForm from "./profile-privileged-edit-form";
 
 export default function ProfileInfoPage({ params }) {
   const { data: profileInstance } = useContext(ProfileContext);
