@@ -12,10 +12,11 @@ import { isProfile } from "@/lib/guards";
 
 import { useZodForm } from "@/hooks/use-zod-form";
 
-import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+
+import { Icons } from "@/components/icons";
 
 async function createProfile(request: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
