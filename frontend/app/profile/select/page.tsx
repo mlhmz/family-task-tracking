@@ -2,12 +2,11 @@
 
 import { useContext, useEffect } from "react";
 
-import { useLogoutProfile } from "@/hooks/use-logout-profile";
-
 import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
 
 import ProfileSelector from "@/components/profile/profile-selector";
 
+import { useLogoutProfile } from "@/app/hooks/use-logout-profile";
 import { ProfilesContext } from "@/app/profiles-context";
 
 export default function ProfileAuth() {

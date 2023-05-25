@@ -2,7 +2,7 @@
 
 import { ReactNode, createContext } from "react";
 
-import { useProfiles } from "@/hooks/fetch/use-profiles";
+import { useProfiles } from "@/app/hooks/fetch/use-profiles";
 
 export interface ProfilesContextProps {
   children: ReactNode;

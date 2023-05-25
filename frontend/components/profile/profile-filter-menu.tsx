@@ -2,13 +2,13 @@ import { Dispatch } from "react";
 
 import { z } from "zod";
 
-import { useZodForm } from "@/hooks/use-zod-form";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),
