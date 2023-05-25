@@ -3,7 +3,6 @@ package org.ftt.familytasktracking.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.ftt.familytasktracking.enums.TaskState;
-import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -50,7 +49,8 @@ public class Task {
 
     private TaskState taskState;
 
-    private SchedulerMode schedulerMode;
+    @Builder.Default
+    private Boolean scheduled = Boolean.FALSE;
 
     private String cronExpression;
 
@@ -67,9 +67,6 @@ public class Task {
     private void prePersist() {
         if (taskState == null) {
             taskState = TaskState.UNDONE;
-        }
-        if (schedulerMode == null) {
-            schedulerMode = SchedulerMode.DEACTIVATED;
         }
         if (lastTaskCreationAt == null) {
             lastTaskCreationAt = LocalDateTime.now();
