@@ -6,7 +6,6 @@ import Link from "next/link";
 
 import Avatar from "boring-avatars";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { twMerge } from "tailwind-merge";
 
 import { siteConfig } from "@/config/site";
 
@@ -68,18 +67,25 @@ export function SiteHeader() {
             {isSuccess && data.uuid && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Avatar
-                    size={32}
-                    name={data.uuid}
-                    variant="beam"
-                    colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-                  />
+                  <div>
+                    <Avatar
+                      size={32}
+                      name={data.uuid}
+                      variant="beam"
+                      colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                    />
+                  </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>{data.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Link href="/profile/select">Switch profile</Link>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/profile/select">
+                      Switch profile
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
