@@ -10,14 +10,14 @@ import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
 
-import { useProfile } from "@/hooks/fetch/use-profile";
-import { useZodForm } from "@/hooks/use-zod-form";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
 
 import { Icons } from "@/components/icons";
+
+import { useProfile } from "@/app/hooks/fetch/use-profile";
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function authProfile(authRequest: ProfileAuthRequest) {
   const response = await fetch("/api/v1/profiles/auth", {

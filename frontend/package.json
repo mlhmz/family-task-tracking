@@ -28,6 +28,7 @@
     "@radix-ui/react-switch": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.3.1",
     "@tanstack/react-query": "^4.29.7",
+    "@tanstack/react-query-devtools": "^4.29.7",
     "boring-avatars": "^1.7.0",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",

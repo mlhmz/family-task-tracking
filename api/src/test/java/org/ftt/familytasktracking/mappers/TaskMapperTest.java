@@ -5,7 +5,6 @@ import org.ftt.familytasktracking.dtos.TaskResponseDto;
 import org.ftt.familytasktracking.entities.Profile;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
-import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,13 +53,13 @@ class TaskMapperTest {
     void mapTaskDtoToTask() {
         TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description", 5,
                 TaskState.UNDONE,
-                SchedulerMode.DEACTIVATED, "* * * * *", 500L, UUID.randomUUID().toString());
+                false, "* * * * *", 500L, UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
         assertThat(task.getTaskState()).isEqualTo(dto.taskState());
         assertThat(task.getAssignee()).isNotNull();
-        assertThat(task.getSchedulerMode()).isEqualTo(dto.schedulerMode());
+        assertThat(task.getScheduled()).isEqualTo(dto.scheduled());
         assertThat(task.getCronExpression()).isEqualTo(dto.cronExpression());
         assertThat(task.getAssignee().getUuid()).hasToString(dto.assigneeUuid());
     }

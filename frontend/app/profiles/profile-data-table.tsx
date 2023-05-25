@@ -11,17 +11,19 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 
-import { isProfile, isProfiles } from "@/lib/guards";
+import { isProfiles } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 
-import { useZodForm } from "@/hooks/use-zod-form";
-
-import { Icons } from "@/components/icons";
-import ProfileFilterMenu from "./profile-filter-menu";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+import { Icons } from "@/components/icons";
+
+import { useZodForm } from "@/app/hooks/use-zod-form";
+
+import ProfileFilterMenu from "./profile-filter-menu";
 
 async function getProfiles({ query }: { query: string }) {
   const request = new URLSearchParams({

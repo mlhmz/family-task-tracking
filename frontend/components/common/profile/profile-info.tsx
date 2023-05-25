@@ -5,7 +5,7 @@ import Avatar from "boring-avatars";
 import { getTranslatedPTValue } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 export default function ProfileInfo({ data }: { data: Profile }) {
   return (

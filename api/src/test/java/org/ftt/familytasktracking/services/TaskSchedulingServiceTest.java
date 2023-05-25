@@ -3,7 +3,7 @@ package org.ftt.familytasktracking.services;
 import org.ftt.familytasktracking.entities.Task;
 import org.ftt.familytasktracking.enums.TaskState;
 import org.ftt.familytasktracking.repositories.TaskRepository;
-import org.ftt.familytasktracking.tasks.scheduler.SchedulerMode;
+import org.ftt.familytasktracking.tasks.scheduler.CronTaskScheduler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +23,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mockStatic;
 
-@SpringBootTest(classes = {TaskSchedulingServiceTest.class, TaskSchedulingServiceImpl.class, TaskRepository.class})
+@SpringBootTest(classes = {TaskSchedulingServiceTest.class, TaskSchedulingServiceImpl.class, TaskRepository.class,
+        CronTaskScheduler.class})
 class TaskSchedulingServiceTest {
     @Autowired
     TaskSchedulingService taskSchedulingService;
@@ -53,7 +53,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(LocalDateTime.now().minusDays(5))
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.CRON)
+                .scheduled(true)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
         LocalDateTime secondLastTaskCreationAt = localDateTime.plusDays(1);
@@ -61,7 +61,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(secondLastTaskCreationAt)
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.CRON)
+                .scheduled(true)
                 .cronExpression("0 0 0 */10 * *")
                 .build();
         LocalDateTime thirdLastTaskCreationAt = LocalDateTime.now().minusDays(2);
@@ -69,19 +69,11 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(thirdLastTaskCreationAt)
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.DEACTIVATED)
+                .scheduled(false)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
-        LocalDateTime fourthLastTaskCreationAt = LocalDateTime.now().minusDays(2);
-        Task task4 = Task.builder()
-                .lastTaskCreationAt(fourthLastTaskCreationAt)
-                .nextTaskCreationAt(LocalDateTime.now())
-                .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.MILLI_INTERVAL)
-                .intervalMillis(1000L)
-                .build();
 
-        doReturn(List.of(task1, task2, task3, task4)).when(taskRepository).findAllByHouseholdAndTaskState(any(),
+        doReturn(List.of(task1, task2, task3)).when(taskRepository).findAllByHouseholdAndTaskState(any(),
                 eq(TaskState.FINISHED));
         doReturn(null).when(taskRepository).saveAll(tasksCaptor.capture());
 
@@ -90,7 +82,7 @@ class TaskSchedulingServiceTest {
 
         List<Task> savedTasks = tasksCaptor.getValue();
 
-        assertThat(savedTasks).isNotNull().hasSize(4);
+        assertThat(savedTasks).isNotNull().hasSize(3);
 
         // First Task
         assertThat(savedTasks.get(0).getLastTaskCreationAt()).isEqualToIgnoringMinutes(LocalDateTime.now());
@@ -103,10 +95,6 @@ class TaskSchedulingServiceTest {
         // Third Task
         assertThat(savedTasks.get(2).getLastTaskCreationAt()).isEqualTo(thirdLastTaskCreationAt);
         assertThat(savedTasks.get(2).getTaskState()).isEqualTo(TaskState.FINISHED);
-
-        // Fourth Task
-        assertThat(savedTasks.get(3).getLastTaskCreationAt()).isEqualTo(LocalDateTime.now());
-        assertThat(savedTasks.get(3).getTaskState()).isEqualTo(TaskState.UNDONE);
     }
 
     @Test
@@ -115,7 +103,7 @@ class TaskSchedulingServiceTest {
                 .lastTaskCreationAt(localDateTime.minusDays(5))
                 .nextTaskCreationAt(LocalDateTime.now())
                 .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.CRON)
+                .scheduled(true)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
 
@@ -126,29 +114,13 @@ class TaskSchedulingServiceTest {
     }
 
     @Test
-    void rescheduleExpiredTaskWithIntervalMillis_UpdatesTaskSchedulingWhenExpired() {
-        Task task = Task.builder()
-                .lastTaskCreationAt(localDateTime.minusDays(61))
-                .nextTaskCreationAt(LocalDateTime.now())
-                .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.MILLI_INTERVAL)
-                .intervalMillis(TimeUnit.DAYS.toMillis(60))
-                .build();
-
-        taskSchedulingService.rescheduleExpiredTask(task);
-        assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringMinutes(localDateTime);
-        assertThat(task.getTaskState()).isEqualTo(TaskState.UNDONE);
-        assertThat(task.getNextTaskCreationAt()).isEqualToIgnoringHours(localDateTime.plusDays(60));
-    }
-
-    @Test
     void rescheduleExpiredTaskWithCron_DoesntUpdateTaskSchedulingWhenNotExpired() {
         LocalDateTime lastTaskCreation = localDateTime;
         Task task = Task.builder()
                 .lastTaskCreationAt(lastTaskCreation)
                 .nextTaskCreationAt(null)
                 .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.CRON)
+                .scheduled(true)
                 .cronExpression("0 0 0 */5 * *")
                 .build();
 
@@ -156,21 +128,6 @@ class TaskSchedulingServiceTest {
 
         assertThat(task.getNextTaskCreationAt()).isNull();
         assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringSeconds(lastTaskCreation);
-        assertThat(task.getTaskState()).isEqualTo(TaskState.FINISHED);
-    }
-
-    @Test
-    void rescheduleExpiredTaskWithIntervalMillis_DoesntUpdateTaskSchedulingWhenNotExpired() {
-        Task task = Task.builder()
-                .lastTaskCreationAt(localDateTime.minusDays(55))
-                .nextTaskCreationAt(LocalDateTime.now())
-                .taskState(TaskState.FINISHED)
-                .schedulerMode(SchedulerMode.MILLI_INTERVAL)
-                .intervalMillis(TimeUnit.DAYS.toMillis(60))
-                .build();
-
-        taskSchedulingService.rescheduleExpiredTask(task);
-        assertThat(task.getLastTaskCreationAt()).isEqualToIgnoringMinutes(localDateTime.minusDays(55));
         assertThat(task.getTaskState()).isEqualTo(TaskState.FINISHED);
     }
 }

@@ -14,9 +14,11 @@ import java.util.List;
 public class TaskSchedulingServiceImpl implements TaskSchedulingService {
     private static final TaskState DONE_TASK_STATE = TaskState.FINISHED;
     private final TaskRepository taskRepository;
+    private final TaskScheduler taskScheduler;
 
-    public TaskSchedulingServiceImpl(TaskRepository taskRepository) {
+    public TaskSchedulingServiceImpl(TaskRepository taskRepository, TaskScheduler taskScheduler) {
         this.taskRepository = taskRepository;
+        this.taskScheduler = taskScheduler;
     }
 
     @Override
@@ -28,8 +30,7 @@ public class TaskSchedulingServiceImpl implements TaskSchedulingService {
 
     @Override
     public void rescheduleExpiredTask(Task task) {
-        TaskScheduler taskScheduler = task.getSchedulerMode().createScheduler();
-        LocalDateTime nextExecution = taskScheduler != null ? taskScheduler.getNextExecutionFromLastExecutionDate(task) : null;
+        LocalDateTime nextExecution = taskScheduler.getNextExecutionFromLastExecutionDate(task);
         if (nextExecution != null && LocalDateTime.now().isAfter(nextExecution)) {
             updateTaskSchedulingParametersByNextExecution(task, taskScheduler.getNextExecutionFromCurrentDate(task));
             resetTaskState(task);
