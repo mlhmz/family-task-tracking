@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import { headers } from "next/dist/client/components/headers";
 
 import { env } from "@/env.mjs";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Session } from "next-auth";
 
 import { siteConfig } from "@/config/site";
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <QueryClientProvider>
+              <ReactQueryDevtools initialIsOpen={false} />
               <div className="relative flex min-h-screen flex-col">
                 <AuthContext session={session}>
                   <HouseholdContextProvider>
