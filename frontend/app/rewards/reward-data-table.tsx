@@ -2,7 +2,6 @@
 
 import { useContext, useState } from "react";
 
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
@@ -24,6 +23,7 @@ import { ProfileContext } from "@/app/profile-context";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../../components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
 import RewardCreateForm from "./reward-create-form";
+import RewardFilterMenu from "./reward-filter-menu";
 
 async function getRewards({ query }: { query: string }) {
   const request = new URLSearchParams({
@@ -36,6 +36,22 @@ async function getRewards({ query }: { query: string }) {
     throw new Error("Problem fetching data");
   }
   const rewards = (await response.json()) as Reward[];
+  // TODO: TypeGuard
+  return rewards;
+}
+
+async function redeemReward(reward: Reward) {
+  const redeemedReward: Reward = { ...reward, redeemed: true };
+  const response = await fetch(`/api/v1/rewards/${reward.uuid}`, {
+    method: `PUT`,
+    body: JSON.stringify(redeemedReward),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.message) throw new Error(error.message);
+    throw new Error("Problem fetching data");
+  }
+  const rewards = (await response.json()) as Reward;
   // TODO: TypeGuard
   return rewards;
 }
@@ -67,6 +83,10 @@ export default function RewardDataTable() {
   const queryClient = useQueryClient();
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteReward,
+    onSuccess: () => queryClient.invalidateQueries(["rewards", searchQuery]),
+  });
+  const { mutate: mutateRedeem, error: errorRedeem } = useMutation({
+    mutationFn: redeemReward,
     onSuccess: () => queryClient.invalidateQueries(["rewards", searchQuery]),
   });
   const { data, isLoading: isSearchLoading } = useQuery({
@@ -135,7 +155,10 @@ export default function RewardDataTable() {
           </Button>
         </div>
       </form>
-      {showFilterMenu && <h1>Filter</h1>}
+      {showFilterMenu && <RewardFilterMenu sendQuery={(query) => {
+            setSelectedRewards([]);
+            setSearchQuery({ query: query });
+          }} />}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>
@@ -175,7 +198,7 @@ export default function RewardDataTable() {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Button variant="ghost">
+                          <Button variant="ghost" onClick={() => mutateRedeem({ ...reward })}>
                             <Icons.checkCircle />
                           </Button>
                         </TooltipTrigger>
@@ -207,6 +230,13 @@ export default function RewardDataTable() {
             ))}
           </TableBody>
         </Table>
+      </div>
+      <div className="my-5 flex flex-col items-center">
+        <>
+          {errorRedeem && errorRedeem instanceof Error && (
+            <p className="text-destructive">{errorRedeem.message}</p>
+          )}
+        </>
       </div>
     </div>
   );
