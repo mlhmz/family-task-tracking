@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch } from "react";
 
 import { z } from "zod";

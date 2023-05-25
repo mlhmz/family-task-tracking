@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
-import ProfileEditForm from "@/components/profile/profile-edit-form";
-import ProfileInfo from "@/components/profile/profile-info";
+import ProfileInfo from "@/components/common/profile/profile-info";
 
 import { ProfileContext } from "../profile-context";
+import ProfileEditForm from "./profile-edit-form";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);

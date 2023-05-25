@@ -11,7 +11,7 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 
-import { isProfile, isProfiles } from "@/lib/guards";
+import { isProfiles } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
