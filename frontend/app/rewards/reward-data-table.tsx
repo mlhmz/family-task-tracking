@@ -2,7 +2,6 @@
 
 import { useContext, useState } from "react";
 
-import Link from "next/link";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -22,9 +21,9 @@ import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../ui/dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import RewardCreateForm from "./admin/reward-create-form";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../../components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
+import RewardCreateForm from "./reward-create-form";
 
 async function getRewards({ query }: { query: string }) {
   const request = new URLSearchParams({

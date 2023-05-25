@@ -1,4 +1,4 @@
-import RewardDataTable from "@/components/reward/reward-data-table";
+import RewardDataTable from "./reward-data-table";
 
 export default function ProfilesPage() {
   return (
