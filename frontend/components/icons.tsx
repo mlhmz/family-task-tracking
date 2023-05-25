@@ -1,6 +1,8 @@
 import {
   Accessibility,
   Check,
+  CheckCircle,
+  Edit,
   Filter,
   Home,
   Laptop,
@@ -14,6 +16,7 @@ import {
   UserPlus,
   X,
   type Icon as LucideIcon,
+  PackagePlus
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -29,9 +32,12 @@ export const Icons = {
   x: X,
   check: Check,
   trash: Trash,
-  userplus: UserPlus,
+  userPlus: UserPlus,
   search: Search,
   filter: Filter,
+  checkCircle: CheckCircle,
+  edit: Edit,
+  packagePlus: PackagePlus,
   logo: (props: LucideProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path

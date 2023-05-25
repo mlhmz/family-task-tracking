@@ -3,6 +3,8 @@ export interface Reward {
   cost?: number;
   name?: string;
   description?: string;
+  createdAt?: string;
+  updatedAt?: string;
   redeemedAt?: string;
   /**
    * This is backend wise a bit confusing

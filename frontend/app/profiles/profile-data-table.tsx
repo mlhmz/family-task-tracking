@@ -123,7 +123,7 @@ export default function ProfileDataTable() {
           </Button>
           <Link href="/profiles/create">
             <Button variant="ghost">
-              <Icons.userplus />
+              <Icons.userPlus />
             </Button>
           </Link>
           <Button variant="ghost" onClick={deleteEverySelectedProfile}>

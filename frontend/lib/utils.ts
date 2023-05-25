@@ -32,7 +32,11 @@ export function getNoContentResponse(originResponse: Response) {
   return response;
 }
 
-export function formatISODateToReadable(isoDate: string) {
-  const date = new Date(isoDate);
-  return date.toLocaleString("en-US");
+export function formatISODateToReadable(isoDate?: string) {
+  if (isoDate) {
+    const date = new Date(isoDate);
+    return date.toLocaleString("en-US");
+  } else {
+    return "";
+  }
 }

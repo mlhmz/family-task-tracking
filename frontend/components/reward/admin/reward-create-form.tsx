@@ -1,18 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { Reward, RewardRequest } from "@/types/reward";
 
-import { useZodForm } from "@/hooks/use-zod-form";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { Icons } from "@/components/icons";
+
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Dispatch } from "react";
 
 async function createReward(request: RewardRequest) {
   const response = await fetch("/api/v1/admin/rewards", {
@@ -35,23 +35,22 @@ const schema = z.object({
   cost: z.number(),
 });
 
-export default function RewardCreateForm() {
+export default function RewardCreateForm({ closeDialog }: { closeDialog: Dispatch<void> }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createReward,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(["rewards"]);
-      router.push(`/rewards/reward/${data.uuid}`);
+      closeDialog();
     },
   });
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const onSubmit = (formData: RewardRequest) => mutate({ ...formData });
 
   return (
     <div>
-      <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
+      <form className="my-10 flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
           <Input placeholder="Name" {...register("name")} />
           <Input placeholder="Description" {...register("description")} />
