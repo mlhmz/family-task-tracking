@@ -49,11 +49,14 @@ export default function ProfileEditForm({
       name: initialData?.name ?? "",
     },
   });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: editProfile,
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
       queryClient.invalidateQueries(["profiles"]);
+    },
+    onError: (error) => {
+      toast.error(`Error editing profile: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
@@ -82,7 +85,6 @@ export default function ProfileEditForm({
               {value.message}
             </p>
           ))}
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>

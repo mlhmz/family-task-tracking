@@ -38,10 +38,13 @@ const schema = z.object({
 
 export default function ThirdWizardPage() {
   const { register, handleSubmit, formState } = useZodForm({ schema });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
+    },
+    onError: (error) => {
+      toast.error(`Error changing password: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const { data } = useContext(ProfileContext);
@@ -78,7 +81,6 @@ export default function ThirdWizardPage() {
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
         </fieldset>
-        <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
       </form>
     </div>
   );

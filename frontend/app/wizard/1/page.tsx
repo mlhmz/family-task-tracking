@@ -45,10 +45,13 @@ const schema = z.object({
 export default function FirstWizardPage() {
   const router = useRouter();
   const { register, handleSubmit, formState } = useZodForm({ schema });
-  const { mutate, isLoading, error } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: postHousehold,
     onSuccess: () => {
       queryClient.invalidateQueries(["household"]);
+    },
+    onError: (error) => {
+      toast.error(`Error creating household: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
@@ -76,7 +79,6 @@ export default function FirstWizardPage() {
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>

@@ -70,16 +70,23 @@ export default function SecondWizardPage() {
     mutate,
     isSuccess: isMutateSuccess,
     isLoading,
-    error,
   } = useMutation({
     mutationFn: createProfile,
+    onError: (error) => {
+      toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
+    },
   });
 
-  const { error: authError } = useQuery({
+  useQuery({
     queryKey: ["profile-auth"],
     queryFn: () => authProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
+    },
+    onError: (error) => {
+      toast.error(
+        `Error authenticating profile: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     },
     enabled: isMutateSuccess && !!data,
   });
@@ -108,12 +115,6 @@ export default function SecondWizardPage() {
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
-          <>
-            {error && error instanceof Error && <p className="text-destructive">{error.message}</p>}
-            {authError && authError instanceof Error && (
-              <p className="text-destructive">{authError.message}</p>
-            )}
-          </>
         </fieldset>
       </form>
     </div>

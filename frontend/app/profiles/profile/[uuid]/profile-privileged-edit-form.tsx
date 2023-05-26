@@ -55,11 +55,14 @@ export default function ProfilePrivilegedEditForm({
       permissionType: initialData?.permissionType ?? PermissionType.Member,
     },
   });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (data: ProfileRequest) => editProfile(data, initialData?.uuid),
     onSuccess: () => {
       queryClient.invalidateQueries(["profile", { uuid: initialData?.uuid ?? "undefined" }]);
       queryClient.invalidateQueries(["profiles"]);
+    },
+    onError: (error) => {
+      toast.error(`Something went wrong: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
@@ -84,6 +87,7 @@ export default function ProfilePrivilegedEditForm({
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
           <Input placeholder="Name" {...register("name")} />
+          {formState.errors.name && <p className="text-destructive ">{formState.errors.name.message}</p>}
           <Input placeholder="Points" type="number" {...register("points", { valueAsNumber: true })} />
           <input disabled={true} className="hidden" {...register("permissionType")} />
           <div className="flex gap-2">
@@ -97,12 +101,6 @@ export default function ProfilePrivilegedEditForm({
           <Button type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Save</>}
           </Button>
-          {Object.entries(formState.errors).map(([key, value]) => (
-            <p className="text-destructive" key={key}>
-              {value.message}
-            </p>
-          ))}
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>

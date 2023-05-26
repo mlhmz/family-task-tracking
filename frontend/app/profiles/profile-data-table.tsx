@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -65,6 +66,10 @@ export default function ProfileDataTable() {
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
     onSuccess: () => queryClient.invalidateQueries(["profiles", searchQuery]),
+    onError: (error) =>
+      toast.error(
+        `Error deleting profile: ${error instanceof Error ? error.message : "Unknown error occurred"}`,
+      ),
   });
   const { data, isLoading: isSearchLoading } = useQuery({
     queryKey: ["profiles", searchQuery],

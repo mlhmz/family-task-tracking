@@ -43,10 +43,13 @@ const schema = z.object({
 
 export default function ProfileCreateForm() {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: createProfile,
     onSuccess: () => {
       queryClient.invalidateQueries(["profiles"]);
+    },
+    onError: (error) => {
+      toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
@@ -86,7 +89,6 @@ export default function ProfileCreateForm() {
               {value.message}
             </p>
           ))}
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>
