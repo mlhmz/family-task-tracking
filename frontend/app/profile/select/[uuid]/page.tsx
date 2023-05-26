@@ -42,14 +42,14 @@ export default function ProfileLogin({ params }) {
   const { mutate, error, isLoading } = useMutation({
     mutationFn: authProfile,
     onSuccess: () => {
-      router.push("/dashboard");
       queryClient.invalidateQueries(["profile"]);
     },
   });
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
+  const onSubmit = (formData: ProfileAuthRequest) =>
+    mutate({ ...formData, profileUuid: data?.uuid }, { onSuccess: () => router.push("/dashboard") });
 
   useEffect(() => {
     if (data && !data?.passwordProtected) {

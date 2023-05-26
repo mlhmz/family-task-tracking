@@ -48,12 +48,12 @@ export default function FirstWizardPage() {
     mutationFn: postHousehold,
     onSuccess: () => {
       queryClient.invalidateQueries(["household"]);
-      router.push("/wizard/2");
     },
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: HouseholdRequest) => mutate(formData);
+  const onSubmit = (formData: HouseholdRequest) =>
+    mutate(formData, { onSuccess: () => router.push("/wizard/2") });
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">

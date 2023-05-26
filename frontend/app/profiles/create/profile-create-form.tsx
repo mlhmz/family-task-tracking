@@ -44,15 +44,15 @@ export default function ProfileCreateForm() {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createProfile,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(["profiles"]);
-      router.push(`/profiles/profile/${data.uuid}`);
     },
   });
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
+  const onSubmit = (formData: ProfileRequest) =>
+    mutate({ ...formData }, { onSuccess: (data) => router.push(`/profiles/profile/${data.uuid}`) });
 
   const onCheckedChange = (checked: boolean) => {
     setValue("permissionType", checked ? PermissionType.Admin : PermissionType.Member);

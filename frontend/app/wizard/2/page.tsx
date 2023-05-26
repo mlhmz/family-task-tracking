@@ -79,13 +79,15 @@ export default function SecondWizardPage() {
     queryFn: () => authProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
-      router.push("/wizard/3");
     },
     enabled: isMutateSuccess && !!data,
   });
 
   const onSubmit = (formData: ProfileRequest) =>
-    mutate({ ...formData, permissionType: PermissionType.Admin });
+    mutate(
+      { ...formData, permissionType: PermissionType.Admin },
+      { onSuccess: () => router.push("/wizard/3") },
+    );
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">

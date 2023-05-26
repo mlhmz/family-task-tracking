@@ -41,14 +41,14 @@ export default function ThirdWizardPage() {
     mutationFn: changePassword,
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
-      router.push("/wizard/finished");
     },
   });
   const { data } = useContext(ProfileContext);
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
+  const onSubmit = (formData: ProfileAuthRequest) =>
+    mutate({ ...formData, profileUuid: data?.uuid }, { onSuccess: () => router.push("/wizard/finished") });
 
   if (!data) {
     return <WizardSkeleton />;

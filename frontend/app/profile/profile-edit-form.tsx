@@ -53,12 +53,11 @@ export default function ProfileEditForm({
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
       queryClient.invalidateQueries(["profiles"]);
-      closeDialog();
     },
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
+  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData }, { onSuccess: () => closeDialog() });
 
   return (
     <div>

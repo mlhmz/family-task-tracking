@@ -83,9 +83,7 @@ export function SiteHeader() {
                     <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link href="/profile/select">
-                      Switch profile
-                    </Link>
+                    <Link href="/profile/select">Switch profile</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

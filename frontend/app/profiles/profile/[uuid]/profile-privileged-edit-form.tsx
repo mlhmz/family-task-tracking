@@ -59,12 +59,11 @@ export default function ProfilePrivilegedEditForm({
     onSuccess: () => {
       queryClient.invalidateQueries(["profile", { uuid: initialData?.uuid ?? "undefined" }]);
       queryClient.invalidateQueries(["profiles"]);
-      closeDialog();
     },
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
+  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData }, { onSuccess: () => closeDialog() });
 
   const onCheckedChange = (checked: boolean) => {
     setValue("permissionType", checked ? PermissionType.Admin : PermissionType.Member);
