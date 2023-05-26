@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -86,7 +87,12 @@ export default function SecondWizardPage() {
   const onSubmit = (formData: ProfileRequest) =>
     mutate(
       { ...formData, permissionType: PermissionType.Admin },
-      { onSuccess: () => router.push("/wizard/3") },
+      {
+        onSuccess: () => {
+          toast.success("Admin profile created!");
+          router.push("/wizard/3");
+        },
+      },
     );
 
   return (

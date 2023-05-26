@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
@@ -48,7 +49,15 @@ export default function ThirdWizardPage() {
   const queryClient = useQueryClient();
 
   const onSubmit = (formData: ProfileAuthRequest) =>
-    mutate({ ...formData, profileUuid: data?.uuid }, { onSuccess: () => router.push("/wizard/finished") });
+    mutate(
+      { ...formData, profileUuid: data?.uuid },
+      {
+        onSuccess: () => {
+          toast.success("Administrator pin set!");
+          router.push("/wizard/finished");
+        },
+      },
+    );
 
   if (!data) {
     return <WizardSkeleton />;

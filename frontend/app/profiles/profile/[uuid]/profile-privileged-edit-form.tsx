@@ -3,6 +3,7 @@
 import { Dispatch } from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -63,7 +64,16 @@ export default function ProfilePrivilegedEditForm({
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData }, { onSuccess: () => closeDialog() });
+  const onSubmit = (formData: ProfileRequest) =>
+    mutate(
+      { ...formData },
+      {
+        onSuccess: () => {
+          closeDialog();
+          toast.success("Profile updated");
+        },
+      },
+    );
 
   const onCheckedChange = (checked: boolean) => {
     setValue("permissionType", checked ? PermissionType.Admin : PermissionType.Member);

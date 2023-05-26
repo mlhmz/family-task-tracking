@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { HouseholdRequest } from "@/types/household";
@@ -53,7 +54,12 @@ export default function FirstWizardPage() {
   const queryClient = useQueryClient();
 
   const onSubmit = (formData: HouseholdRequest) =>
-    mutate(formData, { onSuccess: () => router.push("/wizard/2") });
+    mutate(formData, {
+      onSuccess: () => {
+        toast.success("Household created!");
+        router.push("/wizard/2");
+      },
+    });
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">

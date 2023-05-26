@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import Avatar from "boring-avatars";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { Toaster } from "sonner";
 
 import { siteConfig } from "@/config/site";
 
@@ -26,7 +27,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Toaster } from "sonner";
 
 export function SiteHeader() {
   const { status } = useSession();

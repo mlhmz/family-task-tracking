@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -52,7 +53,15 @@ export default function ProfileCreateForm() {
   const router = useRouter();
 
   const onSubmit = (formData: ProfileRequest) =>
-    mutate({ ...formData }, { onSuccess: (data) => router.push(`/profiles/profile/${data.uuid}`) });
+    mutate(
+      { ...formData },
+      {
+        onSuccess: (data) => {
+          router.push(`/profiles/profile/${data.uuid}`);
+          toast.success("Profile created");
+        },
+      },
+    );
 
   const onCheckedChange = (checked: boolean) => {
     setValue("permissionType", checked ? PermissionType.Admin : PermissionType.Member);

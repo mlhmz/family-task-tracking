@@ -3,6 +3,7 @@
 import { Dispatch } from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Profile, ProfileRequest } from "@/types/profile";
@@ -57,7 +58,16 @@ export default function ProfileEditForm({
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData }, { onSuccess: () => closeDialog() });
+  const onSubmit = (formData: ProfileRequest) =>
+    mutate(
+      { ...formData },
+      {
+        onSuccess: () => {
+          toast.success("Profile updated");
+          closeDialog();
+        },
+      },
+    );
 
   return (
     <div>
