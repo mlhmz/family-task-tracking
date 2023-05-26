@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { HouseholdRequest } from "@/types/household";
@@ -44,16 +45,24 @@ const schema = z.object({
 export default function FirstWizardPage() {
   const router = useRouter();
   const { register, handleSubmit, formState } = useZodForm({ schema });
-  const { mutate, isLoading, error } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: postHousehold,
     onSuccess: () => {
       queryClient.invalidateQueries(["household"]);
-      router.push("/wizard/2");
+    },
+    onError: (error) => {
+      toast.error(`Error creating household: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: HouseholdRequest) => mutate(formData);
+  const onSubmit = (formData: HouseholdRequest) =>
+    mutate(formData, {
+      onSuccess: () => {
+        toast.success("Household created!");
+        router.push("/wizard/2");
+      },
+    });
 
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
@@ -70,7 +79,6 @@ export default function FirstWizardPage() {
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>

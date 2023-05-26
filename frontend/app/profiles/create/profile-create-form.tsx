@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -42,17 +43,28 @@ const schema = z.object({
 
 export default function ProfileCreateForm() {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: createProfile,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(["profiles"]);
-      router.push(`/profiles/profile/${data.uuid}`);
+    },
+    onError: (error) => {
+      toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
+  const onSubmit = (formData: ProfileRequest) =>
+    mutate(
+      { ...formData },
+      {
+        onSuccess: (data) => {
+          router.push(`/profiles/profile/${data.uuid}`);
+          toast.success("Profile created");
+        },
+      },
+    );
 
   const onCheckedChange = (checked: boolean) => {
     setValue("permissionType", checked ? PermissionType.Admin : PermissionType.Member);
@@ -77,7 +89,6 @@ export default function ProfileCreateForm() {
               {value.message}
             </p>
           ))}
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>

@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
@@ -37,18 +38,29 @@ const schema = z.object({
 
 export default function ThirdWizardPage() {
   const { register, handleSubmit, formState } = useZodForm({ schema });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
-      router.push("/wizard/finished");
+    },
+    onError: (error) => {
+      toast.error(`Error changing password: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const { data } = useContext(ProfileContext);
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
+  const onSubmit = (formData: ProfileAuthRequest) =>
+    mutate(
+      { ...formData, profileUuid: data?.uuid },
+      {
+        onSuccess: () => {
+          toast.success("Administrator pin set!");
+          router.push("/wizard/finished");
+        },
+      },
+    );
 
   if (!data) {
     return <WizardSkeleton />;
@@ -69,7 +81,6 @@ export default function ThirdWizardPage() {
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
         </fieldset>
-        <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
       </form>
     </div>
   );

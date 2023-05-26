@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
@@ -39,17 +40,22 @@ const schema = z.object({
 export default function ProfileLogin({ params }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { data } = useProfile(params.uuid);
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: authProfile,
     onSuccess: () => {
-      router.push("/dashboard");
       queryClient.invalidateQueries(["profile"]);
+    },
+    onError: (error) => {
+      toast.error(
+        `Error authenticating profile: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     },
   });
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileAuthRequest) => mutate({ ...formData, profileUuid: data?.uuid });
+  const onSubmit = (formData: ProfileAuthRequest) =>
+    mutate({ ...formData, profileUuid: data?.uuid }, { onSuccess: () => router.push("/dashboard") });
 
   useEffect(() => {
     if (data && !data?.passwordProtected) {
@@ -84,7 +90,6 @@ export default function ProfileLogin({ params }) {
           </fieldset>
         </form>
       )}
-      <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
     </div>
   );
 }

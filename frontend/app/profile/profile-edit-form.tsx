@@ -3,6 +3,7 @@
 import { Dispatch } from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Profile, ProfileRequest } from "@/types/profile";
@@ -48,17 +49,28 @@ export default function ProfileEditForm({
       name: initialData?.name ?? "",
     },
   });
-  const { mutate, error, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: editProfile,
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
       queryClient.invalidateQueries(["profiles"]);
-      closeDialog();
+    },
+    onError: (error) => {
+      toast.error(`Error editing profile: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileRequest) => mutate({ ...formData });
+  const onSubmit = (formData: ProfileRequest) =>
+    mutate(
+      { ...formData },
+      {
+        onSuccess: () => {
+          toast.success("Profile updated");
+          closeDialog();
+        },
+      },
+    );
 
   return (
     <div>
@@ -73,7 +85,6 @@ export default function ProfileEditForm({
               {value.message}
             </p>
           ))}
-          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>
