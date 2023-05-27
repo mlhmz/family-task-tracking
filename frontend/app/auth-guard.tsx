@@ -18,7 +18,7 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   const pathName = usePathname();
 
   const isAnyAdminProfileAvailable = useCallback(() => {
-    if (Array.isArray(profiles.data)) {
+    if (profiles.isFetched) {
       return profiles.data?.some((profile) => profile.permissionType === PermissionType.Admin);
     } else {
       return true;

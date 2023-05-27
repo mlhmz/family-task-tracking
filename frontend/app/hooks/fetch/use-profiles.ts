@@ -14,5 +14,6 @@ export const useProfiles = () => {
   return useQuery({
     queryKey: ["profiles"],
     queryFn: fetchProfiles,
+    initialData: [],
   });
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch } from "react";
+import { Dispatch, useContext } from "react";
 
 import { z } from "zod";
 
@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
+
+import { ProfilesContext } from "../profiles-context";
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),
@@ -64,6 +66,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
       redeemedByQuery: { activated: false },
     },
   });
+  const { data } = useContext(ProfilesContext);
 
   const onSubmit = ({
     costQuery,
@@ -71,6 +74,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
     updatedAtQuery,
     redeemedQuery,
     redeemedAtQuery,
+    redeemedByQuery,
   }: QueryResults) => {
     const queries: string[] = [];
 
@@ -82,6 +86,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
     redeemedQuery?.activated && queries.push(`redeemed:${redeemedQuery.toggled}`);
     redeemedAtQuery?.activated &&
       queries.push(`redeemedAt>${redeemedAtQuery.from},redeemedAt<${redeemedAtQuery.to}`);
+    redeemedByQuery?.activated && queries.push(`redeemedBy.uuid:${redeemedByQuery.value}`);
 
     queries.length !== 0 ? sendQuery(queries.join(",")) : sendQuery("");
   };
@@ -181,6 +186,32 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             <p>To: </p>
             <Input type="datetime-local" {...register("redeemedAtQuery.to")} />
           </div>
+        </fieldset>
+        <div className="flex gap-2">
+          <div className="grid place-items-center">
+            <Checkbox
+              onCheckedChange={(value: boolean) => setValue("redeemedByQuery.activated", value)}
+              disabled={false}
+            />
+          </div>
+          <h2>Redeemed By</h2>
+        </div>
+        <fieldset id="redeemedBy" className="flex flex-col gap-2">
+          <Select
+            onValueChange={(value) => {
+              setValue("redeemedByQuery.value", value);
+            }}>
+            <SelectTrigger>
+              <SelectValue placeholder="Redeemed By" />
+            </SelectTrigger>
+            <SelectContent>
+              <>
+                {data?.map((profile) => (
+                  profile.uuid && <SelectItem value={profile?.uuid} key={profile?.uuid}>{profile?.name}</SelectItem>
+                ))}
+              </>
+            </SelectContent>
+          </Select>
         </fieldset>
         <Button type="submit">Apply filter</Button>
       </form>
