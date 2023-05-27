@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const numberQuery = z.object({
@@ -30,12 +29,18 @@ const booleanQuery = z.object({
   toggled: z.boolean().optional(),
 });
 
+const uuidQuery = z.object({
+  activated: z.boolean().optional(),
+  value: z.string().optional(),
+});
+
 const schema = z.object({
   costQuery: numberQuery.optional(),
   createdAtQuery: dateQuery.optional(),
   updatedAtQuery: dateQuery.optional(),
   redeemedQuery: booleanQuery.optional(),
   redeemedAtQuery: dateQuery.optional(),
+  redeemedByQuery: uuidQuery.optional(),
 });
 
 type QueryResults = z.infer<typeof schema>;
@@ -48,7 +53,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
    *
    * Thats why this is unfortunately solved with setValue and defaultValues
    */
-  const { register, handleSubmit, setValue, getValues, control } = useZodForm({
+  const { register, handleSubmit, setValue } = useZodForm({
     schema,
     defaultValues: {
       costQuery: { activated: false, operator: ":" },
@@ -56,6 +61,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
       updatedAtQuery: { activated: false },
       redeemedQuery: { activated: false, toggled: false },
       redeemedAtQuery: { activated: false },
+      redeemedByQuery: { activated: false },
     },
   });
 
@@ -118,10 +124,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Created At</h2>
         </div>
-        <fieldset
-          id="createdAt"
-          className="flex flex-col gap-2"
-          >
+        <fieldset id="createdAt" className="flex flex-col gap-2">
           <div className="flex gap-3">
             <p>From: </p>
             <Input type="datetime-local" {...register("createdAtQuery.from")} />
@@ -138,10 +141,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Updated At</h2>
         </div>
-        <fieldset
-          id="updatedAt"
-          className="flex flex-col gap-2"
-          >
+        <fieldset id="updatedAt" className="flex flex-col gap-2">
           <div className="flex gap-3">
             <p>From: </p>
             <Input type="datetime-local" {...register("updatedAtQuery.from")} />
@@ -158,10 +158,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Redeemed</h2>
         </div>
-        <fieldset
-          id="redeemed"
-          className="flex flex-col gap-2"
-          >
+        <fieldset id="redeemed" className="flex flex-col gap-2">
           <div className="flex gap-3">
             <p className="grid place-items-center text-sm font-bold">Unredeemed</p>
             <Switch onCheckedChange={(value: boolean) => setValue("redeemedQuery.toggled", value)} />
@@ -177,10 +174,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Redeemed At</h2>
         </div>
-        <fieldset
-          id="redeemedAt"
-          className="flex flex-col gap-2"
-          >
+        <fieldset id="redeemedAt" className="flex flex-col gap-2">
           <div className="flex gap-3">
             <p>From: </p>
             <Input type="datetime-local" {...register("redeemedAtQuery.from")} />

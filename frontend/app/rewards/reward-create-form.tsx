@@ -13,6 +13,8 @@ import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { Dispatch } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 async function createReward(request: RewardRequest) {
   const response = await fetch("/api/v1/admin/rewards", {
@@ -35,16 +37,21 @@ const schema = z.object({
   cost: z.number(),
 });
 
-export default function RewardCreateForm({ closeDialog }: { closeDialog: Dispatch<void> }) {
+export default function RewardCreateForm({ onSuccess }: { onSuccess: Dispatch<void> }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createReward,
-    onSuccess: () => {
+    onSuccess: (reward) => {
       queryClient.invalidateQueries(["rewards"]);
-      closeDialog();
+      toast.success(`The reward ${reward.name} was created!`, { action: {
+        label: 'Go to Reward',
+        onClick: () => router.push(`/rewards/reward/${reward.uuid}`)
+      } })
+      onSuccess();
     },
   });
-  const queryClient = useQueryClient();
 
   const onSubmit = (formData: RewardRequest) => mutate({ ...formData });
 

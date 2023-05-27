@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -85,9 +86,15 @@ export default function RewardDataTable() {
     mutationFn: deleteReward,
     onSuccess: () => queryClient.invalidateQueries(["rewards", searchQuery]),
   });
-  const { mutate: mutateRedeem, error: errorRedeem } = useMutation({
+  const { mutate: mutateRedeem } = useMutation({
     mutationFn: redeemReward,
-    onSuccess: () => queryClient.invalidateQueries(["rewards", searchQuery]),
+    onSuccess: (reward) => {
+      queryClient.invalidateQueries(["rewards", searchQuery]);
+      toast.success(`The reward '${reward.name}' was redeemed!'`);
+    },
+    onError: (error) => {
+      toast.error(`Error redeeming reward: ${error instanceof Error ? error.message : "Unknown error"}`);
+    },
   });
   const { data, isLoading: isSearchLoading } = useQuery({
     queryKey: ["rewards", searchQuery],
@@ -125,7 +132,9 @@ export default function RewardDataTable() {
   };
 
   const deleteEverySelectedProfile = () => {
+    // TODO: Count how much really were deleted
     selectedRewards.forEach((reward) => mutateDelete(reward.uuid ?? ""));
+    toast.success("The rewards were deleted");
   };
 
   return (
@@ -147,7 +156,11 @@ export default function RewardDataTable() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>Create a Reward</DialogHeader>
-              <RewardCreateForm closeDialog={() => setIsCreateDialogOpen(false)} />
+              <RewardCreateForm
+                onSuccess={() => {
+                  setIsCreateDialogOpen(false);
+                }}
+              />
             </DialogContent>
           </Dialog>
           <Button variant="ghost" onClick={deleteEverySelectedProfile}>
@@ -155,10 +168,14 @@ export default function RewardDataTable() {
           </Button>
         </div>
       </form>
-      {showFilterMenu && <RewardFilterMenu sendQuery={(query) => {
+      {showFilterMenu && (
+        <RewardFilterMenu
+          sendQuery={(query) => {
             setSelectedRewards([]);
             setSearchQuery({ query: query });
-          }} />}
+          }}
+        />
+      )}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>
@@ -230,13 +247,6 @@ export default function RewardDataTable() {
             ))}
           </TableBody>
         </Table>
-      </div>
-      <div className="my-5 flex flex-col items-center">
-        <>
-          {errorRedeem && errorRedeem instanceof Error && (
-            <p className="text-destructive">{errorRedeem.message}</p>
-          )}
-        </>
       </div>
     </div>
   );
