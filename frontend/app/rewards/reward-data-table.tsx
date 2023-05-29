@@ -28,6 +28,7 @@ import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
 import RewardFilterMenu from "./reward-filter-menu";
 import Link from "next/link";
+import RedeemRewardButton from "./redeem-reward-button";
 
 async function getRewards({ query }: { query: string }) {
   const request = new URLSearchParams({
@@ -40,22 +41,6 @@ async function getRewards({ query }: { query: string }) {
     throw new Error("Problem fetching data");
   }
   const rewards = (await response.json()) as Reward[];
-  // TODO: TypeGuard
-  return rewards;
-}
-
-async function redeemReward(reward: Reward) {
-  const redeemedReward: Reward = { ...reward, redeemed: true };
-  const response = await fetch(`/api/v1/rewards/${reward.uuid}`, {
-    method: `PUT`,
-    body: JSON.stringify(redeemedReward),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const rewards = (await response.json()) as Reward;
   // TODO: TypeGuard
   return rewards;
 }
@@ -88,16 +73,6 @@ export default function RewardDataTable() {
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteReward,
     onSuccess: () => queryClient.invalidateQueries(["rewards", searchQuery]),
-  });
-  const { mutate: mutateRedeem } = useMutation({
-    mutationFn: redeemReward,
-    onSuccess: (reward) => {
-      queryClient.invalidateQueries(["rewards", searchQuery]);
-      toast.success(`The reward '${reward.name}' was redeemed!'`);
-    },
-    onError: (error) => {
-      toast.error(`Error redeeming reward: ${error instanceof Error ? error.message : "Unknown error"}`);
-    },
   });
   const { data, isLoading: isSearchLoading } = useQuery({
     queryKey: ["rewards", searchQuery],
@@ -219,16 +194,7 @@ export default function RewardDataTable() {
                 </TableCell>
                 <TableCell className="flex flex-col items-center gap-2">
                   <div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Button variant="ghost" onClick={() => mutateRedeem({ ...reward })}>
-                            <Icons.checkCircle />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Redeem Reward</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <RedeemRewardButton reward={reward} onSuccess={() => queryClient.invalidateQueries(["rewards", searchQuery])} />
                     {profile?.permissionType === PermissionType.Admin && (
                       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                         <DialogTrigger asChild>
