@@ -30,6 +30,7 @@ import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
 import RewardFilterMenu from "./reward-filter-menu";
 import RewardEditForm from "./reward-edit-form";
+import { isRewards } from "@/lib/guards";
 
 async function getRewards({ query }: { query: string }) {
   const request = new URLSearchParams({
@@ -41,8 +42,8 @@ async function getRewards({ query }: { query: string }) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  const rewards = (await response.json()) as Reward[];
-  // TODO: TypeGuard
+  const rewards = (await response.json());
+  if (!isRewards(rewards)) throw new Error("Problem fetching data");
   return rewards;
 }
 

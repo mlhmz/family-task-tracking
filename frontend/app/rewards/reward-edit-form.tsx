@@ -17,6 +17,7 @@ import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { Switch } from "@/components/ui/switch";
+import { isReward } from "@/lib/guards";
 
 async function updateReward(request: RewardRequest, uuid?: string) {
   const response = await fetch(`/api/v1/admin/rewards/${uuid}`, {
@@ -28,8 +29,8 @@ async function updateReward(request: RewardRequest, uuid?: string) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  const reward = (await response.json()) as Reward;
-  // TODO: Implement Type Guard
+  const reward = (await response.json());
+  if (!isReward(reward)) throw new Error("Problem fetching data");
   return reward;
 }
 

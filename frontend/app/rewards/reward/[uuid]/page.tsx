@@ -22,6 +22,7 @@ import RedeemRewardButton from "../../redeem-reward-button";
 import RewardEditForm from "../../reward-edit-form";
 import RewardInfo from "./reward-info";
 import RewardProfileLinkButton from "./reward-profile-link-button";
+import { isReward } from "@/lib/guards";
 
 async function getRewardByUuid(uuid: string) {
   const response = await fetch(`/api/v1/rewards/${uuid}`);
@@ -31,7 +32,7 @@ async function getRewardByUuid(uuid: string) {
     throw new Error("Problem fetching data");
   }
   const reward = (await response.json()) as Reward;
-  // TODO: TypeGuard
+  if (!isReward(reward)) throw new Error("Problem fetching data");
   return reward;
 }
 

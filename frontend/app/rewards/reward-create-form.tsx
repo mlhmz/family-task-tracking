@@ -15,6 +15,7 @@ import { useZodForm } from "@/app/hooks/use-zod-form";
 import { Dispatch } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { isReward } from "@/lib/guards";
 
 async function createReward(request: RewardRequest) {
   const response = await fetch("/api/v1/admin/rewards", {
@@ -27,7 +28,7 @@ async function createReward(request: RewardRequest) {
     throw new Error("Problem fetching data");
   }
   const reward = (await response.json()) as Reward;
-  // TODO: Implement Type Guard
+  if (!isReward(reward)) throw new Error("Problem fetching data");
   return reward;
 }
 
