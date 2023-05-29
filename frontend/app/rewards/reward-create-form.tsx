@@ -45,8 +45,8 @@ export default function RewardCreateForm({ onSuccess }: { onSuccess: Dispatch<vo
     mutationFn: createReward,
     onSuccess: (reward) => {
       queryClient.invalidateQueries(["rewards"]);
-      toast.success(`The reward ${reward.name} was created!`, { action: {
-        label: 'Go to Reward',
+      toast.success(`The reward '${reward.name}' was created!`, { action: {
+        label: 'View',
         onClick: () => router.push(`/rewards/reward/${reward.uuid}`)
       } })
       onSuccess();
