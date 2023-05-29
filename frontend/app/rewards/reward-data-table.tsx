@@ -2,6 +2,7 @@
 
 import { useContext, useState } from "react";
 
+import Link from "next/link";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -24,11 +25,11 @@ import { ProfileContext } from "@/app/profile-context";
 
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../../components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
+import RedeemRewardButton from "./redeem-reward-button";
 import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
 import RewardFilterMenu from "./reward-filter-menu";
-import Link from "next/link";
-import RedeemRewardButton from "./redeem-reward-button";
+import RewardEditForm from "./reward-edit-form";
 
 async function getRewards({ query }: { query: string }) {
   const request = new URLSearchParams({
@@ -194,30 +195,40 @@ export default function RewardDataTable() {
                 </TableCell>
                 <TableCell className="flex flex-col items-center gap-2">
                   <div>
-                    <RedeemRewardButton reward={reward} onSuccess={() => queryClient.invalidateQueries(["rewards", searchQuery])} />
+                    <RedeemRewardButton
+                      reward={reward}
+                      onSuccess={() => queryClient.invalidateQueries(["rewards", searchQuery])}
+                    />
                     {profile?.permissionType === PermissionType.Admin && (
-                      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                        <DialogTrigger asChild>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                              <DialogTrigger asChild>
                                 <Button variant="ghost">
                                   <Icons.edit />
                                 </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Edit Reward</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>Edit Reward</DialogHeader>
-                        </DialogContent>
-                      </Dialog>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>Edit Reward</DialogHeader>
+                                <RewardEditForm
+                                  reward={reward}
+                                  onSuccess={() => {
+                                    queryClient.invalidateQueries(["rewards"]);
+                                    setIsEditDialogOpen(false);
+                                  }}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit Reward</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     )}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Button variant="ghost" >
+                          <Button variant="ghost">
                             <Link href={`/rewards/reward/${reward?.uuid}`}>
                               <Icons.externalLink />
                             </Link>

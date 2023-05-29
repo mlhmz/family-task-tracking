@@ -19,6 +19,7 @@ import { Icons } from "@/components/icons";
 import { ProfileContext } from "@/app/profile-context";
 
 import RedeemRewardButton from "../../redeem-reward-button";
+import RewardEditForm from "../../reward-edit-form";
 import RewardInfo from "./reward-info";
 import RewardProfileLinkButton from "./reward-profile-link-button";
 
@@ -48,7 +49,7 @@ export default function ProfileInfoPage({ params }: { params: any }) {
     return <p>Skeleton</p>;
   }
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
+    <div className="m-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
       <div className="grid grid-cols-1 grid-rows-2">
         <div id="title" className="flex flex-row items-center justify-start gap-3">
           <h1 className="col-start-1 justify-self-start text-3xl font-bold">{reward?.name}</h1>
@@ -71,23 +72,30 @@ export default function ProfileInfoPage({ params }: { params: any }) {
             />
           )}
           {profileInstance?.permissionType === PermissionType.Admin && (
-            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-              <DialogTrigger asChild>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                    <DialogTrigger asChild>
                       <Button variant="ghost">
                         <Icons.edit />
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Edit Reward</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>Edit Reward</DialogHeader>
-              </DialogContent>
-            </Dialog>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>Edit Reward</DialogHeader>
+                      <RewardEditForm
+                        reward={reward}
+                        onSuccess={() => {
+                          queryClient.invalidateQueries(["reward", { uuid: params.uuid }]);
+                          setIsEditDialogOpen(false);
+                        }}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </TooltipTrigger>
+                <TooltipContent>Edit Reward</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>
