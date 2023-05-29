@@ -10,8 +10,12 @@ import Avatar from "boring-avatars";
 import { PermissionType } from "@/types/permission-type";
 import { Reward } from "@/types/reward";
 
+import { isReward } from "@/lib/guards";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import RewardProfileInfoSkeleton from "@/components/ui/skeleton/reward-profile-info-skeleton";
+import { Skeleton } from "@/components/ui/skeleton/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Icons } from "@/components/icons";
@@ -22,7 +26,6 @@ import RedeemRewardButton from "../../redeem-reward-button";
 import RewardEditForm from "../../reward-edit-form";
 import RewardInfo from "./reward-info";
 import RewardProfileLinkButton from "./reward-profile-link-button";
-import { isReward } from "@/lib/guards";
 
 async function getRewardByUuid(uuid: string) {
   const response = await fetch(`/api/v1/rewards/${uuid}`);
@@ -45,9 +48,8 @@ export default function ProfileInfoPage({ params }: { params: any }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  // TODO: Skeleton
   if (!reward?.uuid || !profileInstance?.uuid) {
-    return <p>Skeleton</p>;
+    return <RewardProfileInfoSkeleton />;
   }
   return (
     <div className="m-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
