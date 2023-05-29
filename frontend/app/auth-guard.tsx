@@ -4,6 +4,8 @@ import { ReactNode, useCallback, useContext, useEffect } from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
+import { toast } from "sonner";
+
 import { PermissionType } from "@/types/permission-type";
 
 import { HouseholdContext } from "./household-context";
@@ -18,10 +20,19 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   const pathName = usePathname();
 
   const isAnyAdminProfileAvailable = useCallback(() => {
-    if (profiles.isFetched) {
+    if (profiles.isFetched && !profiles.isError) {
       return profiles.data?.some((profile) => profile.permissionType === PermissionType.Admin);
-    } else {
-      return true;
+    }
+    return true;
+  }, [profiles]);
+
+  useEffect(() => {
+    if (profiles.isError && !profiles.isRefetching) {
+      toast.error(
+        `Error showing profiles: ${
+          profiles.error instanceof Error ? profiles.error : "Unknown error occurred"
+        }, Try to reload the window or sign in again`,
+      );
     }
   }, [profiles]);
 
@@ -32,7 +43,7 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
       } else if (!isAnyAdminProfileAvailable()) {
         router.push("/wizard/2");
       } else if (!pathName.match("/profile/select.*")) {
-        if (profile.isError) {
+        if (profiles.isFetched && !profiles.isError && profile.isError) {
           router.push("/profile/select");
         } else if (
           profile.data?.permissionType === PermissionType.Admin &&
