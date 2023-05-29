@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 import { ProfilesContext } from "../profiles-context";
+import Avatar from "boring-avatars";
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),
@@ -206,9 +207,22 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             </SelectTrigger>
             <SelectContent>
               <>
-                {data?.map((profile) => (
-                  profile.uuid && <SelectItem value={profile?.uuid} key={profile?.uuid}>{profile?.name}</SelectItem>
-                ))}
+                {data?.map(
+                  (profile) =>
+                    profile.uuid && (
+                      <SelectItem value={profile?.uuid} key={profile?.uuid}>
+                        <div className="flex flex-row gap-5">
+                          <Avatar
+                            size={32}
+                            name={profile?.uuid}
+                            variant="beam"
+                            colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                          />
+                          <p className="flex items-center">{profile?.name}</p>
+                        </div>
+                      </SelectItem>
+                    ),
+                )}
               </>
             </SelectContent>
           </Select>
