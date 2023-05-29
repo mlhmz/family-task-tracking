@@ -2,10 +2,8 @@
 
 import { useContext, useState } from "react";
 
-import Link from "next/link";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Avatar from "boring-avatars";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -26,8 +24,10 @@ import { ProfileContext } from "@/app/profile-context";
 
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../../components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
+import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
 import RewardFilterMenu from "./reward-filter-menu";
+import Link from "next/link";
 
 async function getRewards({ query }: { query: string }) {
   const request = new URLSearchParams({
@@ -215,27 +215,7 @@ export default function RewardDataTable() {
                 </TableCell>
                 <TableCell className="text-center">{formatISODateToReadable(reward.redeemedAt)}</TableCell>
                 <TableCell>
-                  <>
-                    {reward?.redeemedBy && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Link
-                              className="inline cursor-pointer rounded-full bg-secondary hover:brightness-90"
-                              href={`/profiles/profile/${reward?.redeemedBy}`}>
-                              <Avatar
-                                size={32}
-                                name={reward?.redeemedBy}
-                                variant="beam"
-                                colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-                              />
-                            </Link>
-                          </TooltipTrigger>
-                          <TooltipContent>{reward?.name}</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-                  </>
+                  <>{reward?.redeemedBy && <RedeemedByShowcase redeemedByUuid={reward.redeemedBy} />}</>
                 </TableCell>
                 <TableCell className="flex flex-col items-center gap-2">
                   <div>
@@ -268,6 +248,18 @@ export default function RewardDataTable() {
                         </DialogContent>
                       </Dialog>
                     )}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button variant="ghost" >
+                            <Link href={`/rewards/reward/${reward?.uuid}`}>
+                              <Icons.externalLink />
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>View</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </TableCell>
               </TableRow>
