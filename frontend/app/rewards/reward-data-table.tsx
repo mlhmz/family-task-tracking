@@ -58,12 +58,11 @@ export default function RewardDataTable() {
   const { register, handleSubmit } = useZodForm({ schema });
   const { data: profile } = useContext(ProfileContext);
   const queryClient = useQueryClient();
-  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+  const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteReward,
-    onSuccess: () => queryClient.invalidateQueries(["rewards", searchQuery]),
   });
   const { data, isLoading: isSearchLoading } = useQuery({
-    queryKey: ["rewards", searchQuery],
+    queryKey: ["rewards", { query: searchQuery }],
     queryFn: () => getRewards({ query: searchQuery.query }),
     initialData: [],
   });
@@ -97,10 +96,24 @@ export default function RewardDataTable() {
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
+  const sendToastByDeletionResponses = (responses: Response[]) => {
+    if (responses.some((response) => !response.ok)) {
+      const failedDeletions = responses.filter((response) => !response.ok).length;
+      const allRequestedDeletions = responses.length;
+      toast.error(
+        `${failedDeletions} from ${allRequestedDeletions} couldn't be deleted, please try to delete the remaining rewards again.`,
+      );
+    } else {
+      toast.success(`${responses.length} rewards were successfully deleted.`);
+    }
+  };
+
   const deleteEverySelectedProfile = () => {
-    // TODO: Count how much really were deleted
-    selectedRewards.forEach((reward) => mutateDelete(reward.uuid ?? ""));
-    toast.success("The rewards were deleted");
+    const deletePromises = selectedRewards.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
+    Promise.all(deletePromises).then((responses) => {
+      sendToastByDeletionResponses(responses);
+      queryClient.invalidateQueries(["rewards", { query: searchQuery }]);
+    });
   };
 
   return (
