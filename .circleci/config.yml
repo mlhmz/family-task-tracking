@@ -16,9 +16,18 @@ jobs:
     executor: machine-ubuntu-executor
     steps:
       - checkout
+      - restore_cache:
+          keys: 
+            - gradle-cache-{{ checksum "./api/build.gradle" }}
       - run: |
           cd api
           ./gradlew build
+      - save_cache:
+          name: Save gradle cache to cache
+          paths:
+            - ~/.gradle/caches/
+            - ./api/.gradle
+          key: gradle-cache-{{ checksum "./api/build.gradle" }}
       - run:
           name: Save test results
           command: |
@@ -27,6 +36,14 @@ jobs:
           when: always
       - store_test_results:
           path: ~/test-results
+      - run: |
+          cd api
+          docker build -t mlhmz/family-task-tracking:${CIRCLE_BRANCH//[\/]/_} .
+      - run:
+          name: Push image
+          command: |
+            docker login -u ${DHU} -p ${DHP}
+            docker push mlhmz/family-task-tracking:${CIRCLE_BRANCH//[\/]/_}
 
   frontend:
     executor: docker-node-executor
