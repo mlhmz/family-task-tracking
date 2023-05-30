@@ -10,6 +10,7 @@ import ProfileInfo from "@/components/common/profile/profile-info";
 
 import { ProfileContext } from "../profile-context";
 import ProfileEditForm from "./profile-edit-form";
+import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
@@ -30,6 +31,7 @@ export default function Profile() {
           <ProfileEditForm initialData={data} closeDialog={() => setOpen(!open)} />
         </DialogContent>
       </Dialog>
+      <ProfileRewards profileUuid={data.uuid} />
     </div>
   );
 }

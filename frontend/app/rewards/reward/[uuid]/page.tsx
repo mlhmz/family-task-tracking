@@ -52,10 +52,11 @@ export default function ProfileInfoPage({ params }: { params: any }) {
     return <RewardProfileInfoSkeleton />;
   }
   return (
-    <div className="m-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
-      <div className="grid grid-cols-1 grid-rows-2">
+    <div className="mx-2 mt-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
+      <h1 className="text-2xl font-bold">Reward</h1>
+      <div className="grid grid-cols-1 grid-rows-1">
         <div id="title" className="flex flex-row items-center justify-start gap-3">
-          <h1 className="col-start-1 justify-self-start text-3xl font-bold">{reward?.name}</h1>
+          <h2 className="col-start-1 justify-self-start text-2xl">{reward?.name}</h2>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger className="cursor-default">
