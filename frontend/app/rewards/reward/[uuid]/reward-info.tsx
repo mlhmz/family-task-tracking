@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 export default function RewardInfo({ reward }: { reward: Reward }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-full">
+      <div className="mx-3 w-full">
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger>Costs</AccordionTrigger>

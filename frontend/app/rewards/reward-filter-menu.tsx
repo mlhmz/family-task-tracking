@@ -6,6 +6,7 @@ import Avatar from "boring-avatars";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -93,8 +94,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
   };
 
   return (
-    <div className="my-3 flex flex-col gap-3 rounded-md p-3 outline outline-1 outline-border">
-      <h1 className="text-lg font-bold">Filter</h1>
+    <div className="my-3 flex flex-col gap-3">
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex gap-2">
           <div className="grid place-items-center">
@@ -131,11 +131,14 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           <h2>Created At</h2>
         </div>
         <fieldset id="createdAt" className="flex flex-col gap-2">
-          <div className="flex gap-3">
-            <p>From: </p>
-            <Input type="datetime-local" {...register("createdAtQuery.from")} />
-            <p>To: </p>
-            <Input type="datetime-local" {...register("createdAtQuery.to")} />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-row items-center justify-center gap-2">
+              <Input type="datetime-local" {...register("createdAtQuery.from")} />
+              <p>-</p>
+            </div>
+            <div>
+              <Input type="datetime-local" {...register("createdAtQuery.to")} />
+            </div>
           </div>
         </fieldset>
         <div className="flex gap-2">
@@ -148,11 +151,14 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           <h2>Updated At</h2>
         </div>
         <fieldset id="updatedAt" className="flex flex-col gap-2">
-          <div className="flex gap-3">
-            <p>From: </p>
-            <Input type="datetime-local" {...register("updatedAtQuery.from")} />
-            <p>To: </p>
-            <Input type="datetime-local" {...register("updatedAtQuery.to")} />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-row items-center justify-center gap-2">
+              <Input type="datetime-local" {...register("updatedAtQuery.from")} />
+              <p>-</p>
+            </div>
+            <div>
+              <Input type="datetime-local" {...register("updatedAtQuery.to")} />
+            </div>
           </div>
         </fieldset>
         <div className="flex gap-2">
@@ -181,11 +187,14 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           <h2>Redeemed At</h2>
         </div>
         <fieldset id="redeemedAt" className="flex flex-col gap-2">
-          <div className="flex gap-3">
-            <p>From: </p>
-            <Input type="datetime-local" {...register("redeemedAtQuery.from")} />
-            <p>To: </p>
-            <Input type="datetime-local" {...register("redeemedAtQuery.to")} />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-row items-center justify-center gap-2">
+              <Input type="datetime-local" {...register("redeemedAtQuery.from")} />
+              <p>-</p>
+            </div>
+            <div>
+              <Input type="datetime-local" {...register("redeemedAtQuery.to")} />
+            </div>
           </div>
         </fieldset>
         <div className="flex gap-2">

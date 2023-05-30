@@ -15,6 +15,7 @@ import { deleteReward, getRewards } from "@/lib/reward-requests";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -51,7 +52,7 @@ export default function RewardDataTable() {
     mutationFn: deleteReward,
   });
   const { data, isLoading: isSearchLoading } = useQuery({
-    queryKey: ["rewards", { query: searchQuery }],
+    queryKey: ["rewards", searchQuery],
     queryFn: () => getRewards({ query: searchQuery.query }),
     initialData: [],
   });
@@ -137,12 +138,17 @@ export default function RewardDataTable() {
         </div>
       </form>
       {showFilterMenu && (
-        <RewardFilterMenu
-          sendQuery={(query) => {
-            setSelectedRewards([]);
-            setSearchQuery({ query: query });
-          }}
-        />
+        <Card className="my-2">
+          <CardHeader>Filter</CardHeader>
+          <CardContent>
+            <RewardFilterMenu
+              sendQuery={(query) => {
+                setSelectedRewards([]);
+                setSearchQuery({ query: query });
+              }}
+            />
+          </CardContent>
+        </Card>
       )}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
