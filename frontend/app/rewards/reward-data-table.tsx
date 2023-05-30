@@ -11,6 +11,8 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Reward } from "@/types/reward";
 
+import { isRewards } from "@/lib/guards";
+import { getRewards } from "@/lib/reward-requests";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -28,24 +30,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import RedeemRewardButton from "./redeem-reward-button";
 import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
-import RewardFilterMenu from "./reward-filter-menu";
 import RewardEditForm from "./reward-edit-form";
-import { isRewards } from "@/lib/guards";
-
-async function getRewards({ query }: { query: string }) {
-  const request = new URLSearchParams({
-    query: query,
-  });
-  const response = await fetch(`/api/v1/rewards${"?" + request}`);
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const rewards = (await response.json());
-  if (!isRewards(rewards)) throw new Error("Problem fetching data");
-  return rewards;
-}
+import RewardFilterMenu from "./reward-filter-menu";
 
 async function deleteReward(uuid: string) {
   const response = await fetch(`/api/v1/admin/rewards/${uuid}`, { method: "DELETE" });

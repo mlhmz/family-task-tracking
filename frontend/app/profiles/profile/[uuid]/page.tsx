@@ -14,6 +14,7 @@ import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { ProfileContext } from "@/app/profile-context";
 
 import ProfilePrivilegedEditForm from "./profile-privileged-edit-form";
+import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 export default function ProfileInfoPage({ params }: { params: any }) {
   const { data: profileInstance } = useContext(ProfileContext);
@@ -37,6 +38,7 @@ export default function ProfileInfoPage({ params }: { params: any }) {
           </DialogContent>
         </Dialog>
       )}
+      <ProfileRewards profileUuid={profileInstance.uuid} />
     </div>
   );
 }
