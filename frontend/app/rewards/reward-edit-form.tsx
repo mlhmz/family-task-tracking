@@ -10,14 +10,15 @@ import { z } from "zod";
 
 import { Reward, RewardRequest } from "@/types/reward";
 
+import { isReward } from "@/lib/guards";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
-import { Switch } from "@/components/ui/switch";
-import { isReward } from "@/lib/guards";
 
 async function updateReward(request: RewardRequest, uuid?: string) {
   const response = await fetch(`/api/v1/admin/rewards/${uuid}`, {
@@ -29,7 +30,7 @@ async function updateReward(request: RewardRequest, uuid?: string) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  const reward = (await response.json());
+  const reward = await response.json();
   if (!isReward(reward)) throw new Error("Problem fetching data");
   return reward;
 }

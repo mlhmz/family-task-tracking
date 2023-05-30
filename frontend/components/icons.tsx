@@ -3,12 +3,14 @@ import {
   Check,
   CheckCircle,
   Edit,
+  ExternalLink,
   Filter,
   Home,
   Laptop,
   Loader2,
   LucideProps,
   Moon,
+  PackagePlus,
   Search,
   SunMedium,
   Trash,
@@ -16,8 +18,6 @@ import {
   UserPlus,
   X,
   type Icon as LucideIcon,
-  PackagePlus,
-  ExternalLink
 } from "lucide-react";
 
 export type Icon = LucideIcon;

@@ -5,11 +5,12 @@ import { toast } from "sonner";
 
 import { Reward } from "@/types/reward";
 
+import { isReward } from "@/lib/guards";
+
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Icons } from "@/components/icons";
-import { isReward } from "@/lib/guards";
 
 async function redeemReward(reward: Reward) {
   const redeemedReward: Reward = { ...reward, redeemed: true };

@@ -2,20 +2,20 @@
 
 import { useContext, useState } from "react";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Avatar from "boring-avatars";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
 import { Reward } from "@/types/reward";
 
 import { isReward } from "@/lib/guards";
+import { deleteReward } from "@/lib/reward-requests";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import RewardProfileInfoSkeleton from "@/components/ui/skeleton/reward-profile-info-skeleton";
-import { Skeleton } from "@/components/ui/skeleton/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Icons } from "@/components/icons";
@@ -39,11 +39,19 @@ async function getRewardByUuid(uuid: string) {
   return reward;
 }
 
-export default function ProfileInfoPage({ params }: { params: any }) {
+export default function RewardInfoPage({ params }: { params: any }) {
   const { data: profileInstance } = useContext(ProfileContext);
   const { data: reward } = useQuery({
     queryKey: ["reward", { uuid: params.uuid }],
     queryFn: () => getRewardByUuid(params.uuid),
+  });
+  const router = useRouter();
+  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: () => deleteReward(params.uuid),
+    onSuccess: () => {
+      toast.success(`The reward was successfully deleted`);
+      router.push("/rewards");
+    },
   });
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -76,30 +84,42 @@ export default function ProfileInfoPage({ params }: { params: any }) {
             />
           )}
           {profileInstance?.permissionType === PermissionType.Admin && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="ghost">
-                        <Icons.edit />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>Edit Reward</DialogHeader>
-                      <RewardEditForm
-                        reward={reward}
-                        onSuccess={() => {
-                          queryClient.invalidateQueries(["reward", { uuid: params.uuid }]);
-                          setIsEditDialogOpen(false);
-                        }}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </TooltipTrigger>
-                <TooltipContent>Edit Reward</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost">
+                          <Icons.edit />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Edit Reward</DialogHeader>
+                        <RewardEditForm
+                          reward={reward}
+                          onSuccess={() => {
+                            queryClient.invalidateQueries(["reward", { uuid: params.uuid }]);
+                            setIsEditDialogOpen(false);
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit Reward</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" onClick={() => mutateDelete()}>
+                      {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete Reward</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
           )}
         </div>
       </div>

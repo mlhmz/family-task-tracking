@@ -1,7 +1,10 @@
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import Avatar from "boring-avatars";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+import Avatar from "boring-avatars";
+
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 
 export default function RewardProfileLinkButton({ uuid }: { uuid: string }) {

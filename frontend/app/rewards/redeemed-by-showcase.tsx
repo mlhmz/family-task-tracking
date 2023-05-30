@@ -1,6 +1,9 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Avatar from "boring-avatars";
 import Link from "next/link";
+
+import Avatar from "boring-avatars";
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { useProfile } from "../hooks/fetch/use-profile";
 
 export default function RedeemedByShowcase({ redeemedByUuid }: { redeemedByUuid: string }) {

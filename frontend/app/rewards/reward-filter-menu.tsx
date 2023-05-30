@@ -2,6 +2,7 @@
 
 import { Dispatch, useContext } from "react";
 
+import Avatar from "boring-avatars";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,6 @@ import { Switch } from "@/components/ui/switch";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 import { ProfilesContext } from "../profiles-context";
-import Avatar from "boring-avatars";
 
 const numberQuery = z.object({
   activated: z.boolean().optional(),

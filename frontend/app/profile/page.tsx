@@ -7,10 +7,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import ProfileInfo from "@/components/common/profile/profile-info";
+import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 import { ProfileContext } from "../profile-context";
 import ProfileEditForm from "./profile-edit-form";
-import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);

@@ -11,8 +11,7 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Reward } from "@/types/reward";
 
-import { isRewards } from "@/lib/guards";
-import { getRewards } from "@/lib/reward-requests";
+import { deleteReward, getRewards } from "@/lib/reward-requests";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -32,16 +31,6 @@ import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
 import RewardEditForm from "./reward-edit-form";
 import RewardFilterMenu from "./reward-filter-menu";
-
-async function deleteReward(uuid: string) {
-  const response = await fetch(`/api/v1/admin/rewards/${uuid}`, { method: "DELETE" });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  return response;
-}
 
 const schema = z.object({
   name: z.string().optional(),

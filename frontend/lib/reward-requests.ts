@@ -14,3 +14,13 @@ export async function getRewards({ query }: { query?: string }) {
   if (!isRewards(rewards)) throw new Error("Problem fetching data");
   return rewards;
 }
+
+export async function deleteReward(uuid: string) {
+  const response = await fetch(`/api/v1/admin/rewards/${uuid}`, { method: "DELETE" });
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.message) throw new Error(error.message);
+    throw new Error("Problem fetching data");
+  }
+  return response;
+}

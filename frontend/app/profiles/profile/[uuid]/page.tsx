@@ -9,12 +9,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import ProfileInfo from "@/components/common/profile/profile-info";
+import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { ProfileContext } from "@/app/profile-context";
 
 import ProfilePrivilegedEditForm from "./profile-privileged-edit-form";
-import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 export default function ProfileInfoPage({ params }: { params: any }) {
   const { data: profileInstance } = useContext(ProfileContext);

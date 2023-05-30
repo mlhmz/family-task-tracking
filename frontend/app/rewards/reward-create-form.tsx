@@ -1,10 +1,16 @@
 "use client";
 
+import { Dispatch } from "react";
+
+import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Reward, RewardRequest } from "@/types/reward";
+
+import { isReward } from "@/lib/guards";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
-import { Dispatch } from "react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { isReward } from "@/lib/guards";
 
 async function createReward(request: RewardRequest) {
   const response = await fetch("/api/v1/admin/rewards", {
@@ -46,10 +48,12 @@ export default function RewardCreateForm({ onSuccess }: { onSuccess: Dispatch<vo
     mutationFn: createReward,
     onSuccess: (reward) => {
       queryClient.invalidateQueries(["rewards"]);
-      toast.success(`The reward '${reward.name}' was created!`, { action: {
-        label: 'View',
-        onClick: () => router.push(`/rewards/reward/${reward.uuid}`)
-      } })
+      toast.success(`The reward '${reward.name}' was created!`, {
+        action: {
+          label: "View",
+          onClick: () => router.push(`/rewards/reward/${reward.uuid}`),
+        },
+      });
       onSuccess();
     },
   });
