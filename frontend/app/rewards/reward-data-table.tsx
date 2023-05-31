@@ -98,7 +98,7 @@ export default function RewardDataTable() {
     }
   };
 
-  const deleteEverySelectedProfile = () => {
+  const deleteEverySelectedReward = () => {
     const deletePromises = selectedRewards.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
     Promise.all(deletePromises).then((responses) => {
       sendToastByDeletionResponses(responses);
@@ -132,7 +132,7 @@ export default function RewardDataTable() {
               />
             </DialogContent>
           </Dialog>
-          <Button variant="ghost" onClick={deleteEverySelectedProfile}>
+          <Button variant="ghost" onClick={deleteEverySelectedReward}>
             {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
           </Button>
         </div>

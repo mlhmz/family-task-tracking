@@ -65,7 +65,7 @@ export default function ProfileDataTable() {
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
   const queryClient = useQueryClient();
-  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+  const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
     onSuccess: () => queryClient.invalidateQueries(["profiles", searchQuery]),
     onError: (error) =>
@@ -109,8 +109,24 @@ export default function ProfileDataTable() {
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
+  const sendToastByDeletionResponses = (responses: Response[]) => {
+    if (responses.some((response) => !response.ok)) {
+      const failedDeletions = responses.filter((response) => !response.ok).length;
+      const allRequestedDeletions = responses.length;
+      toast.error(
+        `${failedDeletions} from ${allRequestedDeletions} profiles couldn't be deleted, please try to delete the remaining profiles again.`,
+      );
+    } else {
+      toast.success(`${responses.length} profiles were successfully deleted.`);
+    }
+  };
+
   const deleteEverySelectedProfile = () => {
-    selectedProfiles.forEach((profile) => mutateDelete(profile.uuid ?? ""));
+    const deletePromises = selectedProfiles.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
+    Promise.all(deletePromises).then((responses) => {
+      sendToastByDeletionResponses(responses);
+      queryClient.invalidateQueries(["profiles", searchQuery]);
+    });
   };
 
   return (
