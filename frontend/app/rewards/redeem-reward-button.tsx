@@ -30,27 +30,34 @@ async function redeemReward(reward: Reward) {
 
 export default function RedeemRewardButton({
   reward,
-  onSuccess,
+  handleInvalidateOnSuccess,
 }: {
   reward: Reward;
-  onSuccess: Dispatch<void>;
+  handleInvalidateOnSuccess: Dispatch<void>;
 }) {
   const { mutate, isLoading } = useMutation({
     mutationFn: redeemReward,
-    onSuccess: (reward) => {
-      onSuccess();
-      toast.success(`The reward '${reward.name}' was redeemed!'`);
-    },
-    onError: (error) => {
-      toast.error(`Error redeeming reward: ${error instanceof Error ? error.message : "Unknown error"}`);
-    },
   });
+
+  const redeem = () => {
+    mutate(
+      { ...reward },
+      {
+        onSuccess: () => {
+          toast.success(`The reward '${reward.name}' was redeemed!'`);
+          handleInvalidateOnSuccess();
+        },
+        onError: (error) =>
+          toast.error(`Error redeeming reward: ${error instanceof Error ? error.message : "Unknown error"}`),
+      },
+    );
+  };
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <Button variant="ghost" onClick={() => mutate({ ...reward })}>
+          <Button variant="ghost" onClick={redeem}>
             {isLoading ? <Icons.spinner className="animate-spin" /> : <Icons.checkCircle />}
           </Button>
         </TooltipTrigger>
