@@ -53,6 +53,8 @@ jobs:
           cd frontend
           npm ci
           npm run lint
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: |
           cd frontend
           docker build -t mlhmz/family-task-tracking-frontend:${CIRCLE_BRANCH//[\/]/_} .
