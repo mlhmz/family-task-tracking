@@ -82,6 +82,7 @@ export default function SecondWizardPage() {
     queryFn: () => authProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
+      queryClient.invalidateQueries(["profiles"]);
     },
     onError: (error) => {
       toast.error(
