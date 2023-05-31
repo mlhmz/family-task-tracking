@@ -81,7 +81,7 @@ export default function TaskCreateForm() {
               {value.message}
             </p>
           ))}
-          <>{error && error instanceof Error && <p onLoad={e => {console.log({error})}} className="text-destructive">{error.message}</p>}</>
+          <>{error && error instanceof Error && <p className="text-destructive">{error.message}</p>}</>
         </fieldset>
       </form>
     </div>

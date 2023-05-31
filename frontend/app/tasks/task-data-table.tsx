@@ -115,7 +115,7 @@ export default function TaskDataTable() {
           </Button>
           <Link href="/tasks/create">
             <Button variant="ghost">
-              <Icons.userplus />
+              <Icons.taskplus />
             </Button>
           </Link>
           <Button variant="ghost" onClick={deleteEverySelectedTask}>

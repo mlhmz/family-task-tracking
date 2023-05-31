@@ -165,7 +165,6 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
                   {Object.values(TaskState).map(taskState => <SelectItem value={taskState}>{getTranslatedTaskStateValue(taskState)}</SelectItem>)}
                 </SelectContent>
               </Select>
-
             </div>
           </div>
           <Button type="submit">Apply filter</Button>

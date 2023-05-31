@@ -16,6 +16,7 @@ import {
   Trash,
   Twitter,
   UserPlus,
+  FilePlus,
   X,
   type Icon as LucideIcon,
 } from "lucide-react";
@@ -33,7 +34,8 @@ export const Icons = {
   x: X,
   check: Check,
   trash: Trash,
-  userPlus: UserPlus,
+  userplus: UserPlus,
+  taskplus: FilePlus,
   search: Search,
   filter: Filter,
   checkCircle: CheckCircle,
