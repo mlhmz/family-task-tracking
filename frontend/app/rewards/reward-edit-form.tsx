@@ -42,25 +42,36 @@ const schema = z.object({
   redeemed: z.boolean(),
 });
 
-export default function RewardEditForm({ onSuccess, reward }: { onSuccess: Dispatch<void>; reward: Reward }) {
+export default function RewardEditForm({
+  handleCloseDialog,
+  reward,
+}: {
+  handleCloseDialog: Dispatch<void>;
+  reward: Reward;
+}) {
   const { register, handleSubmit, formState, setValue } = useZodForm({ schema, defaultValues: reward });
   const queryClient = useQueryClient();
   const router = useRouter();
   const { mutate, error, isLoading } = useMutation({
     mutationFn: (data: RewardRequest) => updateReward(data, reward.uuid),
-    onSuccess: (reward) => {
-      queryClient.invalidateQueries(["rewards"]);
-      toast.success(`The reward '${reward.name}' was updated!`, {
-        action: {
-          label: "View",
-          onClick: () => router.push(`/rewards/reward/${reward.uuid}`),
-        },
-      });
-      onSuccess();
-    },
+    onSuccess: () => queryClient.invalidateQueries(["rewards"]),
   });
 
-  const onSubmit = (formData: RewardRequest) => mutate({ ...formData });
+  const onSubmit = (formData: RewardRequest) =>
+    mutate(
+      { ...formData },
+      {
+        onSuccess: () => {
+          toast.success(`The reward '${reward.name}' was updated!`, {
+            action: {
+              label: "View",
+              onClick: () => router.push(`/rewards/reward/${reward.uuid}`),
+            },
+          });
+          handleCloseDialog();
+        },
+      },
+    );
 
   const onCheckedChange = (checked: boolean) => {
     setValue("redeemed", checked);

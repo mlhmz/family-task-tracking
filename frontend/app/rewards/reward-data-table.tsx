@@ -72,7 +72,7 @@ export default function RewardDataTable() {
     }
   };
 
-  const onEveryProfileCheckedChange = () => {
+  const onEveryRewardCheckedChange = () => {
     if (isEveryRewardChecked()) {
       setSelectedRewards([]);
     } else {
@@ -193,7 +193,7 @@ export default function RewardDataTable() {
             <TableRow>
               <TableHead className="w-[60px]">
                 <div className="grid place-items-center">
-                  <Checkbox checked={isEveryRewardChecked()} onCheckedChange={onEveryProfileCheckedChange} />
+                  <Checkbox checked={isEveryRewardChecked()} onCheckedChange={onEveryRewardCheckedChange} />
                 </div>
               </TableHead>
               <TableHead className="text-center">Name</TableHead>
@@ -247,7 +247,7 @@ export default function RewardDataTable() {
                                 <DialogHeader>Edit Reward</DialogHeader>
                                 <RewardEditForm
                                   reward={reward}
-                                  onSuccess={() => {
+                                  handleCloseDialog={() => {
                                     queryClient.invalidateQueries(["rewards"]);
                                     setIsEditDialogOpen(false);
                                   }}

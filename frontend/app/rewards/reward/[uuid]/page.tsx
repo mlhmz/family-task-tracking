@@ -98,7 +98,7 @@ export default function RewardInfoPage({ params }: { params: any }) {
                         <DialogHeader>Edit Reward</DialogHeader>
                         <RewardEditForm
                           reward={reward}
-                          onSuccess={() => {
+                          handleCloseDialog={() => {
                             queryClient.invalidateQueries(["reward", { uuid: params.uuid }]);
                             setIsEditDialogOpen(false);
                           }}
