@@ -47,14 +47,15 @@ export default function RewardInfoPage({ params }: { params: any }) {
   });
   const router = useRouter();
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
-    mutationFn: () => deleteReward(params.uuid),
-    onSuccess: () => {
-      toast.success(`The reward was successfully deleted`);
-      router.push("/rewards");
-    },
+    mutationFn: deleteReward,
+    onSuccess: () => router.push("/rewards"),
   });
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  const onDelete = () => {
+    mutateDelete(params.uuid, { onSuccess: () => toast.success(`The reward was successfully deleted`) })
+  }
 
   if (!reward?.uuid || !profileInstance?.uuid) {
     return <RewardProfileInfoSkeleton />;
@@ -112,7 +113,7 @@ export default function RewardInfoPage({ params }: { params: any }) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button variant="ghost" onClick={() => mutateDelete()}>
+                    <Button variant="ghost" onClick={onDelete}>
                       {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
                     </Button>
                   </TooltipTrigger>
