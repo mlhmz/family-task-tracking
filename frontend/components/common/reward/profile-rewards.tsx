@@ -20,7 +20,7 @@ export default function ProfileRewards({ profileUuid }: { profileUuid: string })
     <div>
       <ScrollArea className="rounded-md border">
         <div className="p-4">
-          <h4 className="mb-4 text-sm font-medium leading-none">Redeemed Tasks</h4>
+          <h4 className="mb-4 text-sm font-medium leading-none">Redeemed Rewards</h4>
           {data
             .filter((reward) => reward.redeemed)
             .map((reward) => (
