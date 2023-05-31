@@ -8,10 +8,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
-import { Reward } from "@/types/reward";
 
-import { isReward } from "@/lib/guards";
-import { deleteReward } from "@/lib/reward-requests";
+import { deleteReward, getRewardByUuid } from "@/lib/reward-requests";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
@@ -26,18 +24,6 @@ import RedeemRewardButton from "../../redeem-reward-button";
 import RewardEditForm from "../../reward-edit-form";
 import RewardInfo from "./reward-info";
 import RewardProfileLinkButton from "./reward-profile-link-button";
-
-async function getRewardByUuid(uuid: string) {
-  const response = await fetch(`/api/v1/rewards/${uuid}`);
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const reward = (await response.json()) as Reward;
-  if (!isReward(reward)) throw new Error("Problem fetching data");
-  return reward;
-}
 
 export default function RewardInfoPage({ params }: { params: any }) {
   const { data: profileInstance } = useContext(ProfileContext);
@@ -54,8 +40,8 @@ export default function RewardInfoPage({ params }: { params: any }) {
   const queryClient = useQueryClient();
 
   const onDelete = () => {
-    mutateDelete(params.uuid, { onSuccess: () => toast.success(`The reward was successfully deleted`) })
-  }
+    mutateDelete(params.uuid, { onSuccess: () => toast.success(`The reward was successfully deleted`) });
+  };
 
   if (!reward?.uuid || !profileInstance?.uuid) {
     return <RewardProfileInfoSkeleton />;
@@ -81,7 +67,9 @@ export default function RewardInfoPage({ params }: { params: any }) {
           ) : (
             <RedeemRewardButton
               reward={reward}
-              handleInvalidateOnSuccess={() => queryClient.invalidateQueries(["reward", { uuid: params.uuid }])}
+              handleInvalidateOnSuccess={() =>
+                queryClient.invalidateQueries(["reward", { uuid: params.uuid }])
+              }
             />
           )}
           {profileInstance?.permissionType === PermissionType.Admin && (

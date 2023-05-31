@@ -10,7 +10,7 @@ import { z } from "zod";
 
 import { Reward, RewardRequest } from "@/types/reward";
 
-import { isReward } from "@/lib/guards";
+import { updateReward } from "@/lib/reward-requests";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,21 +19,6 @@ import { Switch } from "@/components/ui/switch";
 import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
-
-async function updateReward(request: RewardRequest, uuid?: string) {
-  const response = await fetch(`/api/v1/admin/rewards/${uuid}`, {
-    method: "PUT",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const reward = await response.json();
-  if (!isReward(reward)) throw new Error("Problem fetching data");
-  return reward;
-}
 
 const schema = z.object({
   name: z.string(),

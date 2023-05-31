@@ -8,9 +8,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Reward, RewardRequest } from "@/types/reward";
+import { RewardRequest } from "@/types/reward";
 
-import { isReward } from "@/lib/guards";
+import { createReward } from "@/lib/reward-requests";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,21 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
-
-async function createReward(request: RewardRequest) {
-  const response = await fetch("/api/v1/admin/rewards", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const reward = (await response.json()) as Reward;
-  if (!isReward(reward)) throw new Error("Problem fetching data");
-  return reward;
-}
 
 const schema = z.object({
   name: z.string(),
@@ -46,7 +31,7 @@ export default function RewardCreateForm({ handleCloseDialog }: { handleCloseDia
   const router = useRouter();
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createReward,
-    onSuccess: () => queryClient.invalidateQueries(["rewards"]), 
+    onSuccess: () => queryClient.invalidateQueries(["rewards"]),
   });
 
   const onSubmit = (formData: RewardRequest) =>
