@@ -1,15 +1,17 @@
 "use client";
 
-import {Dispatch} from "react";
-import {z} from "zod";
+import { Dispatch, useContext } from "react";
+import { z } from "zod";
 
-import {Button} from "@/components/ui/button";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {getTranslatedTaskStateValue, TaskState} from "@/types/task-state";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 
-import {useZodForm} from "@/app/hooks/use-zod-form";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { ProfileContext } from "../profile-context";
+import { PermissionType } from "@/types/permission-type";
 
 const stringQuery = z.object({
   activated: z.boolean().optional(),
@@ -38,6 +40,7 @@ const schema = z.object({
 type QueryResults = z.infer<typeof schema>;
 
 export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<string> }) {
+  const { data: profile } = useContext(ProfileContext);
   /**
    * According to this issue https://github.com/radix-ui/primitives/issues/1851
    * radix ui primitive checkboxes don't have any event handlers.
@@ -50,11 +53,11 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
       pointsQuery: { activated: false, operator: ":" },
       createdAtQuery: { activated: false },
       updatedAtQuery: { activated: false },
-      taskStateQuery: { activated: false, value:"" },
+      taskStateQuery: { activated: false, value: "" },
     },
   });
 
-  const onSubmit = ({pointsQuery, createdAtQuery, updatedAtQuery, taskStateQuery}: QueryResults) => {
+  const onSubmit = ({ pointsQuery, createdAtQuery, updatedAtQuery, taskStateQuery }: QueryResults) => {
     const queries: string[] = [];
 
     if (pointsQuery?.activated) {
@@ -71,6 +74,10 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
 
     if (taskStateQuery?.activated) {
       queries.push(`taskState:${taskStateQuery.value}`);
+    }
+
+    if (profile?.permissionType !== PermissionType.Admin && profile?.uuid) {
+      queries.push(`assignee.uuid:${profile.uuid}`);
     }
 
     console.log(queries);
@@ -94,7 +101,7 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
             </div>
             <div className="grid grid-cols-2 gap-2">
               {/* Auch das geht wohl nicht direkt mit React Hook Form */}
-              <Select defaultValue=":" onValueChange={(value) => {setValue("pointsQuery.operator", value)}}>
+              <Select defaultValue=":" onValueChange={(value) => { setValue("pointsQuery.operator", value) }}>
                 <SelectTrigger>
                   <SelectValue
                     placeholder="Operator"
@@ -155,7 +162,7 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
             </div>
             <div className="flex gap-3">
 
-              <Select onValueChange={(value) => {setValue("taskStateQuery.value", value)}}>
+              <Select onValueChange={(value) => { setValue("taskStateQuery.value", value) }}>
                 <SelectTrigger>
                   <SelectValue
                     placeholder="Task State"

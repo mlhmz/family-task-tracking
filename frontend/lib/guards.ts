@@ -183,6 +183,7 @@ const parseTask = (value: unknown): Task | null => {
     return {
       uuid: typeof value.uuid === "string" ? value.uuid : undefined,
       name: typeof value.name === "string" ? value.name : undefined,
+      description: typeof value.description === "string" ? value.description : undefined,
       points: typeof value.points === "number" ? value.points : undefined,
       createdAt: typeof value.createdAt === "string" ? value.createdAt : undefined,
       updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : undefined,

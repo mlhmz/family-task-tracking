@@ -35,7 +35,7 @@ async function createTask(request: TaskRequest) {
 
 const schema = z.object({
   name: z.string().min(1).max(255),
-  description: z.string().min(1).max(255).optional(), //ToDo: agree on a decent size limit for this
+  description: z.string().min(1).max(255).optional(),
   points: z.number().optional(),
   taskState: z.enum([TaskState.Done,TaskState.Undone,TaskState.Finished,TaskState.Reviewed]).optional()
 });

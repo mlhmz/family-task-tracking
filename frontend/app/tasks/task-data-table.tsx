@@ -1,26 +1,28 @@
 "use client";
 
-import {useState} from "react";
+import { useContext, useState } from "react";
 
 import Link from "next/link";
 
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
-import {z} from "zod";
-import {Task} from "@/types/task";
+import { z } from "zod";
+import { Task } from "@/types/task";
 
-import {isTask} from "@/lib/guards";
-import {formatISODateToReadable} from "@/lib/utils";
+import { isTask } from "@/lib/guards";
+import { formatISODateToReadable } from "@/lib/utils";
 
-import {Icons} from "@/components/icons";
+import { Icons } from "@/components/icons";
 import TaskFilterMenu from "./task-filter-menu";
-import {Button} from "@/components/ui/button";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Input} from "@/components/ui/input";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {getTranslatedTaskStateValue} from "@/types/task-state";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getTranslatedTaskStateValue } from "@/types/task-state";
 
-import {useZodForm} from "@/app/hooks/use-zod-form";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { ProfileContext } from "../profile-context";
+import { PermissionType } from "@/types/permission-type";
 
 async function getTasks({ query }: { query: string[] }) {
   const request = new URLSearchParams({
@@ -58,6 +60,7 @@ export default function TaskDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
+  const { data: profile } = useContext(ProfileContext);
   const { register, handleSubmit } = useZodForm({ schema });
   const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteTask,
@@ -69,6 +72,7 @@ export default function TaskDataTable() {
     initialData: [],
   });
   const queryClient = useQueryClient();
+
 
   const isChecked = (task: Task) =>
     selectedTasks.some((selectedTask) => selectedTask.uuid === task.uuid);
@@ -107,20 +111,22 @@ export default function TaskDataTable() {
       <form onSubmit={handleSubmit(onSearchSubmit)}>
         <div className="my-2 flex gap-2">
           <Input placeholder="Search by Name..." {...register("name")} />
-          <Button variant="ghost">
+          <Button variant="ghost" title="Search by name">
             {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
           </Button>
-          <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+          <Button variant="ghost" title="show filters" onClick={() => setShowFilterMenu(!showFilterMenu)}>
             <Icons.filter />
           </Button>
-          <Link href="/tasks/create">
-            <Button variant="ghost">
-              <Icons.taskplus />
-            </Button>
-          </Link>
-          <Button variant="ghost" onClick={deleteEverySelectedTask}>
-            {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
-          </Button>
+          {profile?.permissionType === PermissionType.Admin &&
+            <Link href="/tasks/create">
+              <Button variant="ghost" title="add task">
+                <Icons.taskplus />
+              </Button>
+            </Link>}
+          {profile?.permissionType === PermissionType.Admin &&
+            <Button variant="ghost" title="delete task" onClick={deleteEverySelectedTask}>
+              {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
+            </Button>}
         </div>
       </form>
       {showFilterMenu && <TaskFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}
