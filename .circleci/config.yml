@@ -53,6 +53,14 @@ jobs:
           cd frontend
           npm ci
           npm run lint
+      - run: |
+          cd frontend
+          docker build -t mlhmz/family-task-tracking-frontend:${CIRCLE_BRANCH//[\/]/_} .
+      - run:
+          name: Push image
+          command: |
+            docker login -u ${DHU} -p ${DHP}
+            docker push mlhmz/family-task-tracking-frontend:${CIRCLE_BRANCH//[\/]/_}
 
 
 workflows:
