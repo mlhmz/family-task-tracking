@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
 export default function ProfileRewards({ profileUuid }: { profileUuid: string }) {
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["rewards", { redeemedBy: profileUuid }],
     queryFn: () => getRewards({ query: "redeemedBy.uuid:" + profileUuid }),
     initialData: [],

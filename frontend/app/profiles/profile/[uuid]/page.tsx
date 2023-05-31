@@ -38,7 +38,7 @@ export default function ProfileInfoPage({ params }: { params: any }) {
           </DialogContent>
         </Dialog>
       )}
-      <ProfileRewards profileUuid={profileInstance.uuid} />
+      <ProfileRewards profileUuid={selectedProfile.uuid} />
     </div>
   );
 }
