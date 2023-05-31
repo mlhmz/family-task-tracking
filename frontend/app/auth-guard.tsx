@@ -27,16 +27,6 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   }, [profiles]);
 
   useEffect(() => {
-    if (profiles.isError && !profiles.isRefetching) {
-      toast.error(
-        `Error showing profiles: ${
-          profiles.error instanceof Error ? profiles.error : "Unknown error occurred"
-        }, Try to reload the window or sign in again`,
-      );
-    }
-  }, [profiles]);
-
-  useEffect(() => {
     if (!pathName.match("/wizard.*")) {
       if (household.isHouseholdEmpty) {
         router.push("/wizard");
