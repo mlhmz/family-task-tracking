@@ -102,7 +102,7 @@ export default function RewardDataTable() {
     const deletePromises = selectedRewards.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
     Promise.all(deletePromises).then((responses) => {
       sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["rewards", { query: searchQuery }]);
+      queryClient.invalidateQueries(["rewards", searchQuery]);
     });
   };
 
@@ -111,30 +111,67 @@ export default function RewardDataTable() {
       <form onSubmit={handleSubmit(onSearchSubmit)}>
         <div className="my-2 flex gap-2">
           <Input placeholder="Search by Name..." {...register("name")} />
-          <Button variant="ghost">
-            {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
-          </Button>
-          <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
-            <Icons.filter />
-          </Button>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost">
-                <Icons.packagePlus />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>Create a Reward</DialogHeader>
-              <RewardCreateForm
-                onSuccess={() => {
-                  setIsCreateDialogOpen(false);
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-          <Button variant="ghost" onClick={deleteEverySelectedReward}>
-            {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  {isSearchLoading ? (
+                    <Icons.spinner className="animate-spin text-primary" />
+                  ) : (
+                    <Icons.search />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Trigger Search</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                  <Icons.filter />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Show Filter Menu</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost">
+                      <Icons.packagePlus />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>Create a Reward</DialogHeader>
+                    <RewardCreateForm
+                      handleCloseDialog={() => {
+                        setIsCreateDialogOpen(false);
+                      }}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </TooltipTrigger>
+              <TooltipContent>Create Reward</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={deleteEverySelectedReward}>
+                  {isDeleteLoading ? (
+                    <Icons.spinner className="animate-spin text-primary" />
+                  ) : (
+                    <Icons.trash />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Delete Reward(s)</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </form>
       {showFilterMenu && (
@@ -192,7 +229,9 @@ export default function RewardDataTable() {
                   <div>
                     <RedeemRewardButton
                       reward={reward}
-                      onSuccess={() => queryClient.invalidateQueries(["rewards", searchQuery])}
+                      handleInvalidateOnSuccess={() =>
+                        queryClient.invalidateQueries(["rewards", searchQuery])
+                      }
                     />
                     {profile?.permissionType === PermissionType.Admin && (
                       <TooltipProvider>
