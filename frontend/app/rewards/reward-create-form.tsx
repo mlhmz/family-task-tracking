@@ -40,25 +40,30 @@ const schema = z.object({
   cost: z.number(),
 });
 
-export default function RewardCreateForm({ onSuccess }: { onSuccess: Dispatch<void> }) {
+export default function RewardCreateForm({ handleCloseDialog }: { handleCloseDialog: Dispatch<void> }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const queryClient = useQueryClient();
   const router = useRouter();
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createReward,
-    onSuccess: (reward) => {
-      queryClient.invalidateQueries(["rewards"]);
-      toast.success(`The reward '${reward.name}' was created!`, {
-        action: {
-          label: "View",
-          onClick: () => router.push(`/rewards/reward/${reward.uuid}`),
-        },
-      });
-      onSuccess();
-    },
+    onSuccess: () => queryClient.invalidateQueries(["rewards"]), 
   });
 
-  const onSubmit = (formData: RewardRequest) => mutate({ ...formData });
+  const onSubmit = (formData: RewardRequest) =>
+    mutate(
+      { ...formData },
+      {
+        onSuccess: (reward) => {
+          toast.success(`The reward '${reward.name}' was created!`, {
+            action: {
+              label: "View",
+              onClick: () => router.push(`/rewards/reward/${reward.uuid}`),
+            },
+          });
+          handleCloseDialog();
+        },
+      },
+    );
 
   return (
     <div>

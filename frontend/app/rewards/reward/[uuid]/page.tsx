@@ -80,7 +80,7 @@ export default function RewardInfoPage({ params }: { params: any }) {
           ) : (
             <RedeemRewardButton
               reward={reward}
-              onSuccess={() => queryClient.invalidateQueries(["reward", { uuid: params.uuid }])}
+              handleInvalidateOnSuccess={() => queryClient.invalidateQueries(["reward", { uuid: params.uuid }])}
             />
           )}
           {profileInstance?.permissionType === PermissionType.Admin && (
