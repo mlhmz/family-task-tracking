@@ -88,6 +88,19 @@ services:
       retries: 15
     command:
       - fixtures
+  frontend:
+    image: frontend:latest
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      LOCAL_AUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: NONE
+      BACKEND_API_URL: https://fttapi.mlhmz.xyz/api/v1
+      KEYCLOAK_CLIENT_ID: ftt-next
+      KEYCLOAK_ISSUER: https://keycloak.mlhmz.xyz/realms/ftt
+      KEYCLOAK_CLIENT_SECRET: SECRET
 
 volumes:
   kc-db-data:
