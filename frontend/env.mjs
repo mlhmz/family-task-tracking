@@ -22,6 +22,7 @@ export const env = createEnv({
    * 💡 You'll get typeerrors if these are not prefixed with NEXT_PUBLIC_.
    */
   client: {
+    NEXT_PUBLIC_APP_NAME: z.string().min(1).default("FTT"),
   },
   /*
    * Due to how Next.js bundles environment variables on Edge and Client,
@@ -38,6 +39,7 @@ export const env = createEnv({
     KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID,
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
     KEYCLOAK_CLIENT_SECRET: process.env.KEYCLOAK_CLIENT_SECRET,
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME
   },
   skipValidation: process.env.NODE_ENV === "production",
 });
