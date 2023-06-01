@@ -39,4 +39,5 @@ export const env = createEnv({
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
     KEYCLOAK_CLIENT_SECRET: process.env.KEYCLOAK_CLIENT_SECRET,
   },
+  skipValidation: process.env.NODE_ENV === "production",
 });
