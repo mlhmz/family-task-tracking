@@ -13,7 +13,8 @@ import { isTask } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { Icons } from "@/components/icons";
-import TaskFilterMenu from "./task-filter-menu";
+import TaskFilterMenu from "@/app/tasks/task-filter-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getTranslatedTaskStateValue } from "@/types/task-state";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
-import { ProfileContext } from "../profile-context";
+import { ProfileContext } from "@/app/profile-context";
 import { PermissionType } from "@/types/permission-type";
 
 async function getTasks({ query }: { query: string[] }) {
@@ -99,7 +100,18 @@ export default function TaskDataTable() {
 
   const onSearchSubmit = (formData: SearchQuery) => {
     setSearchQuery({ query: [] });
-    formData.name && setSearchQuery({ query: [`name:${formData.name}`] });
+
+    if (!formData.name) {
+      return;
+    }
+
+    let queries = [`name:${formData.name}`];
+
+    if (profile?.permissionType !== PermissionType.Admin && profile?.uuid) {
+      queries.push(`assignee.uuid:${profile.uuid}`);
+    }
+
+    formData.name && setSearchQuery({ query: queries });
   };
 
   const deleteEverySelectedTask = () => {
@@ -111,22 +123,52 @@ export default function TaskDataTable() {
       <form onSubmit={handleSubmit(onSearchSubmit)}>
         <div className="my-2 flex gap-2">
           <Input placeholder="Search by Name..." {...register("name")} />
-          <Button variant="ghost" title="Search by name">
-            {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
-          </Button>
-          <Button variant="ghost" title="show filters" onClick={() => setShowFilterMenu(!showFilterMenu)}>
-            <Icons.filter />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Search by name</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                  <Icons.filter />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Show filters</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
           {profile?.permissionType === PermissionType.Admin &&
             <Link href="/tasks/create">
-              <Button variant="ghost" title="add task">
-                <Icons.taskplus />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost">
+                      <Icons.taskplus />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Add task</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </Link>}
           {profile?.permissionType === PermissionType.Admin &&
-            <Button variant="ghost" title="delete task" onClick={deleteEverySelectedTask}>
-              {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
-            </Button>}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant="ghost" onClick={deleteEverySelectedTask}>
+                    {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete task</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>}
         </div>
       </form>
       {showFilterMenu && <TaskFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}
