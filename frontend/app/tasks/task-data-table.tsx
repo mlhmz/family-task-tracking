@@ -6,13 +6,13 @@ import Link from "next/link";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
-import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
-import { Profile } from "@/types/profile";
+import { Task } from "@/types/task";
+import { getTranslatedTaskStateValue } from "@/types/task-state";
 
-import { isProfiles } from "@/lib/guards";
+import { isTask } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -24,27 +24,25 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
+import { ProfileContext } from "@/app/profile-context";
+import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
-import { ProfileContext } from "../profile-context";
-import ProfileFilterMenu from "./profile-filter-menu";
-
-async function getProfiles({ query }: { query: string }) {
+async function getTasks({ query }: { query: string[] }) {
   const request = new URLSearchParams({
-    query: query,
+    query: query.join(","),
   });
-  const response = await fetch(`/api/v1/profiles${"?" + request}`);
+  const response = await fetch(`/api/v1/tasks${"?" + request}`);
   if (!response.ok) {
     const error = await response.json();
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  const profiles = await response.json();
-  if (!isProfiles(profiles)) throw new Error("Problem fetching data");
-  return profiles;
+  const tasks = (await response.json()) as Task[];
+  return tasks.filter(isTask);
 }
 
-async function deleteProfile(uuid: string) {
-  const response = await fetch(`/api/v1/admin/profiles/${uuid}`, { method: "DELETE" });
+async function deleteTask(uuid: string) {
+  const response = await fetch(`/api/v1/admin/tasks/${uuid}`, { method: "DELETE" });
   if (!response.ok) {
     const error = await response.json();
     if (error.message) throw new Error(error.message);
@@ -53,80 +51,71 @@ async function deleteProfile(uuid: string) {
   return response;
 }
 
+interface SearchQuery {
+  name?: string;
+}
+
 const schema = z.object({
   name: z.string().optional(),
 });
 
-type SearchQueryFormResult = z.infer<typeof schema>;
-
-export default function ProfileDataTable() {
-  const [searchQuery, setSearchQuery] = useState({ query: "" });
+export default function TaskDataTable() {
+  const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
+  const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
+  const { data: profile } = useContext(ProfileContext);
   const { register, handleSubmit } = useZodForm({ schema });
-  const queryClient = useQueryClient();
-  const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
-    mutationFn: deleteProfile,
-    onSuccess: () => queryClient.invalidateQueries(["profiles", searchQuery]),
-    onError: (error) =>
-      toast.error(
-        `Error deleting profile: ${error instanceof Error ? error.message : "Unknown error occurred"}`,
-      ),
+  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: deleteTask,
+    onSuccess: () => queryClient.invalidateQueries(["tasks"]),
   });
   const { data, isLoading: isSearchLoading } = useQuery({
-    queryKey: ["profiles", searchQuery],
-    queryFn: () => getProfiles({ query: searchQuery.query }),
+    queryKey: ["tasks", searchQuery],
+    queryFn: () => getTasks({ query: searchQuery.query }),
     initialData: [],
   });
-  const { data: profile } = useContext(ProfileContext);
+  const queryClient = useQueryClient();
 
-  const isChecked = (profile: Profile) =>
-    selectedProfiles.some((selectedProfile) => selectedProfile.uuid === profile.uuid);
+  const isChecked = (task: Task) => selectedTasks.some((selectedTask) => selectedTask.uuid === task.uuid);
 
-  const isEveryProfileChecked = () => {
-    return selectedProfiles.length === data.length;
+  const isEveryTaskChecked = () => {
+    return selectedTasks == data;
   };
 
-  const onCheckedChange = (profile: Profile) => {
-    if (isChecked(profile)) {
-      setSelectedProfiles(selectedProfiles.filter((entry) => entry.uuid !== profile.uuid));
+  const onCheckedChange = (task: Task) => {
+    if (isChecked(task)) {
+      setSelectedTasks(selectedTasks.filter((entry) => entry.uuid !== task.uuid));
     } else {
-      setSelectedProfiles([...selectedProfiles, profile]);
+      setSelectedTasks([...selectedTasks, task]);
     }
   };
 
-  const onEveryProfileCheckedChange = () => {
-    if (isEveryProfileChecked()) {
-      setSelectedProfiles([]);
+  const onEveryTaskCheckedChange = () => {
+    if (isEveryTaskChecked()) {
+      setSelectedTasks([]);
     } else {
-      setSelectedProfiles(data);
+      setSelectedTasks(data);
     }
   };
 
-  const onSearchSubmit = (formData: SearchQueryFormResult) => {
-    setSelectedProfiles([]);
-    setSearchQuery({ query: "" });
-    formData.name && setSearchQuery({ query: `name:${formData.name}` });
-  };
+  const onSearchSubmit = (formData: SearchQuery) => {
+    setSearchQuery({ query: [] });
 
-  const sendToastByDeletionResponses = (responses: Response[]) => {
-    if (responses.some((response) => !response.ok)) {
-      const failedDeletions = responses.filter((response) => !response.ok).length;
-      const allRequestedDeletions = responses.length;
-      toast.error(
-        `${failedDeletions} from ${allRequestedDeletions} profiles couldn't be deleted, please try to delete the remaining profiles again.`,
-      );
-    } else {
-      toast.success(`${responses.length} profiles were successfully deleted.`);
+    if (!formData.name) {
+      return;
     }
+
+    let queries = [`name:${formData.name}`];
+
+    if (profile?.permissionType !== PermissionType.Admin && profile?.uuid) {
+      queries.push(`assignee.uuid:${profile.uuid}`);
+    }
+
+    formData.name && setSearchQuery({ query: queries });
   };
 
-  const deleteEverySelectedProfile = () => {
-    const deletePromises = selectedProfiles.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
-    Promise.all(deletePromises).then((responses) => {
-      sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["profiles", searchQuery]);
-    });
+  const deleteEverySelectedTask = () => {
+    selectedTasks.forEach((task) => mutateDelete(task.uuid ?? ""));
   };
 
   return (
@@ -148,6 +137,7 @@ export default function ProfileDataTable() {
               <TooltipContent>Trigger search</TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -158,24 +148,25 @@ export default function ProfileDataTable() {
               <TooltipContent>Show filter menu</TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           {profile?.permissionType === PermissionType.Admin && (
             <>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Link href="/profiles/create">
+                    <Link href="/tasks/create">
                       <Button variant="ghost">
-                        <Icons.userPlus />
+                        <Icons.taskPlus />
                       </Button>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>Create profile</TooltipContent>
+                  <TooltipContent>Create task</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button variant="ghost" onClick={deleteEverySelectedProfile}>
+                    <Button variant="ghost" onClick={deleteEverySelectedTask}>
                       {isDeleteLoading ? (
                         <Icons.spinner className="animate-spin text-primary" />
                       ) : (
@@ -183,28 +174,21 @@ export default function ProfileDataTable() {
                       )}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Delete profile(s)</TooltipContent>
+                  <TooltipContent>Delete task(s)</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </>
           )}
         </div>
       </form>
-      {showFilterMenu && (
-        <ProfileFilterMenu
-          sendQuery={(query) => {
-            setSelectedProfiles([]);
-            setSearchQuery({ query: query });
-          }}
-        />
-      )}
+      {showFilterMenu && <TaskFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[60px]">
                 <div className="grid place-items-center">
-                  <Checkbox checked={isEveryProfileChecked()} onCheckedChange={onEveryProfileCheckedChange} />
+                  <Checkbox checked={isEveryTaskChecked()} onCheckedChange={onEveryTaskCheckedChange} />
                 </div>
               </TableHead>
               <TableHead className="w-[60px]">&nbsp;</TableHead>
@@ -212,44 +196,36 @@ export default function ProfileDataTable() {
               <TableHead>Points</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Updated At</TableHead>
-              <TableHead className="text-center">Privileged</TableHead>
+              <TableHead className="text-center">State</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((profile) => (
-              <TableRow key={profile.uuid}>
+            {data.map((task) => (
+              <TableRow key={task.uuid}>
                 <TableCell>
                   <div className="grid place-items-center">
-                    <Checkbox checked={isChecked(profile)} onCheckedChange={() => onCheckedChange(profile)} />
+                    <Checkbox checked={isChecked(task)} onCheckedChange={() => onCheckedChange(task)} />
                   </div>
                 </TableCell>
                 <TableCell>
                   <Link
                     className="inline cursor-pointer rounded-full bg-secondary hover:brightness-90"
-                    href={`/profiles/profile/${profile.uuid}`}>
+                    href={`/tasks/task/${task.uuid}`}>
                     <Avatar
                       size={32}
-                      name={profile.uuid}
+                      name={task.uuid}
                       variant="beam"
                       colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
                     />
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <p>{profile.name}</p>
+                  <p>{task.name}</p>
                 </TableCell>
-                <TableCell>{profile.points}</TableCell>
-                <TableCell>{profile.createdAt && formatISODateToReadable(profile.createdAt)}</TableCell>
-                <TableCell>{profile.updatedAt && formatISODateToReadable(profile.updatedAt)}</TableCell>
-                <TableCell>
-                  <p>
-                    {profile.permissionType === PermissionType.Admin ? (
-                      <Icons.check className="m-auto" />
-                    ) : (
-                      <Icons.x className="m-auto" />
-                    )}
-                  </p>
-                </TableCell>
+                <TableCell>{task.points}</TableCell>
+                <TableCell>{task.createdAt && formatISODateToReadable(task.createdAt)}</TableCell>
+                <TableCell>{task.updatedAt && formatISODateToReadable(task.updatedAt)}</TableCell>
+                <TableCell>{task.taskState && getTranslatedTaskStateValue(task.taskState)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

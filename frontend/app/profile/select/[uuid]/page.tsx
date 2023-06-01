@@ -49,19 +49,22 @@ export default function ProfileLogin({ params }: { params: any }) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const login = useCallback((request: ProfileAuthRequest) => mutate(
-    { ...request, profileUuid: data?.uuid },
-    {
-      onSuccess: () => router.push("/dashboard"),
-      onError: (error) =>
-        toast.error(
-          `Error authenticating profile: ${error instanceof Error ? error.message : "Unknown error"}`,
-        ),
-    },
-  ), [data, mutate, router]);
+  const login = useCallback(
+    (request: ProfileAuthRequest) =>
+      mutate(
+        { ...request, profileUuid: data?.uuid },
+        {
+          onSuccess: () => router.push("/dashboard"),
+          onError: (error) =>
+            toast.error(
+              `Error authenticating profile: ${error instanceof Error ? error.message : "Unknown error"}`,
+            ),
+        },
+      ),
+    [data, mutate, router],
+  );
 
   const onSubmit = (formData: ProfileAuthRequest) => login(formData);
-    
 
   useEffect(() => {
     if (data && !data?.passwordProtected) {

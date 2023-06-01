@@ -1,4 +1,4 @@
-export enum PermissionType {
+export enum SchedulerMode {
   /**
    * Cron uses a Cron Expression for resolving Execution Dates
    */
@@ -11,4 +11,17 @@ export enum PermissionType {
    * Deactivates the Scheduler
    */
   Deactivated = "DEACTIVATED",
+}
+
+export function getTranslatedSchedulerModeValue(mode: SchedulerMode) {
+  switch (mode) {
+    case SchedulerMode.Cron:
+      return "Cron";
+    case SchedulerMode.MilliInterval:
+      return "Interval";
+    case SchedulerMode.Deactivated:
+      return "Inactive";
+    default:
+      return "Invalid";
+  }
 }

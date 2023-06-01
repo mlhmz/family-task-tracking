@@ -4,6 +4,8 @@ import { HouseholdResponse } from "@/types/household";
 import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileAuthResponse } from "@/types/profile";
 import { Reward } from "@/types/reward";
+import { Task } from "@/types/task";
+import { TaskState } from "@/types/task-state";
 
 // This is a hack to add hasOwnProperty to Object
 declare global {
@@ -151,3 +153,53 @@ const parseRewards = (value: unknown): Profile[] | null => {
 };
 
 export const isRewards = createTypeGuard<Reward[]>(parseRewards);
+
+const parseTaskState = (value: unknown): TaskState | null => {
+  if (
+    typeof value === "string" &&
+    Object.values(TaskState)
+      .map((s) => s.toString())
+      .includes(value)
+  ) {
+    return value as TaskState;
+  }
+  return null;
+};
+
+export const isTaskState = createTypeGuard<TaskState>(parseTaskState);
+
+// ToDo: finish this parse function
+const parseTask = (value: unknown): Task | null => {
+  if (
+    typeof value === "object" &&
+    value &&
+    value.hasOwnProperty("uuid") &&
+    value.hasOwnProperty("name") &&
+    value.hasOwnProperty("description") &&
+    value.hasOwnProperty("points") &&
+    value.hasOwnProperty("createdAt") &&
+    value.hasOwnProperty("updatedAt") &&
+    value.hasOwnProperty("expirationAt") &&
+    value.hasOwnProperty("doneAt") &&
+    value.hasOwnProperty("nextTaskCreationAt") &&
+    value.hasOwnProperty("taskState") &&
+    value.hasOwnProperty("assigneeUuid")
+  ) {
+    return {
+      uuid: typeof value.uuid === "string" ? value.uuid : undefined,
+      name: typeof value.name === "string" ? value.name : undefined,
+      description: typeof value.description === "string" ? value.description : undefined,
+      points: typeof value.points === "number" ? value.points : undefined,
+      createdAt: typeof value.createdAt === "string" ? value.createdAt : undefined,
+      updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : undefined,
+      expirationAt: typeof value.expirationAt === "string" ? value.expirationAt : undefined,
+      doneAt: typeof value.doneAt === "string" ? value.doneAt : undefined,
+      nextTaskCreationAt: typeof value.nextTaskCreationAt === "string" ? value.nextTaskCreationAt : undefined,
+      taskState: isTaskState(value.taskState) ? value.taskState : undefined,
+      assigneeUuid: typeof value.assigneeUuid === "string" ? value.assigneeUuid : undefined,
+    };
+  }
+  return null;
+};
+
+export const isTask = createTypeGuard<Task>(parseTask);

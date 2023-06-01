@@ -122,7 +122,7 @@ export default function RewardDataTable() {
                   )}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Trigger Search</TooltipContent>
+              <TooltipContent>Trigger search</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
@@ -132,46 +132,51 @@ export default function RewardDataTable() {
                   <Icons.filter />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Show Filter Menu</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost">
-                      <Icons.packagePlus />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>Create a Reward</DialogHeader>
-                    <RewardCreateForm
-                      handleCloseDialog={() => {
-                        setIsCreateDialogOpen(false);
-                      }}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </TooltipTrigger>
-              <TooltipContent>Create Reward</TooltipContent>
+              <TooltipContent>Show filter menu</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost" onClick={deleteEverySelectedReward}>
-                  {isDeleteLoading ? (
-                    <Icons.spinner className="animate-spin text-primary" />
-                  ) : (
-                    <Icons.trash />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Delete Reward(s)</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {profile?.permissionType === PermissionType.Admin && (
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost">
+                          <Icons.packagePlus />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Create a Reward</DialogHeader>
+                        <RewardCreateForm
+                          handleCloseDialog={() => {
+                            setIsCreateDialogOpen(false);
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </TooltipTrigger>
+                  <TooltipContent>Create reward</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" onClick={deleteEverySelectedReward}>
+                      {isDeleteLoading ? (
+                        <Icons.spinner className="animate-spin text-primary" />
+                      ) : (
+                        <Icons.trash />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete reward(s)</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
         </div>
       </form>
       {showFilterMenu && (
