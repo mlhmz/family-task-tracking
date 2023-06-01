@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import Link from "next/link";
 
@@ -19,11 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
+import { ProfileContext } from "../profile-context";
 import ProfileFilterMenu from "./profile-filter-menu";
 
 async function getProfiles({ query }: { query: string }) {
@@ -63,7 +65,7 @@ export default function ProfileDataTable() {
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
   const queryClient = useQueryClient();
-  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+  const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
     onSuccess: () => queryClient.invalidateQueries(["profiles", searchQuery]),
     onError: (error) =>
@@ -76,6 +78,7 @@ export default function ProfileDataTable() {
     queryFn: () => getProfiles({ query: searchQuery.query }),
     initialData: [],
   });
+  const { data: profile } = useContext(ProfileContext);
 
   const isChecked = (profile: Profile) =>
     selectedProfiles.some((selectedProfile) => selectedProfile.uuid === profile.uuid);
@@ -106,8 +109,24 @@ export default function ProfileDataTable() {
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
+  const sendToastByDeletionResponses = (responses: Response[]) => {
+    if (responses.some((response) => !response.ok)) {
+      const failedDeletions = responses.filter((response) => !response.ok).length;
+      const allRequestedDeletions = responses.length;
+      toast.error(
+        `${failedDeletions} from ${allRequestedDeletions} profiles couldn't be deleted, please try to delete the remaining profiles again.`,
+      );
+    } else {
+      toast.success(`${responses.length} profiles were successfully deleted.`);
+    }
+  };
+
   const deleteEverySelectedProfile = () => {
-    selectedProfiles.forEach((profile) => mutateDelete(profile.uuid ?? ""));
+    const deletePromises = selectedProfiles.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
+    Promise.all(deletePromises).then((responses) => {
+      sendToastByDeletionResponses(responses);
+      queryClient.invalidateQueries(["profiles", searchQuery]);
+    });
   };
 
   return (
@@ -115,20 +134,60 @@ export default function ProfileDataTable() {
       <form onSubmit={handleSubmit(onSearchSubmit)}>
         <div className="my-2 flex gap-2">
           <Input placeholder="Search by Name..." {...register("name")} />
-          <Button variant="ghost">
-            {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
-          </Button>
-          <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
-            <Icons.filter />
-          </Button>
-          <Link href="/profiles/create">
-            <Button variant="ghost">
-              <Icons.userplus />
-            </Button>
-          </Link>
-          <Button variant="ghost" onClick={deleteEverySelectedProfile}>
-            {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  {isSearchLoading ? (
+                    <Icons.spinner className="animate-spin text-primary" />
+                  ) : (
+                    <Icons.search />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Trigger Search</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                  <Icons.filter />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Show Filter Menu</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {profile?.permissionType === PermissionType.Admin && (
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link href="/profiles/create">
+                      <Button variant="ghost">
+                        <Icons.userPlus />
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>Create Profile</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" onClick={deleteEverySelectedProfile}>
+                      {isDeleteLoading ? (
+                        <Icons.spinner className="animate-spin text-primary" />
+                      ) : (
+                        <Icons.trash />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete Profile(s)</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
         </div>
       </form>
       {showFilterMenu && (

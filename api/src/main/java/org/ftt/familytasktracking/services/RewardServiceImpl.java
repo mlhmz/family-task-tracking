@@ -1,6 +1,7 @@
 package org.ftt.familytasktracking.services;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.RewardRequestDto;
 import org.ftt.familytasktracking.dtos.RewardResponseDto;
@@ -73,6 +74,12 @@ public class RewardServiceImpl implements RewardService {
     }
 
     @Override
+    public RewardModel getRewardByJwtAndUuid(@NonNull Jwt jwt, @NonNull UUID uuid) {
+        Household household = this.householdService.getHouseholdByJwt(jwt);
+        return buildModelFromRewardEntity(this.rewardRepository.findRewardByHouseholdAndUuid(household, uuid));
+    }
+
+    @Override
     public List<RewardModel> getAllRewardsByJwt(Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         return this.rewardRepository.findAllByHousehold(household).stream()
@@ -99,6 +106,7 @@ public class RewardServiceImpl implements RewardService {
     }
 
     @Override
+    @Transactional
     public void deleteRewardByIdAndJwt(UUID rewardId, Jwt jwt) {
         Household household = this.householdService.getHouseholdByJwt(jwt);
         if (!rewardRepository.existsRewardByUuidAndHousehold(rewardId, household)) {

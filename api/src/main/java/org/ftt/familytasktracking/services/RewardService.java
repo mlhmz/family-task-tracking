@@ -28,6 +28,15 @@ public interface RewardService {
     List<RewardModel> getAllRewardsByJwtAndSearchQuery(@NonNull Jwt jwt, @NonNull String query);
 
     /**
+     * Gets a profile of a household by the Profile UUID and the {@link Jwt}
+     *
+     * @param uuid {@link UUID} of the {@link Reward}
+     * @param jwt         {@link Jwt} that is bound to the rewards household
+     * @return {@link RewardModel} that represents the Output
+     */
+    RewardModel getRewardByJwtAndUuid(@NonNull Jwt jwt, @NonNull UUID uuid);
+
+    /**
      * Gets all Rewards of a household by its jwt
      *
      * @param jwt {@link Jwt} of the household

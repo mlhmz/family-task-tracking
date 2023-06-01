@@ -12,6 +12,10 @@ export const siteConfig = {
       title: "Profiles",
       href: "/profiles",
     },
+    {
+      title: "Rewards",
+      href: "/rewards",
+    },
   ],
   links: {
     github: "https://github.com/mlhmz/family-task-tracking",

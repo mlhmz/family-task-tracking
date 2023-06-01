@@ -1,12 +1,16 @@
 import {
   Accessibility,
   Check,
+  CheckCircle,
+  Edit,
+  ExternalLink,
   Filter,
   Home,
   Laptop,
   Loader2,
   LucideProps,
   Moon,
+  PackagePlus,
   Search,
   SunMedium,
   Trash,
@@ -29,9 +33,13 @@ export const Icons = {
   x: X,
   check: Check,
   trash: Trash,
-  userplus: UserPlus,
+  userPlus: UserPlus,
   search: Search,
   filter: Filter,
+  checkCircle: CheckCircle,
+  edit: Edit,
+  packagePlus: PackagePlus,
+  externalLink: ExternalLink,
   logo: (props: LucideProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path

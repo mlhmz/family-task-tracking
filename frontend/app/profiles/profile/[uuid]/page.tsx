@@ -9,13 +9,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
 
 import ProfileInfo from "@/components/common/profile/profile-info";
+import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { ProfileContext } from "@/app/profile-context";
 
 import ProfilePrivilegedEditForm from "./profile-privileged-edit-form";
 
-export default function ProfileInfoPage({ params }) {
+export default function ProfileInfoPage({ params }: { params: any }) {
   const { data: profileInstance } = useContext(ProfileContext);
   const { data: selectedProfile } = useProfile(params.uuid);
   const [open, setOpen] = useState(false);
@@ -37,6 +38,7 @@ export default function ProfileInfoPage({ params }) {
           </DialogContent>
         </Dialog>
       )}
+      <ProfileRewards profileUuid={selectedProfile.uuid} />
     </div>
   );
 }

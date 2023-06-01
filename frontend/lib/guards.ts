@@ -3,6 +3,7 @@
 import { HouseholdResponse } from "@/types/household";
 import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileAuthResponse } from "@/types/profile";
+import { Reward } from "@/types/reward";
 
 // This is a hack to add hasOwnProperty to Object
 declare global {
@@ -109,3 +110,44 @@ const parseProfiles = (value: unknown): Profile[] | null => {
 };
 
 export const isProfiles = createTypeGuard<Profile[]>(parseProfiles);
+
+const parseReward = (value: unknown): Reward | null => {
+  if (
+    typeof value === "object" &&
+    value &&
+    value.hasOwnProperty("uuid") &&
+    value.hasOwnProperty("cost") &&
+    value.hasOwnProperty("name") &&
+    value.hasOwnProperty("description") &&
+    value.hasOwnProperty("createdAt") &&
+    value.hasOwnProperty("updatedAt") &&
+    value.hasOwnProperty("redeemedAt") &&
+    value.hasOwnProperty("redeemedBy") &&
+    value.hasOwnProperty("redeemed")
+  ) {
+    return {
+      uuid: typeof value.uuid === "string" ? value.uuid : undefined,
+      cost: typeof value.cost === "number" ? value.cost : undefined,
+      name: typeof value.name === "string" ? value.name : undefined,
+      description: typeof value.description === "string" ? value.description : undefined,
+      createdAt: typeof value.createdAt === "string" ? value.createdAt : undefined,
+      updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : undefined,
+      redeemedAt: typeof value.redeemedAt === "string" ? value.redeemedAt : undefined,
+      redeemedBy: typeof value.redeemedBy === "string" ? value.redeemedBy : undefined,
+      redeemed: typeof value.redeemed === "boolean" ? value.redeemed : undefined,
+    };
+  }
+  return null;
+};
+
+export const isReward = createTypeGuard<Reward>(parseReward);
+
+const parseRewards = (value: unknown): Profile[] | null => {
+  if (Array.isArray(value)) {
+    const isRewards = value.every((reward) => isReward(reward));
+    if (isRewards) return value;
+  }
+  return null;
+};
+
+export const isRewards = createTypeGuard<Reward[]>(parseRewards);

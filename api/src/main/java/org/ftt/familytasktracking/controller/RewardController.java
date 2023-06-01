@@ -66,6 +66,28 @@ public class RewardController {
         );
     }
 
+    @Operation(summary = "Gets a Reward by its JWT and its UUID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found reward",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON submitted",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "401", description = "Request doesn't contain valid bearer token or " +
+                    "Session ID is not valid",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}),
+            @ApiResponse(responseCode = "404", description = "Reward couldn't be found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class))}
+            )}
+    )
+    @GetMapping("/{id}")
+    public RewardResponseDto getRewardById(@PathVariable(value = "id") UUID uuid, @AuthenticationPrincipal Jwt jwt) {
+        return this.rewardService.getRewardByJwtAndUuid(jwt, uuid).toResponseDto();
+    }
+
     @Operation(summary = "Updates a Reward safely" +
             "(Safely means that fields that unprivileged users shouldn't update won't be updated).")
     @ApiResponses(value = {

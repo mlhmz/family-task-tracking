@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -37,7 +37,7 @@ const schema = z.object({
   password: z.string().min(1).max(255).optional(),
 });
 
-export default function ProfileLogin({ params }) {
+export default function ProfileLogin({ params }: { params: any }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { data } = useProfile(params.uuid);
   const { mutate, isLoading } = useMutation({
@@ -45,23 +45,29 @@ export default function ProfileLogin({ params }) {
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
     },
-    onError: (error) => {
-      toast.error(
-        `Error authenticating profile: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
-    },
   });
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const onSubmit = (formData: ProfileAuthRequest) =>
-    mutate({ ...formData, profileUuid: data?.uuid }, { onSuccess: () => router.push("/dashboard") });
+  const login = useCallback((request: ProfileAuthRequest) => mutate(
+    { ...request, profileUuid: data?.uuid },
+    {
+      onSuccess: () => router.push("/dashboard"),
+      onError: (error) =>
+        toast.error(
+          `Error authenticating profile: ${error instanceof Error ? error.message : "Unknown error"}`,
+        ),
+    },
+  ), [data, mutate, router]);
+
+  const onSubmit = (formData: ProfileAuthRequest) => login(formData);
+    
 
   useEffect(() => {
     if (data && !data?.passwordProtected) {
-      mutate({ profileUuid: data?.uuid });
+      login({ profileUuid: data?.uuid });
     }
-  }, [data, mutate]);
+  }, [data, mutate, login]);
 
   if (!data || !data.uuid) {
     return <ProfileSelectSkeleton />;
