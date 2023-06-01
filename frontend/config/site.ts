@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "FTT",
-  description: "Next generation addictive family task tracker that will make household chores more bearable.",
+  name: "Questie",
+  description: "Turn chores into fun sidequests while gaining rewards",
   mainNav: [
     {
       title: "Dashboard",
