@@ -42,7 +42,7 @@ const schema = z.object({
 });
 
 export default function TaskCreateForm() {
-  const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
+  const { register, handleSubmit, formState, setValue } = useZodForm({ schema, defaultValues: { points: 0 } });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createTask,
     onSuccess: (data) => {
