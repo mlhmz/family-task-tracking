@@ -32,10 +32,16 @@ Installing frontend dependencies in frontend directory
 $ npm install
 ```
 
-Starting Frontend Dev Environment with Vite in frontend directory
+Starting Frontend Dev Server with Next in frontend directory
 
 ```bash
 $ npm run dev
+```
+
+or optionally with Turbopack (faster but might be buggy)
+
+```bash
+$ npm run turbo
 ```
 
 Navigate to Keycloak on
@@ -53,7 +59,7 @@ Password - admin
 
 ## Production
 
-FTT will be delivered as Docker Containers, so a Compose is the best way to go, to host it.
+FTT will be delivered as Docker Containers, so a Compose File is the way to go.
 
 ### Prerequisites
 
@@ -63,7 +69,7 @@ FTT will be delivered as Docker Containers, so a Compose is the best way to go, 
 ### Compose
 
 ```yaml
-version: "3.1"
+version: '3.1'
 
 # Services that are required for a production instance
 # Ports are not required if a reverse proxy is used
@@ -72,21 +78,21 @@ services:
     image: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: "${POSTGRES_DB:-tasktracking}"
-      POSTGRES_USER: "${POSTGRES_USER:-tasktracking}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-tasktracking}"
+      POSTGRES_DB: '${POSTGRES_DB:-tasktracking}'
+      POSTGRES_USER: '${POSTGRES_USER:-tasktracking}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
-          "CMD",
-          "pg_isready",
-          "-q",
-          "-d",
-          "${POSTGRES_DB:-tasktracking}",
-          "-U",
-          "${POSTGRES_USER:-tasktracking}",
+          'CMD',
+          'pg_isready',
+          '-q',
+          '-d',
+          '${POSTGRES_DB:-tasktracking}',
+          '-U',
+          '${POSTGRES_USER:-tasktracking}',
         ]
       retries: 3
       timeout: 5s
@@ -94,12 +100,12 @@ services:
     image: mlhmz/family-task-tracking:main
     restart: unless-stopped
     labels:
-      - "com.centurylinklabs.watchtower.scope=ftt"
+      - 'com.centurylinklabs.watchtower.scope=ftt'
     environment:
       DB_HOST: db
-      DB_NAME: "${POSTGRES_DB:-tasktracking}"
-      DB_USERNAME: "${POSTGRES_USER:-tasktracking}"
-      DB_PASSWORD: "${POSTGRES_PASSWORD:-tasktracking}"
+      DB_NAME: '${POSTGRES_DB:-tasktracking}'
+      DB_USERNAME: '${POSTGRES_USER:-tasktracking}'
+      DB_PASSWORD: '${POSTGRES_PASSWORD:-tasktracking}'
       KC_ISSUER_HOST: # URL of the Keycloak Instance
       KC_JWK_HOST: # URL of the Keycloak Instance
       KC_REALM: # Keycloak Realm
@@ -111,7 +117,7 @@ services:
       - default
       - reverse_proxy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
       interval: 15s
       timeout: 2s
       retries: 15
@@ -125,7 +131,7 @@ services:
     depends_on:
       - api
     labels:
-      - "com.centurylinklabs.watchtower.scope=ftt"
+      - 'com.centurylinklabs.watchtower.scope=ftt'
     environment:
       LOCAL_AUTH_URL: http://localhost:3000
       NEXTAUTH_URL: # URL of the Frontend URL with Reverse Proxy on it
@@ -142,7 +148,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30 --scope ftt
     labels:
-      - "com.centurylinklabs.watchtower.scope=ftt"
+      - 'com.centurylinklabs.watchtower.scope=ftt'
 networks:
   default:
     driver: bridge
