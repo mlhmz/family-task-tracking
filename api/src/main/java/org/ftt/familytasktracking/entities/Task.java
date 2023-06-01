@@ -29,6 +29,7 @@ public class Task {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "TEXT", length = 1024)
     private String description;
 
     private Integer points;
