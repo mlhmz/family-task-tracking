@@ -1,5 +1,5 @@
-import {TaskState} from "@/types/task-state";
-import {SchedulerMode} from "@/types/scheduler-mode";
+import { SchedulerMode } from "@/types/scheduler-mode";
+import { TaskState } from "@/types/task-state";
 
 export interface Task {
   uuid?: string;

@@ -1,5 +1,5 @@
 export enum TaskState {
-   /**
+  /**
    * Task is not done yet.
    */
   Undone = "UNDONE",

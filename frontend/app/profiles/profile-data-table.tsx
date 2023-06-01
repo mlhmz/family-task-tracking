@@ -145,7 +145,7 @@ export default function ProfileDataTable() {
                   )}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Trigger Search</TooltipContent>
+              <TooltipContent>Trigger search</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
@@ -155,7 +155,7 @@ export default function ProfileDataTable() {
                   <Icons.filter />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Show Filter Menu</TooltipContent>
+              <TooltipContent>Show filter menu</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           {profile?.permissionType === PermissionType.Admin && (
@@ -169,7 +169,7 @@ export default function ProfileDataTable() {
                       </Button>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>Create Profile</TooltipContent>
+                  <TooltipContent>Create profile</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
               <TooltipProvider>
@@ -183,7 +183,7 @@ export default function ProfileDataTable() {
                       )}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Delete Profile(s)</TooltipContent>
+                  <TooltipContent>Delete profile(s)</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </>

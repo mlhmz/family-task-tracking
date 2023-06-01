@@ -1,17 +1,20 @@
 "use client";
 
 import { Dispatch, useContext } from "react";
+
 import { z } from "zod";
+
+import { PermissionType } from "@/types/permission-type";
+import { TaskState, getTranslatedTaskStateValue } from "@/types/task-state";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
+
 import { ProfileContext } from "../profile-context";
-import { PermissionType } from "@/types/permission-type";
 
 const stringQuery = z.object({
   activated: z.boolean().optional(),
@@ -101,11 +104,13 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
             </div>
             <div className="grid grid-cols-2 gap-2">
               {/* Auch das geht wohl nicht direkt mit React Hook Form */}
-              <Select defaultValue=":" onValueChange={(value) => { setValue("pointsQuery.operator", value) }}>
+              <Select
+                defaultValue=":"
+                onValueChange={(value) => {
+                  setValue("pointsQuery.operator", value);
+                }}>
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder="Operator"
-                  />
+                  <SelectValue placeholder="Operator" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value=":">equals</SelectItem>
@@ -161,15 +166,17 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
               <h2>Task State</h2>
             </div>
             <div className="flex gap-3">
-
-              <Select onValueChange={(value) => { setValue("taskStateQuery.value", value) }}>
+              <Select
+                onValueChange={(value) => {
+                  setValue("taskStateQuery.value", value);
+                }}>
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder="Task State"
-                  />
+                  <SelectValue placeholder="Task State" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(TaskState).map(taskState => <SelectItem value={taskState}>{getTranslatedTaskStateValue(taskState)}</SelectItem>)}
+                  {Object.values(TaskState).map((taskState) => (
+                    <SelectItem value={taskState}>{getTranslatedTaskStateValue(taskState)}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

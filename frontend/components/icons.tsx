@@ -4,6 +4,7 @@ import {
   CheckCircle,
   Edit,
   ExternalLink,
+  FilePlus,
   Filter,
   Home,
   Laptop,
@@ -16,7 +17,6 @@ import {
   Trash,
   Twitter,
   UserPlus,
-  FilePlus,
   X,
   type Icon as LucideIcon,
 } from "lucide-react";

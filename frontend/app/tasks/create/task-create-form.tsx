@@ -1,21 +1,22 @@
 "use client";
 
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {z} from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 
-import {TaskRequest} from "@/types/task";
+import { TaskRequest } from "@/types/task";
+import { TaskState, getTranslatedTaskStateValue } from "@/types/task-state";
 
-import {isTask} from "@/lib/guards";
+import { isTask } from "@/lib/guards";
 
-import {Input} from "@/components/ui/input";
-import {getTranslatedTaskStateValue, TaskState} from "@/types/task-state";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
-import {Icons} from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import {useZodForm} from "@/app/hooks/use-zod-form";
+import { Icons } from "@/components/icons";
+
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function createTask(request: TaskRequest) {
   const response = await fetch("/api/v1/admin/tasks", {
@@ -37,7 +38,7 @@ const schema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().min(1).max(255).optional(),
   points: z.number().optional(),
-  taskState: z.enum([TaskState.Done,TaskState.Undone,TaskState.Finished,TaskState.Reviewed]).optional()
+  taskState: z.enum([TaskState.Done, TaskState.Undone, TaskState.Finished, TaskState.Reviewed]).optional(),
 });
 
 export default function TaskCreateForm() {
@@ -62,14 +63,16 @@ export default function TaskCreateForm() {
           <Input placeholder="Description" {...register("description")} />
           <Input placeholder="Points" type="number" {...register("points", { valueAsNumber: true })} />
 
-          <Select defaultValue={TaskState.Undone} onValueChange={value => setValue("taskState", value as TaskState)}>
+          <Select
+            defaultValue={TaskState.Undone}
+            onValueChange={(value) => setValue("taskState", value as TaskState)}>
             <SelectTrigger>
-              <SelectValue
-                placeholder="State"
-              />
+              <SelectValue placeholder="State" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(TaskState).map(taskState => <SelectItem value={taskState}>{getTranslatedTaskStateValue(taskState)}</SelectItem>)}
+              {Object.values(TaskState).map((taskState) => (
+                <SelectItem value={taskState}>{getTranslatedTaskStateValue(taskState)}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

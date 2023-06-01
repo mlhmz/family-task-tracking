@@ -7,23 +7,25 @@ import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { z } from "zod";
+
+import { PermissionType } from "@/types/permission-type";
 import { Task } from "@/types/task";
+import { getTranslatedTaskStateValue } from "@/types/task-state";
 
 import { isTask } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 
-import { Icons } from "@/components/icons";
-import TaskFilterMenu from "@/app/tasks/task-filter-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getTranslatedTaskStateValue } from "@/types/task-state";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+import { Icons } from "@/components/icons";
 
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
-import { PermissionType } from "@/types/permission-type";
+import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
 async function getTasks({ query }: { query: string[] }) {
   const request = new URLSearchParams({
@@ -74,9 +76,7 @@ export default function TaskDataTable() {
   });
   const queryClient = useQueryClient();
 
-
-  const isChecked = (task: Task) =>
-    selectedTasks.some((selectedTask) => selectedTask.uuid === task.uuid);
+  const isChecked = (task: Task) => selectedTasks.some((selectedTask) => selectedTask.uuid === task.uuid);
 
   const isEveryTaskChecked = () => {
     return selectedTasks == data;
@@ -127,10 +127,14 @@ export default function TaskDataTable() {
             <Tooltip>
               <TooltipTrigger>
                 <Button variant="ghost">
-                  {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
+                  {isSearchLoading ? (
+                    <Icons.spinner className="animate-spin text-primary" />
+                  ) : (
+                    <Icons.search />
+                  )}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Search by name</TooltipContent>
+              <TooltipContent>Trigger search</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
@@ -141,34 +145,40 @@ export default function TaskDataTable() {
                   <Icons.filter />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Show filters</TooltipContent>
+              <TooltipContent>Show filter menu</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
-          {profile?.permissionType === PermissionType.Admin &&
-            <Link href="/tasks/create">
+          {profile?.permissionType === PermissionType.Admin && (
+            <>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button variant="ghost">
-                      <Icons.taskPlus />
-                    </Button>
+                    <Link href="/tasks/create">
+                      <Button variant="ghost">
+                        <Icons.taskPlus />
+                      </Button>
+                    </Link>
                   </TooltipTrigger>
-                  <TooltipContent>Add task</TooltipContent>
+                  <TooltipContent>Create task</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </Link>}
-          {profile?.permissionType === PermissionType.Admin &&
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button variant="ghost" onClick={deleteEverySelectedTask}>
-                    {isDeleteLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.trash />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete task</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" onClick={deleteEverySelectedTask}>
+                      {isDeleteLoading ? (
+                        <Icons.spinner className="animate-spin text-primary" />
+                      ) : (
+                        <Icons.trash />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete task(s)</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
         </div>
       </form>
       {showFilterMenu && <TaskFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}

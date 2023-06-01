@@ -4,8 +4,8 @@ import { HouseholdResponse } from "@/types/household";
 import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileAuthResponse } from "@/types/profile";
 import { Reward } from "@/types/reward";
-import {Task} from "@/types/task";
-import {TaskState} from "@/types/task-state";
+import { Task } from "@/types/task";
+import { TaskState } from "@/types/task-state";
 
 // This is a hack to add hasOwnProperty to Object
 declare global {
@@ -155,7 +155,12 @@ const parseRewards = (value: unknown): Profile[] | null => {
 export const isRewards = createTypeGuard<Reward[]>(parseRewards);
 
 const parseTaskState = (value: unknown): TaskState | null => {
-  if (typeof value === "string" && Object.values(TaskState).map(s => s.toString()).includes(value)) {
+  if (
+    typeof value === "string" &&
+    Object.values(TaskState)
+      .map((s) => s.toString())
+      .includes(value)
+  ) {
     return value as TaskState;
   }
   return null;
