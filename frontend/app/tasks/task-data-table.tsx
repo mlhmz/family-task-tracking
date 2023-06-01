@@ -151,7 +151,7 @@ export default function TaskDataTable() {
                 <Tooltip>
                   <TooltipTrigger>
                     <Button variant="ghost">
-                      <Icons.taskplus />
+                      <Icons.taskPlus />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Add task</TooltipContent>
