@@ -5,7 +5,6 @@ import { env } from "@/env.mjs";
 import { getToken } from "next-auth/jwt";
 
 import { ApiHandler } from "@/types/handlers";
-
 import { getJSONFromResponse, getNoContentResponse, setResponseHeaders } from "@/lib/utils";
 
 const springHandler: ApiHandler = async (request, context) => {

@@ -7,15 +7,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { HouseholdRequest } from "@/types/household";
-
 import { isHouseholdResponse } from "@/lib/guards";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const postHousehold = async (householdRequest: HouseholdRequest) => {

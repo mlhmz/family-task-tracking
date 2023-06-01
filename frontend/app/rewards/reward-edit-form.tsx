@@ -1,7 +1,6 @@
 "use client";
 
 import { Dispatch } from "react";
-
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,15 +8,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Reward, RewardRequest } from "@/types/reward";
-
 import { updateReward } from "@/lib/reward-requests";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const schema = z.object({

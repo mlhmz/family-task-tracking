@@ -6,16 +6,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { TaskRequest } from "@/types/task";
-import { TaskState, getTranslatedTaskStateValue } from "@/types/task-state";
-
+import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 import { isTask } from "@/lib/guards";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function createTask(request: TaskRequest) {
@@ -42,7 +38,10 @@ const schema = z.object({
 });
 
 export default function TaskCreateForm() {
-  const { register, handleSubmit, formState, setValue } = useZodForm({ schema, defaultValues: { points: 0 } });
+  const { register, handleSubmit, formState, setValue } = useZodForm({
+    schema,
+    defaultValues: { points: 0 },
+  });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createTask,
     onSuccess: (data) => {

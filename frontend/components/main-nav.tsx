@@ -6,11 +6,8 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 import { NavItem } from "@/types/nav";
-
 import { siteConfig } from "@/config/site";
-
 import { cn } from "@/lib/utils";
-
 import { Icons } from "@/components/icons";
 
 const Home = () => {

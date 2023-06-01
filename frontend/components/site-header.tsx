@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext } from "react";
-
 import Link from "next/link";
 
 import Avatar from "boring-avatars";
@@ -9,13 +8,10 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { Toaster } from "sonner";
 
 import { siteConfig } from "@/config/site";
-
 import { Button, buttonVariants } from "@/components/ui/button";
-
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-
 import { useLogoutProfile } from "@/app/hooks/use-logout-profile";
 import { ProfileContext } from "@/app/profile-context";
 

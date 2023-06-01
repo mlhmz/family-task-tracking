@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,13 +9,10 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
-
 import { Icons } from "@/components/icons";
-
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
