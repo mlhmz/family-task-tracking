@@ -71,7 +71,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     <ProfileContextProvider>
                       <ProfilesContextProvider>
                         <AuthGuard>
-                          <SiteHeader />
+                          <SiteHeader appName={siteConfig.name} />
                           <div className="flex-1">{children}</div>
                         </AuthGuard>
                       </ProfilesContextProvider>
