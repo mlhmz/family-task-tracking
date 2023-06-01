@@ -42,7 +42,7 @@ const schema = z.object({
 });
 
 export default function ProfileCreateForm() {
-  const { register, handleSubmit, formState, setValue } = useZodForm({ schema });
+  const { register, handleSubmit, formState, setValue } = useZodForm({ schema, defaultValues: { points: 0 } });
   const { mutate, isLoading } = useMutation({
     mutationFn: createProfile,
     onSuccess: () => {

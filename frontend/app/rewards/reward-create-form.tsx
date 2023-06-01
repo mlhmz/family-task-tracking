@@ -26,7 +26,7 @@ const schema = z.object({
 });
 
 export default function RewardCreateForm({ handleCloseDialog }: { handleCloseDialog: Dispatch<void> }) {
-  const { register, handleSubmit, formState } = useZodForm({ schema });
+  const { register, handleSubmit, formState } = useZodForm({ schema, defaultValues: { cost: 0 } });
   const queryClient = useQueryClient();
   const router = useRouter();
   const { mutate, error, isLoading } = useMutation({
