@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useEffect } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 

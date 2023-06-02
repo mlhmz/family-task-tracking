@@ -1,11 +1,9 @@
 import React from "react";
-
 import Link from "next/link";
 
 import { useQuery } from "@tanstack/react-query";
 
 import { getRewards } from "@/lib/reward-requests";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 

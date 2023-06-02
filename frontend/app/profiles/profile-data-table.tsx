@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext, useState } from "react";
-
 import Link from "next/link";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,18 +10,14 @@ import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
-
 import { isProfiles } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 import { ProfileContext } from "../profile-context";

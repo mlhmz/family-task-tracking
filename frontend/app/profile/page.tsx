@@ -5,7 +5,6 @@ import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
-
 import ProfileInfo from "@/components/common/profile/profile-info";
 import ProfileRewards from "@/components/common/reward/profile-rewards";
 

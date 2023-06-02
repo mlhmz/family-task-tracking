@@ -1,23 +1,18 @@
 "use client";
 
 import { useContext, useState } from "react";
-
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
-
 import { deleteReward, getRewardByUuid } from "@/lib/reward-requests";
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import RewardProfileInfoSkeleton from "@/components/ui/skeleton/reward-profile-info-skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
 import { Icons } from "@/components/icons";
-
 import { ProfileContext } from "@/app/profile-context";
 
 import RedeemRewardButton from "../../redeem-reward-button";

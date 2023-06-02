@@ -4,12 +4,9 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Reward } from "@/types/reward";
-
 import { redeemReward } from "@/lib/reward-requests";
-
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
 import { Icons } from "@/components/icons";
 
 export default function RedeemRewardButton({

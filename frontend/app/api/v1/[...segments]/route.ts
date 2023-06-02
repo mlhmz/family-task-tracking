@@ -5,7 +5,6 @@ import { env } from "@/env.mjs";
 import { getToken } from "next-auth/jwt";
 
 import { ApiHandler } from "@/types/handlers";
-
 import { getJSONFromResponse, getNoContentResponse, setResponseHeaders } from "@/lib/utils";
 
 const springHandler: ApiHandler = async (request, context) => {
@@ -31,8 +30,6 @@ const springHandler: ApiHandler = async (request, context) => {
       if (serverResponse.status != 204) {
         const content = await getJSONFromResponse(serverResponse);
         if (content && content.sessionId) {
-          // Must be ignored, because Next did not implement any type declarations for .set() yet
-          // @ts-ignore
           cookieStore.set("session-id", content.sessionId);
         }
         const nextResponse = NextResponse.json(content, {

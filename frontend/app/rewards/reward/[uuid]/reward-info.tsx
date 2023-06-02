@@ -1,7 +1,5 @@
 import { Reward } from "@/types/reward";
-
 import { formatISODateToReadable } from "@/lib/utils";
-
 import { Separator } from "@/components/ui/separator";
 
 export default function RewardInfo({ reward }: { reward: Reward }) {

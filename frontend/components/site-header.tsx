@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext } from "react";
-
 import Link from "next/link";
 
 import Avatar from "boring-avatars";
@@ -9,13 +8,10 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { Toaster } from "sonner";
 
 import { siteConfig } from "@/config/site";
-
 import { Button, buttonVariants } from "@/components/ui/button";
-
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-
 import { useLogoutProfile } from "@/app/hooks/use-logout-profile";
 import { ProfileContext } from "@/app/profile-context";
 
@@ -28,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-export function SiteHeader() {
+export function SiteHeader({ appName }: { appName: string }) {
   const { status } = useSession();
   const { data, isSuccess } = useContext(ProfileContext);
   const { logoutProfile } = useLogoutProfile();
@@ -42,7 +38,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <Toaster richColors={true} closeButton={true} />
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <MainNav items={siteConfig.mainNav} />
+        <MainNav items={siteConfig.mainNav} appName={appName} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
             <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">

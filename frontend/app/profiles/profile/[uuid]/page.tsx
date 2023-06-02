@@ -3,14 +3,11 @@
 import { useContext, useState } from "react";
 
 import { PermissionType } from "@/types/permission-type";
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileSkeleton } from "@/components/ui/skeleton/profile-skeleton";
-
 import ProfileInfo from "@/components/common/profile/profile-info";
 import ProfileRewards from "@/components/common/reward/profile-rewards";
-
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { ProfileContext } from "@/app/profile-context";
 

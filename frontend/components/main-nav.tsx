@@ -6,27 +6,25 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 import { NavItem } from "@/types/nav";
-
 import { siteConfig } from "@/config/site";
-
 import { cn } from "@/lib/utils";
-
 import { Icons } from "@/components/icons";
 
-const Home = () => {
+const Home = ({ appName }: { appName: string }) => {
   return (
     <>
       <Icons.home className="h-6 w-6" />
-      <span className="hidden text-xl font-bold sm:inline-block">{siteConfig.name}</span>
+      <span className="hidden text-xl font-bold sm:inline-block">{appName}</span>
     </>
   );
 };
 
 interface MainNavProps {
+  appName: string;
   items?: NavItem[];
 }
 
-export const MainNav = ({ items }: MainNavProps) => {
+export const MainNav = ({ appName, items }: MainNavProps) => {
   const { status } = useSession();
   const pathname = usePathname();
   const isWizard = pathname.match("/wizard.*");
@@ -35,11 +33,11 @@ export const MainNav = ({ items }: MainNavProps) => {
     <div className="flex gap-6 md:gap-10">
       {isWizard ? (
         <div className="hidden items-center space-x-2 md:flex">
-          <Home />
+          <Home appName={appName} />
         </div>
       ) : (
         <Link href="/" className="hidden items-center space-x-2 md:flex">
-          <Home />
+          <Home appName={appName} />
         </Link>
       )}
       {status === "authenticated" && !isWizard && items?.length ? (

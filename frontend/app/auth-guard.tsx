@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode, useCallback, useContext, useEffect } from "react";
-
 import { usePathname, useRouter } from "next/navigation";
 
 import { toast } from "sonner";

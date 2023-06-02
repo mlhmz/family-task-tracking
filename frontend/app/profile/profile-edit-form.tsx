@@ -7,14 +7,10 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Profile, ProfileRequest } from "@/types/profile";
-
 import { isProfile } from "@/lib/guards";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function editProfile(request: ProfileRequest) {

@@ -3,7 +3,6 @@
 import { useContext, useEffect } from "react";
 
 import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
-
 import { useLogoutProfile } from "@/app/hooks/use-logout-profile";
 import { ProfilesContext } from "@/app/profiles-context";
 

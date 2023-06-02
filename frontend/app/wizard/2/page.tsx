@@ -8,15 +8,11 @@ import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
 import { Profile, ProfileAuthResponse, ProfileRequest } from "@/types/profile";
-
 import { isProfile, isProfileAuthResponse } from "@/lib/guards";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function authProfile(profile?: Profile) {
