@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,16 +8,13 @@ import { z } from "zod";
 
 import { TaskRequest } from "@/types/task";
 import { TaskState, getTranslatedTaskStateValue } from "@/types/task-state";
-
 import { isTask } from "@/lib/guards";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Icons } from "@/components/icons";
-
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function createTask(request: TaskRequest) {
@@ -126,7 +122,7 @@ export default function TaskCreateForm() {
       scheduled: formData.scheduling.activated,
       cronExpression: buildCronExpressionFromInput(formData.scheduling),
     } as TaskRequest;
-    mutate({ ...task })
+    mutate({ ...task });
   };
 
   return (
@@ -145,7 +141,9 @@ export default function TaskCreateForm() {
             </SelectTrigger>
             <SelectContent>
               {Object.values(TaskState).map((taskState) => (
-                <SelectItem key={taskState} value={taskState}>{getTranslatedTaskStateValue(taskState)}</SelectItem>
+                <SelectItem key={taskState} value={taskState}>
+                  {getTranslatedTaskStateValue(taskState)}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
