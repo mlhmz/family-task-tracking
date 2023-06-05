@@ -98,7 +98,7 @@ export default function TaskCreateForm() {
     if (!scheduling.activated) {
       return "";
     }
-    const expressionArray = ["*/1", "*", "*", "*", "*"];
+    const expressionArray = ["0", "*", "*", "*", "*"];
     const [hours, days, months] = [scheduling.hours, scheduling.days, scheduling.months];
 
     if (!hours.activated && (days.activated || months.activated)) {
