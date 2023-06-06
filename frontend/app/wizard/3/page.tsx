@@ -15,18 +15,7 @@ import { WizardSkeleton } from "@/components/ui/skeleton/wizard-skeleton";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
-
-async function changePassword(request: ProfileAuthRequest) {
-  const response = await fetch("/api/v1/profiles/auth", {
-    method: "PUT",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-}
+import { changePassword } from "@/lib/profile-requests";
 
 const schema = z.object({
   password: z.string().min(1).max(255),

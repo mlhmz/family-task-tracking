@@ -15,19 +15,7 @@ import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-s
 import { Icons } from "@/components/icons";
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { useZodForm } from "@/app/hooks/use-zod-form";
-
-async function authProfile(authRequest: ProfileAuthRequest) {
-  const response = await fetch("/api/v1/profiles/auth", {
-    method: "POST",
-    body: JSON.stringify(authRequest),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  return response;
-}
+import { authProfile } from "@/lib/profile-requests";
 
 const schema = z.object({
   password: z.string().min(1).max(255).optional(),

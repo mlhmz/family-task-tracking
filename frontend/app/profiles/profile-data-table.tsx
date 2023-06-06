@@ -22,31 +22,7 @@ import { useZodForm } from "@/app/hooks/use-zod-form";
 
 import { ProfileContext } from "../profile-context";
 import ProfileFilterMenu from "./profile-filter-menu";
-
-async function getProfiles({ query }: { query: string }) {
-  const request = new URLSearchParams({
-    query: query,
-  });
-  const response = await fetch(`/api/v1/profiles${"?" + request}`);
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const profiles = await response.json();
-  if (!isProfiles(profiles)) throw new Error("Problem fetching data");
-  return profiles;
-}
-
-async function deleteProfile(uuid: string) {
-  const response = await fetch(`/api/v1/admin/profiles/${uuid}`, { method: "DELETE" });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  return response;
-}
+import { deleteProfile, getProfiles } from "@/lib/profile-requests";
 
 const schema = z.object({
   name: z.string().optional(),

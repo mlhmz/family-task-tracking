@@ -13,7 +13,8 @@ import ProfileEditForm from "./profile-edit-form";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
-  const [open, setOpen] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openPasswordChangeDialog, setOpenPasswordChangeDialog] = useState(false);
 
   if (!data || !data.uuid) {
     return <ProfileSkeleton />;
@@ -21,16 +22,25 @@ export default function Profile() {
   return (
     <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
       <ProfileInfo data={data} />
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
         <DialogTrigger asChild>
           <Button>Edit profile</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>Edit Profile</DialogHeader>
-          <ProfileEditForm initialData={data} closeDialog={() => setOpen(!open)} />
+          <ProfileEditForm initialData={data} closeDialog={() => setOpenEditDialog(!openEditDialog)} />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={openPasswordChangeDialog} onOpenChange={setOpenPasswordChangeDialog}>
+        <DialogTrigger asChild>
+          <Button>Edit password</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>Edit your password</DialogHeader>
         </DialogContent>
       </Dialog>
       <ProfileRewards profileUuid={data.uuid} />
+      
     </div>
   );
 }
