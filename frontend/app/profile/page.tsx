@@ -10,6 +10,7 @@ import ProfileRewards from "@/components/common/reward/profile-rewards";
 
 import { ProfileContext } from "../profile-context";
 import ProfileEditForm from "./profile-edit-form";
+import ProfilePasswordEditForm from "./profile-password-edit-form";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
@@ -20,27 +21,29 @@ export default function Profile() {
     return <ProfileSkeleton />;
   }
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
+    <div className="m-auto my-5 flex flex-col gap-5 md:w-1/3">
       <ProfileInfo data={data} />
-      <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-        <DialogTrigger asChild>
-          <Button>Edit profile</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>Edit Profile</DialogHeader>
-          <ProfileEditForm initialData={data} closeDialog={() => setOpenEditDialog(!openEditDialog)} />
-        </DialogContent>
-      </Dialog>
-      <Dialog open={openPasswordChangeDialog} onOpenChange={setOpenPasswordChangeDialog}>
-        <DialogTrigger asChild>
-          <Button>Edit password</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>Edit your password</DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <div className="flex flex-row gap-2">
+        <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+          <DialogTrigger asChild>
+            <Button className="w-1/2">Edit profile</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>Edit Profile</DialogHeader>
+            <ProfileEditForm initialData={data} closeDialog={() => setOpenEditDialog(!openEditDialog)} />
+          </DialogContent>
+        </Dialog>
+        <Dialog open={openPasswordChangeDialog} onOpenChange={setOpenPasswordChangeDialog}>
+          <DialogTrigger asChild>
+            <Button className="w-1/2">Edit password</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>Edit your password</DialogHeader>
+            <ProfilePasswordEditForm onPasswordChangeSuccess={() => setOpenPasswordChangeDialog(false)} />
+          </DialogContent>
+        </Dialog>
+      </div>
       <ProfileRewards profileUuid={data.uuid} />
-      
     </div>
   );
 }
