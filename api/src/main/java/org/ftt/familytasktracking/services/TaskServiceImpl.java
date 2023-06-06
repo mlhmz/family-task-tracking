@@ -1,6 +1,7 @@
 package org.ftt.familytasktracking.services;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
@@ -21,6 +22,7 @@ import org.ftt.familytasktracking.repositories.TaskRepository;
 import org.ftt.familytasktracking.search.SearchQuery;
 import org.ftt.familytasktracking.utils.SearchQueryUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +50,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDto createTask(TaskRequestDto dto, Jwt jwt) {
+        throwBadRequestOnInvalidCronExpression(dto.cronExpression());
         Task task = taskMapper.mapTaskDtoToTask(dto);
         setTasksAssigneeByMappingResult(task, jwt);
         task.setHousehold(this.householdService.getHouseholdByJwt(jwt));
@@ -101,6 +104,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public TaskModel updateTaskByUuidAndJwt(@NonNull TaskModel updateTaskModel, @NonNull UUID uuid, @NonNull Jwt jwt,
                                             boolean safe) {
+        throwBadRequestOnInvalidCronExpression(updateTaskModel.toResponseDto().cronExpression());
         Task updateTask = updateTaskModel.toEntity();
         Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
         updateTargetTask(updateTask, targetTask, safe);
@@ -130,10 +134,17 @@ public class TaskServiceImpl implements TaskService {
         return new TaskModel(dto, taskMapper);
     }
 
+    private void throwBadRequestOnInvalidCronExpression(String cronExpression) {
+        if (StringUtils.isNotEmpty(cronExpression) && !CronExpression.isValidExpression(cronExpression)) {
+            throw new WebRtException(HttpStatus.BAD_REQUEST, "The given scheduling expression is invalid.");
+        }
+    }
+
     private void updateTargetTask(@NonNull Task updateTask, @NonNull Task targetTask, boolean safe) {
         if (safe) {
             this.taskMapper.safeUpdateTask(updateTask, targetTask);
         } else {
+            throwBadRequestOnInvalidCronExpression(updateTask.getCronExpression());
             this.taskMapper.updateTask(updateTask, targetTask);
         }
     }
