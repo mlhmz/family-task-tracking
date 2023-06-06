@@ -47,7 +47,7 @@ export default function ProfilePasswordEditForm({
     <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
       <Input placeholder="New password" type="password" {...register("pin")} />
       <Button type="submit">
-        {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Change Password</>}
+        {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Change PIN</>}
       </Button>
     </form>
   );

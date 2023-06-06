@@ -35,7 +35,7 @@ export default function Profile() {
         </Dialog>
         <Dialog open={openPasswordChangeDialog} onOpenChange={setOpenPasswordChangeDialog}>
           <DialogTrigger asChild>
-            <Button className="w-1/2">Edit password</Button>
+            <Button className="w-1/2">Edit PIN</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>Edit your password</DialogHeader>
