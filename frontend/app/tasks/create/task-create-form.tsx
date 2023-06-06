@@ -96,45 +96,39 @@ export default function TaskCreateForm() {
    * So * /3 in days context means, schedule every 3 days.
    */
   const buildCronExpressionFromInput = (scheduling: z.infer<typeof schedulingSchema>): string => {
-    // If scheduling isn't activated, we can return a empty string, because
-    // nothing else is required.
     if (!scheduling.activated) {
       return "";
     }
-    // We can split the expression array into the 5 parts of cron
-    // minutes, hours, day of the month, months, day of the week.
-    // We will not need the minutes, as well as the day of the week for now.
-    const expressionArray = ["0", "*", "*", "*", "*"];
-    const [hours, days, months] = [scheduling.hours, scheduling.days, scheduling.months];
 
+    const {hours, days, months} = scheduling;
+
+    let hoursExpression = "*";
     // When the days or the months are activated, but the hours are not, their value
     // has to be, in terms of a cron expression, '0' instead of '*'.
     // If it would be a '*' the cron expression would reschedule every hour on the certain day.
     // That is not the functionality we want.
     if (!hours.activated && (days.activated || months.activated)) {
-      expressionArray[1] = "0";
-    } else if (hours.activated && hours.value != 0) {
+      hoursExpression = "0";
+    } else if (hours.activated && hours.value !== 0) {
       // We'll just check here if hours is activated and will set a */${value}
-      expressionArray[1] = `*/${scheduling.hours.value}`;
+      hoursExpression = `*/${scheduling.hours.value}`;
     }
 
-    // Same thing like in hours applies here, witht the only difference, that only months lays over
+    let daysExpression = "*";
+    // Same thing like in hours applies here, with the only difference, that only months lays over
     // days in the expression.
     if (!days.activated && months.activated) {
-      expressionArray[2] = "0";
-    } else if (days.activated && days.value != 0) {
-      // We'll just check here if days is activated and will set a */${value}
-      expressionArray[2] = `*/${scheduling.days.value}`;
+      daysExpression = "0";
+    } else if (days.activated && days.value !== 0) {
+      daysExpression = `*/${scheduling.days.value}`;
     }
 
-    if (months.activated && months.value != 0) {
-      // We'll just check here if months is activated and will set a */${value}
-      expressionArray[3] = `*/${scheduling.months.value}`;
+    let monthsExpression = "*";
+    if (months.activated && months.value !== 0) {
+      monthsExpression = `*/${scheduling.months.value}`;
     }
 
-    // We'll finish up by joining the array into an actual cron expression with spaces
-    // It'll look like this then e.g. 0 0 */5 * *
-    return expressionArray.join(" ");
+    return `0 ${hoursExpression} ${daysExpression} ${monthsExpression} *`;
   };
 
   const onSubmit = (formData: z.infer<typeof schema>) => {
@@ -142,7 +136,7 @@ export default function TaskCreateForm() {
       ...formData.task,
       scheduled: formData.scheduling.activated,
       cronExpression: buildCronExpressionFromInput(formData.scheduling),
-    } as TaskRequest;
+    } satisfies TaskRequest;
     mutate({ ...task });
   };
 
