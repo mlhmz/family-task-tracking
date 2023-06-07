@@ -1,28 +1,29 @@
 "use client";
 
-import { useContext, useState } from "react";
 import Link from "next/link";
+import { useContext, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { PermissionType } from "@/types/permission-type";
-import { Profile } from "@/types/profile";
-import { isProfiles } from "@/lib/guards";
-import { formatISODateToReadable } from "@/lib/utils";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Icons } from "@/components/icons";
-import { useZodForm } from "@/app/hooks/use-zod-form";
-
-import { ProfileContext } from "../profile-context";
-import ProfileFilterMenu from "./profile-filter-menu";
 import { deleteProfile, getProfiles } from "@/lib/profile-requests";
+import { formatISODateToReadable } from "@/lib/utils";
+import { PermissionType } from "@/types/permission-type";
+import { Profile } from "@/types/profile";
+
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import { ProfileContext } from "../profile-context";
+import ProfileCreateForm from "./profile-create-form";
+import ProfileFilterMenu from "./profile-filter-menu";
 
 const schema = z.object({
   name: z.string().optional(),
@@ -32,7 +33,8 @@ type SearchQueryFormResult = z.infer<typeof schema>;
 
 export default function ProfileDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: "" });
-  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [hasOpenFilterMenu, setHasOpenFilterMenu] = useState(false);
+  const [hasOpenCreateDialog, setHasOpenCreateDialog] = useState(false);
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
   const queryClient = useQueryClient();
@@ -122,7 +124,7 @@ export default function ProfileDataTable() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                <Button variant="ghost" onClick={() => setHasOpenFilterMenu(!hasOpenFilterMenu)}>
                   <Icons.filter />
                 </Button>
               </TooltipTrigger>
@@ -134,11 +136,17 @@ export default function ProfileDataTable() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Link href="/profiles/create">
-                      <Button variant="ghost">
-                        <Icons.userPlus />
-                      </Button>
-                    </Link>
+                    <Dialog open={hasOpenCreateDialog} onOpenChange={(value: boolean) => setHasOpenCreateDialog(value)}>
+                      <DialogTrigger>
+                        <Button variant="ghost">
+                          <Icons.userPlus />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Create a Profile</DialogHeader>
+                        <ProfileCreateForm handleCloseDialog={() => setHasOpenCreateDialog(!hasOpenCreateDialog)} />
+                      </DialogContent>
+                    </Dialog>
                   </TooltipTrigger>
                   <TooltipContent>Create profile</TooltipContent>
                 </Tooltip>
@@ -161,7 +169,7 @@ export default function ProfileDataTable() {
           )}
         </div>
       </form>
-      {showFilterMenu && (
+      {hasOpenFilterMenu && (
         <ProfileFilterMenu
           sendQuery={(query) => {
             setSelectedProfiles([]);
