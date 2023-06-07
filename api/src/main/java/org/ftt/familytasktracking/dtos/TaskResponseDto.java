@@ -13,6 +13,8 @@ public record TaskResponseDto(
         LocalDateTime updatedAt,
         LocalDateTime expirationAt,
         LocalDateTime doneAt,
+        Boolean scheduled,
+        String cronExpression,
         LocalDateTime nextTaskCreationAt,
         TaskState taskState,
         String assigneeUuid
