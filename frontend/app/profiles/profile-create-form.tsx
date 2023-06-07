@@ -6,15 +6,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { PermissionType } from "@/types/permission-type";
-import { ProfileRequest } from "@/types/profile";
-import { isProfile } from "@/lib/guards";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Icons } from "@/components/icons";
-import { useZodForm } from "@/app/hooks/use-zod-form";
 import { createProfile } from "@/lib/profile-requests";
+import { PermissionType } from "@/types/permission-type";
+import { ProfileRequest } from "@/types/profile";
+import { Dispatch } from "react";
 
 const schema = z.object({
   name: z.string().min(1).max(255),
@@ -22,7 +22,7 @@ const schema = z.object({
   permissionType: z.enum([PermissionType.Admin, PermissionType.Member]).optional(),
 });
 
-export default function ProfileCreateForm() {
+export default function ProfileCreateForm({ handleCloseDialog }: { handleCloseDialog: Dispatch<void> }) {
   const { register, handleSubmit, formState, setValue } = useZodForm({
     schema,
     defaultValues: { points: 0 },
@@ -32,9 +32,6 @@ export default function ProfileCreateForm() {
     onSuccess: () => {
       queryClient.invalidateQueries(["profiles"]);
     },
-    onError: (error) => {
-      toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
-    },
   });
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -43,9 +40,17 @@ export default function ProfileCreateForm() {
     mutate(
       { ...formData },
       {
-        onSuccess: (data) => {
-          router.push(`/profiles/profile/${data.uuid}`);
-          toast.success("Profile created");
+        onSuccess: (profile) => {
+          toast.success(`The profile '${profile.name}' was created!`, {
+            action: {
+              label: "View",
+              onClick: () => router.push(`/profiles/profile/${profile.uuid}`),
+            },
+          });
+          handleCloseDialog();
+        },
+        onError: (error) => {
+          toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
         },
       },
     );
