@@ -1,13 +1,13 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
-import { deleteReward, getRewardByUuid } from "@/lib/reward-requests";
+import { deleteTask } from "@/lib/task-requests";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,62 +23,44 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import InfoPageSkeleton from "@/components/ui/skeleton/info-page-skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TaskStateIcon } from "@/components/common/task/task-state-icon";
 import { Icons } from "@/components/icons";
+import { useTask } from "@/app/hooks/fetch/use-task";
 import { ProfileContext } from "@/app/profile-context";
 
-import RedeemRewardButton from "../../redeem-reward-button";
-import RewardEditForm from "../../reward-edit-form";
-import RewardInfo from "./reward-info";
-import RewardProfileLinkButton from "./reward-profile-link-button";
+import TaskEditForm from "./task-edit-form";
+import TaskInfo from "./task-info";
 
-export default function RewardInfoPage({ params }: { params: { uuid: string } }) {
+export default function TaskDetailPage({ params }: { params: { uuid: string } }) {
+  const { data: task } = useTask(params.uuid);
   const { data: profileInstance } = useContext(ProfileContext);
-  const { data: reward } = useQuery({
-    queryKey: ["reward", { uuid: params.uuid }],
-    queryFn: () => getRewardByUuid(params.uuid),
-  });
-  const router = useRouter();
-  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
-    mutationFn: deleteReward,
-    onSuccess: () => router.push("/rewards"),
-  });
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: deleteTask,
+    onSuccess: () => router.push("/tasks"),
+  });
 
   const onDelete = () => {
-    mutateDelete(params.uuid, { onSuccess: () => toast.success(`The reward was successfully deleted`) });
+    mutateDelete(params.uuid, { onSuccess: () => toast.success(`The task was successfully deleted`) });
   };
 
-  if (!reward?.uuid || !profileInstance?.uuid) {
-    return <InfoPageSkeleton />;
-  }
+  const isAdmin = useMemo(() => profileInstance?.permissionType === PermissionType.Admin, [profileInstance]);
+
+  if (!task) return <InfoPageSkeleton />;
+
   return (
     <div className="mx-2 mt-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
-      <h1 className="text-2xl font-bold">Reward</h1>
+      <h1 className="text-2xl font-bold">Task</h1>
       <div className="grid grid-cols-1 grid-rows-1">
         <div id="title" className="flex flex-row items-center justify-start gap-3">
-          <h2 className="col-start-1 justify-self-start text-2xl">{reward?.name}</h2>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger className="cursor-default">
-                <p>{reward.redeemed ? <Icons.check className="m-auto" /> : <Icons.x className="m-auto" />}</p>
-              </TooltipTrigger>
-              <TooltipContent>{reward.redeemed ? "Redeemed" : "Not redeemed"}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <h2 className="col-start-1 justify-self-start text-2xl">{task?.name}</h2>
+          <TaskStateIcon taskState={task?.taskState} />
         </div>
         <div id="actions" className="col-start-2">
-          {reward.redeemed ? (
-            reward.redeemedBy && <RewardProfileLinkButton uuid={reward.redeemedBy} />
-          ) : (
-            <RedeemRewardButton
-              reward={reward}
-              handleInvalidateOnSuccess={() =>
-                queryClient.invalidateQueries(["reward", { uuid: params.uuid }])
-              }
-            />
-          )}
-          {profileInstance?.permissionType === PermissionType.Admin && (
+          {isAdmin && (
             <>
               <TooltipProvider>
                 <Tooltip>
@@ -90,18 +72,18 @@ export default function RewardInfoPage({ params }: { params: { uuid: string } })
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <DialogHeader>Edit Reward</DialogHeader>
-                        <RewardEditForm
-                          reward={reward}
+                        <DialogHeader>Edit Task</DialogHeader>
+                        <TaskEditForm
+                          task={task}
                           handleCloseDialog={() => {
-                            queryClient.invalidateQueries(["reward", { uuid: params.uuid }]);
+                            queryClient.invalidateQueries(["task", { uuid: params.uuid }]);
                             setIsEditDialogOpen(false);
                           }}
                         />
                       </DialogContent>
                     </Dialog>
                   </TooltipTrigger>
-                  <TooltipContent>Edit Reward</TooltipContent>
+                  <TooltipContent>Edit Task</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
               <TooltipProvider>
@@ -115,9 +97,9 @@ export default function RewardInfoPage({ params }: { params: { uuid: string } })
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Reward</AlertDialogTitle>
+                          <AlertDialogTitle>Delete Task</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this reward?
+                            Are you sure you want to delete this task?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -127,14 +109,14 @@ export default function RewardInfoPage({ params }: { params: { uuid: string } })
                       </AlertDialogContent>
                     </AlertDialog>
                   </TooltipTrigger>
-                  <TooltipContent>Delete Reward</TooltipContent>
+                  <TooltipContent>Delete Task</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </>
           )}
         </div>
       </div>
-      <RewardInfo reward={reward} />
+      <TaskInfo task={task} />
     </div>
   );
 }

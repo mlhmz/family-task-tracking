@@ -13,7 +13,7 @@ import { ProfileContext } from "@/app/profile-context";
 
 import ProfilePrivilegedEditForm from "./profile-privileged-edit-form";
 
-export default function ProfileInfoPage({ params }: { params: any }) {
+export default function ProfileInfoPage({ params }: { params: { uuid: string } }) {
   const { data: profileInstance } = useContext(ProfileContext);
   const { data: selectedProfile } = useProfile(params.uuid);
   const [open, setOpen] = useState(false);
