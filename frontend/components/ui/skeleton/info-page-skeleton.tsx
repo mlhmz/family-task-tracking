@@ -1,6 +1,6 @@
 import { Skeleton } from "./skeleton";
 
-export default function RewardProfileInfoSkeleton() {
+export default function InfoPageSkeleton() {
   return (
     <div className="m-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
       <Skeleton className="h-10 w-64" />
