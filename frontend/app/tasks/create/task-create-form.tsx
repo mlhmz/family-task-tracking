@@ -60,6 +60,7 @@ const taskSchema = z.object({
   description: z.string().min(1).max(255).optional(),
   points: z.number().optional(),
   taskState: z.enum([TaskState.Done, TaskState.Undone, TaskState.Finished, TaskState.Reviewed]).optional(),
+  expirationAt: z.string().optional(),
 });
 
 const schema = z.object({
@@ -147,6 +148,7 @@ export default function TaskCreateForm() {
           <Input placeholder="Name" {...register("task.name")} />
           <Input placeholder="Description" {...register("task.description")} />
           <Input placeholder="Points" type="number" {...register("task.points", { valueAsNumber: true })} />
+          <Input placeholder="Expiration At" type="datetime-local" {...register("task.expirationAt")} />
 
           <Select
             defaultValue={TaskState.Undone}

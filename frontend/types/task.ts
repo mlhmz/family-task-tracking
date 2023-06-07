@@ -22,5 +22,6 @@ export interface TaskRequest {
   taskState?: TaskState;
   scheduled?: boolean;
   cronExpression?: string;
+  expirationAt?: string;
   assigneeUuid?: string;
 }
