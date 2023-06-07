@@ -3,8 +3,10 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
@@ -14,6 +16,7 @@ import { isTask } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -57,10 +60,11 @@ const schema = z.object({
 export default function TaskDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [hasOpenDeleteConfirmation, setHasOpenDeleteConfirmation] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const { data: profile } = useContext(ProfileContext);
   const { register, handleSubmit } = useZodForm({ schema });
-  const { mutate: mutateDelete, isLoading: isDeleteLoading } = useMutation({
+  const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteTask,
     onSuccess: () => queryClient.invalidateQueries(["tasks"]),
   });
@@ -109,8 +113,25 @@ export default function TaskDataTable() {
     formData.name && setSearchQuery({ query: queries });
   };
 
+  const sendToastByDeletionResponses = (responses: Response[]) => {
+    if (responses.some((response) => !response.ok)) {
+      const failedDeletions = responses.filter((response) => !response.ok).length;
+      const allRequestedDeletions = responses.length;
+      toast.error(
+        `${failedDeletions} from ${allRequestedDeletions} couldn't be deleted, please try to delete the remaining tasks again.`,
+      );
+    } else {
+      toast.success(`${responses.length} tasks were successfully deleted.`);
+      setHasOpenDeleteConfirmation(false);
+    }
+  };
+
   const deleteEverySelectedTask = () => {
-    selectedTasks.forEach((task) => mutateDelete(task.uuid ?? ""));
+    const deletePromises = selectedTasks.map((task) => mutateAsyncDelete(task.uuid ?? ""));
+    Promise.all(deletePromises).then((responses) => {
+      sendToastByDeletionResponses(responses);
+      queryClient.invalidateQueries(["tasks", searchQuery]);
+    });
   };
 
   return (
@@ -161,13 +182,24 @@ export default function TaskDataTable() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button variant="ghost" onClick={deleteEverySelectedTask}>
-                      {isDeleteLoading ? (
-                        <Icons.spinner className="animate-spin text-primary" />
-                      ) : (
-                        <Icons.trash />
-                      )}
-                    </Button>
+                    <Dialog open={hasOpenDeleteConfirmation} onOpenChange={(value: boolean) => setHasOpenDeleteConfirmation(value)}>
+                      <DialogTrigger>
+                        <Button variant="ghost">
+                          <Icons.trash />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Delete Confirmation</DialogHeader>
+                        <p>Are you sure, that you want to delete {selectedTasks.length} Task(s)?</p>
+                        <Button onClick={deleteEverySelectedTask}>
+                          {isDeleteLoading ? (
+                            <Icons.spinner className="animate-spin text-secondary" />
+                          ) : (
+                            <>Delete</>
+                          )}
+                        </Button>
+                      </DialogContent>
+                    </Dialog>
                   </TooltipTrigger>
                   <TooltipContent>Delete task(s)</TooltipContent>
                 </Tooltip>
