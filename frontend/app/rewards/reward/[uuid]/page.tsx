@@ -20,7 +20,7 @@ import RewardEditForm from "../../reward-edit-form";
 import RewardInfo from "./reward-info";
 import RewardProfileLinkButton from "./reward-profile-link-button";
 
-export default function RewardInfoPage({ params }: { params: any }) {
+export default function RewardInfoPage({ params }: { params: { uuid: string } }) {
   const { data: profileInstance } = useContext(ProfileContext);
   const { data: reward } = useQuery({
     queryKey: ["reward", { uuid: params.uuid }],

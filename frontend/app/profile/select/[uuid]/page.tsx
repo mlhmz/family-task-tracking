@@ -21,7 +21,7 @@ const schema = z.object({
   password: z.string().min(1).max(255).optional(),
 });
 
-export default function ProfileLogin({ params }: { params: any }) {
+export default function ProfileLogin({ params }: { params: { uuid: string } }) {
   const { register, handleSubmit, formState } = useZodForm({ schema });
   const { data } = useProfile(params.uuid);
   const { mutate, isLoading } = useMutation({
