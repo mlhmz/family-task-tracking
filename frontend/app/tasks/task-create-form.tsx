@@ -75,6 +75,7 @@ export default function TaskCreateForm({ handleCloseDialog }: { handleCloseDialo
     defaultValues: {
       task: { points: 0 },
       scheduling: {
+        activated: false,
         hours: { value: 0 },
         days: { value: 0 },
         months: { value: 0 },
