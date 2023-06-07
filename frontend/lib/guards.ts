@@ -181,6 +181,8 @@ const parseTask = (value: unknown): Task | null => {
     value.hasOwnProperty("expirationAt") &&
     value.hasOwnProperty("doneAt") &&
     value.hasOwnProperty("nextTaskCreationAt") &&
+    value.hasOwnProperty("cronExpression") &&
+    value.hasOwnProperty("scheduled") &&
     value.hasOwnProperty("taskState") &&
     value.hasOwnProperty("assigneeUuid")
   ) {
@@ -193,6 +195,8 @@ const parseTask = (value: unknown): Task | null => {
       updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : undefined,
       expirationAt: typeof value.expirationAt === "string" ? value.expirationAt : undefined,
       doneAt: typeof value.doneAt === "string" ? value.doneAt : undefined,
+      scheduled: typeof value.scheduled === "boolean" ? value.scheduled : undefined,
+      cronExpression: typeof value.cronExpression === "string" ? value.cronExpression : undefined,
       nextTaskCreationAt: typeof value.nextTaskCreationAt === "string" ? value.nextTaskCreationAt : undefined,
       taskState: isTaskState(value.taskState) ? value.taskState : undefined,
       assigneeUuid: typeof value.assigneeUuid === "string" ? value.assigneeUuid : undefined,

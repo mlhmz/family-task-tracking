@@ -36,6 +36,8 @@ import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
+import RedeemRewardButton from "../rewards/redeem-reward-button";
+import RedeemTaskButton from "./redeem-task-button";
 
 import AssignTaskButton from "./assign-task-button";
 import TaskCreateForm from "./task-create-form";
@@ -255,6 +257,7 @@ export default function TaskDataTable() {
                       </Link>
                     </Button>
                     <AssignTaskButton task={task} />
+                    <RedeemTaskButton task={task} />
                   </div>
                 </TableCell>
               </TableRow>
