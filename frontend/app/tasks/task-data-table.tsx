@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { z } from "zod";
@@ -14,6 +15,7 @@ import { isTask } from "@/lib/guards";
 import { formatISODateToReadable } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -21,6 +23,8 @@ import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
+
+import TaskCreateForm from "./task-create-form";
 
 async function getTasks({ query }: { query: string[] }) {
   const request = new URLSearchParams({
@@ -57,6 +61,7 @@ const schema = z.object({
 export default function TaskDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [hasOpenCreationDialog, setHasOpenCreationDialog] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const { data: profile } = useContext(ProfileContext);
   const { register, handleSubmit } = useZodForm({ schema });
@@ -149,11 +154,19 @@ export default function TaskDataTable() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Link href="/tasks/create">
-                      <Button variant="ghost">
-                        <Icons.taskPlus />
-                      </Button>
-                    </Link>
+                    <Dialog
+                      open={hasOpenCreationDialog}
+                      onOpenChange={() => setHasOpenCreationDialog(!hasOpenCreationDialog)}>
+                      <DialogTrigger>
+                        <Button variant="ghost">
+                          <Icons.taskPlus />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Create a task</DialogHeader>
+                        <TaskCreateForm handleCloseDialog={() => setHasOpenCreationDialog(false)} />
+                      </DialogContent>
+                    </Dialog>
                   </TooltipTrigger>
                   <TooltipContent>Create task</TooltipContent>
                 </Tooltip>
