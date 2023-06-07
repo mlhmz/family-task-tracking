@@ -8,11 +8,11 @@ import { Task } from "@/types/task";
 import { TaskState } from "@/types/task-state";
 import { isTasks } from "@/lib/guards";
 import { getRewards } from "@/lib/reward-requests";
+import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { RewardCard } from "./reward-card";
 import { TaskCard } from "./task-card";
-import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 
 async function getTasks() {
   const response = await fetch("/api/v1/tasks");
@@ -51,7 +51,7 @@ const PrivilegedDashboard = () => {
     const inReview = tasks.filter((task) => task.taskState === TaskState.Done);
     const expiringSoon = tasks.filter((task) => task.expirationAt && new Date(task.expirationAt) < in24Hours);
     setFilteredTasks({ inReview, expiringSoon });
-    console.log(tasks)
+    console.log(tasks);
   }, [tasks]);
 
   if (isTasksLoading || isRewardsLoading) return <DashboardSkeleton />;

@@ -209,6 +209,6 @@ const parseTasks = (value: unknown): Task[] | null => {
     if (isTasks) return value;
   }
   return null;
-}
+};
 
 export const isTasks = createTypeGuard<Task[]>(parseTasks);

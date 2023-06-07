@@ -3,11 +3,11 @@
 import { useContext } from "react";
 
 import { PermissionType } from "@/types/permission-type";
+import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 
 import { ProfileContext } from "../profile-context";
 import PrivilegedDashboard from "./privileged-dashboard";
 import UnprivilegedDashboard from "./unprivileged-dashboard";
-import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 
 const Page = () => {
   const { data: profile, isLoading } = useContext(ProfileContext);

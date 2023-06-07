@@ -30,7 +30,10 @@ export default function Profile() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>Edit Profile</DialogHeader>
-            <ProfileEditForm initialData={data} closeDialog={() => setHasOpenEditDialog(!hasOpenEditDialog)} />
+            <ProfileEditForm
+              initialData={data}
+              closeDialog={() => setHasOpenEditDialog(!hasOpenEditDialog)}
+            />
           </DialogContent>
         </Dialog>
         <Dialog open={hasOpenPasswordDialog} onOpenChange={setHasOpenPasswordDialog}>

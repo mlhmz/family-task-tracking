@@ -7,11 +7,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Task } from "@/types/task";
 import { TaskState } from "@/types/task-state";
 import { isTasks } from "@/lib/guards";
+import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ProfileContext } from "../profile-context";
 import { TaskCard } from "./task-card";
-import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 
 async function getTasks(uuid?: string) {
   const query = new URLSearchParams(uuid ? { query: `assignee.uuid:${uuid}` } : undefined);
