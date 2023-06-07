@@ -168,7 +168,6 @@ const parseTaskState = (value: unknown): TaskState | null => {
 
 export const isTaskState = createTypeGuard<TaskState>(parseTaskState);
 
-// ToDo: finish this parse function
 const parseTask = (value: unknown): Task | null => {
   if (
     typeof value === "object" &&
@@ -203,3 +202,13 @@ const parseTask = (value: unknown): Task | null => {
 };
 
 export const isTask = createTypeGuard<Task>(parseTask);
+
+const parseTasks = (value: unknown): Task[] | null => {
+  if (Array.isArray(value)) {
+    const isTasks = value.every((task) => isTask(task));
+    if (isTasks) return value;
+  }
+  return null;
+}
+
+export const isTasks = createTypeGuard<Task[]>(parseTasks);
