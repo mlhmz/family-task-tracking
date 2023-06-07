@@ -19,24 +19,25 @@ export async function createProfile(request: ProfileRequest) {
 }
 
 export async function getProfile(uuid?: string) {
-    const response = await fetch(`/api/v1/profiles/${uuid ? uuid : "profile"}`);
-  
-    if (!response.ok) {
-      const error = await response.json();
-      if (error.message) throw new Error(error.message);
-      throw new Error("Problem fetching data");
-    }
-  
-    const profile = await response.json();
-    if (!isProfile(profile)) throw new Error("Problem fetching data");
-    return profile;
+  const response = await fetch(`/api/v1/profiles/${uuid ? uuid : "profile"}`);
+
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.message) throw new Error(error.message);
+    throw new Error("Problem fetching data");
   }
-  
+
+  const profile = await response.json();
+  if (!isProfile(profile)) throw new Error("Problem fetching data");
+  return profile;
+}
 
 export async function getProfiles({ query }: { query?: string }) {
-  const request = query ? new URLSearchParams({
-    query: query,
-  }) : undefined;
+  const request = query
+    ? new URLSearchParams({
+        query: query,
+      })
+    : undefined;
   const response = await fetch(`/api/v1/profiles${request ? "?" + request : ""}`);
   if (!response.ok) {
     const error = await response.json();

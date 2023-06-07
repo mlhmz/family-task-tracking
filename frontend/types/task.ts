@@ -1,4 +1,3 @@
-import { SchedulerMode } from "@/types/scheduler-mode";
 import { TaskState } from "@/types/task-state";
 
 export interface Task {

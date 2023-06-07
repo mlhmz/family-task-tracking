@@ -9,13 +9,13 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { ProfileAuthRequest } from "@/types/profile";
+import { authProfile } from "@/lib/profile-requests";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProfileSelectSkeleton } from "@/components/ui/skeleton/profile-select-skeleton";
 import { Icons } from "@/components/icons";
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { useZodForm } from "@/app/hooks/use-zod-form";
-import { authProfile } from "@/lib/profile-requests";
 
 const schema = z.object({
   password: z.string().min(1).max(255).optional(),

@@ -17,7 +17,7 @@ export enum TaskState {
   Finished = "FINISHED",
 }
 
-export function getTranslatedTaskStateValue(state: TaskState) {
+export function getTranslatedTaskStateValue(state: TaskState | string) {
   switch (state) {
     case TaskState.Done:
       return "Done";
