@@ -20,8 +20,7 @@ export interface TaskRequest {
   description?: string;
   points?: number;
   taskState?: TaskState;
-  schedulerMode?: SchedulerMode;
+  scheduled?: boolean;
   cronExpression?: string;
-  intervalMillis?: number;
   assigneeUuid?: string;
 }
