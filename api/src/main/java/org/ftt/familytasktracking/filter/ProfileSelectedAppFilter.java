@@ -15,7 +15,7 @@ import java.util.UUID;
  * Filter that is making sure, that only requests, having a selected authenticated profile
  * in the session id will use the resources that are matching with the {@link jakarta.servlet.annotation.WebFilter}
  */
-@WebFilter(urlPatterns = {"/api/v1/tasks/*"})
+@WebFilter(urlPatterns = {"/api/v1/tasks/*", "/api/v1/rewards/*"})
 @Slf4j
 public class ProfileSelectedAppFilter extends AppFilter {
     private final ProfileAuthService profileAuthService;

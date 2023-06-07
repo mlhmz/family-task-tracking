@@ -30,6 +30,7 @@ public class Reward {
 
     private String name;
 
+    @Column(columnDefinition = "TEXT", length = 1024)
     private String description;
 
     private Boolean redeemed;
