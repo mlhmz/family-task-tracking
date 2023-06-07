@@ -1,7 +1,10 @@
 "use client";
 
+import { Dispatch } from "react";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { TaskRequest } from "@/types/task";
@@ -12,7 +15,6 @@ import { Icons } from "@/components/icons";
 
 import { useProfiles } from "../hooks/fetch/use-profiles";
 import { useZodForm } from "../hooks/use-zod-form";
-import { toast } from "sonner";
 
 async function updateTaskAssignee(request: TaskRequest, uuid: string) {
   const response = await fetch(`/api/v1/admin/tasks/${uuid}/assignee`, {
@@ -33,7 +35,13 @@ const schema = z.object({
   assigneeUuid: z.string().uuid(),
 });
 
-export default function TaskAssignForm({ taskUuid }: { taskUuid: string }) {
+export default function TaskAssignForm({
+  taskUuid,
+  handleAssignSuccess,
+}: {
+  taskUuid: string;
+  handleAssignSuccess: Dispatch<void>;
+}) {
   const { handleSubmit, setValue } = useZodForm({ schema });
   const { data: profiles } = useProfiles();
   const queryClient = useQueryClient();
@@ -44,14 +52,19 @@ export default function TaskAssignForm({ taskUuid }: { taskUuid: string }) {
     },
   });
 
-  const onSubmit = (taskRequest: TaskRequest) => mutate({ ...taskRequest }, {
-    onSuccess: () => {
-      toast.success("Task assignee updated");
-    },
-    onError: (error) => {
-      toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
-    },
-  });
+  const onSubmit = (taskRequest: TaskRequest) =>
+    mutate(
+      { ...taskRequest },
+      {
+        onSuccess: () => {
+          toast.success("Task assignee updated");
+          handleAssignSuccess();
+        },
+        onError: (error) => {
+          toast.error(`Error creating profile: ${error instanceof Error ? error.message : "Unknown error"}`);
+        },
+      },
+    );
 
   return (
     <div>
