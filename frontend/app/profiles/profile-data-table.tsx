@@ -105,16 +105,29 @@ export default function ProfileDataTable() {
     }
   };
 
+  const resetAfterDelete = () => {
+    setSelectedProfiles([]);
+    queryClient.invalidateQueries(["profiles", searchQuery]);
+  };
+
   const deleteEverySelectedProfile = () => {
     if (selectedProfiles.length === 0) {
       toast(`Please select at least one profile.`);
       return;
     }
     const deletePromises = selectedProfiles.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
-    Promise.all(deletePromises).then((responses) => {
-      setSelectedProfiles([]);
-      sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["profiles", searchQuery]);
+    toast.promise(Promise.all(deletePromises), {
+      loading: `Deleting ${selectedProfiles.length} profile(s)...`,
+      success: () => {
+        resetAfterDelete();
+        return `${selectedProfiles.length} profile(s) were successfully deleted.`;
+      },
+      error: (responses: Response[]) => {
+        resetAfterDelete();
+        const failedDeletions = responses.filter((response) => !response.ok).length;
+        const allRequestedDeletions = responses.length;
+        return `${failedDeletions} from ${allRequestedDeletions} profile(s) couldn't be deleted, please try again.`;
+      },
     });
   };
 

@@ -92,16 +92,9 @@ export default function RewardDataTable() {
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
-  const sendToastByDeletionResponses = (responses: Response[]) => {
-    if (responses.some((response) => !response.ok)) {
-      const failedDeletions = responses.filter((response) => !response.ok).length;
-      const allRequestedDeletions = responses.length;
-      toast.error(
-        `${failedDeletions} from ${allRequestedDeletions} couldn't be deleted, please try to delete the remaining rewards again.`,
-      );
-    } else {
-      toast.success(`${responses.length} rewards were successfully deleted.`);
-    }
+  const resetAfterDelete = () => {
+    setSelectedRewards([]);
+    queryClient.invalidateQueries(["rewards", searchQuery]);
   };
 
   const deleteEverySelectedReward = () => {
@@ -110,10 +103,18 @@ export default function RewardDataTable() {
       return;
     }
     const deletePromises = selectedRewards.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
-    Promise.all(deletePromises).then((responses) => {
-      setSelectedRewards([]);
-      sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["rewards", searchQuery]);
+    toast.promise(Promise.all(deletePromises), {
+      loading: `Deleting ${selectedRewards.length} reward(s)...`,
+      success: () => {
+        resetAfterDelete();
+        return `${selectedRewards.length} reward(s) were successfully deleted.`;
+      },
+      error: (responses: Response[]) => {
+        resetAfterDelete();
+        const failedDeletions = responses.filter((response) => !response.ok).length;
+        const allRequestedDeletions = responses.length;
+        return `${failedDeletions} from ${allRequestedDeletions} reward(s) couldn't be deleted, please try again.`;
+      },
     });
   };
 

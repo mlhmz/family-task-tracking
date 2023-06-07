@@ -103,17 +103,9 @@ export default function TaskDataTable() {
     formData.name && setSearchQuery({ query: queries });
   };
 
-  const sendToastByDeletionResponses = (responses: Response[]) => {
-    if (responses.some((response) => !response.ok)) {
-      const failedDeletions = responses.filter((response) => !response.ok).length;
-      const allRequestedDeletions = responses.length;
-      toast.error(
-        `${failedDeletions} from ${allRequestedDeletions} couldn't be deleted, please try to delete the remaining tasks again.`,
-      );
-    } else {
-      toast.success(`${responses.length} tasks were successfully deleted.`);
-      setHasOpenDeleteConfirmation(false);
-    }
+  const resetAfterDelete = () => {
+    setSelectedTasks([]);
+    queryClient.invalidateQueries(["tasks", searchQuery]);
   };
 
   const deleteEverySelectedTask = () => {
@@ -122,10 +114,18 @@ export default function TaskDataTable() {
       return;
     }
     const deletePromises = selectedTasks.map((task) => mutateAsyncDelete(task.uuid ?? ""));
-    Promise.all(deletePromises).then((responses) => {
-      setSelectedTasks([]);
-      sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["tasks", searchQuery]);
+    toast.promise(Promise.all(deletePromises), {
+      loading: `Deleting ${selectedTasks.length} task(s)...`,
+      success: () => {
+        resetAfterDelete();
+        return `${selectedTasks.length} task(s) were successfully deleted.`;
+      },
+      error: (responses: Response[]) => {
+        resetAfterDelete();
+        const failedDeletions = responses.filter((response) => !response.ok).length;
+        const allRequestedDeletions = responses.length;
+        return `${failedDeletions} from ${allRequestedDeletions} task(s) couldn't be deleted, please try again.`;
+      },
     });
   };
 
