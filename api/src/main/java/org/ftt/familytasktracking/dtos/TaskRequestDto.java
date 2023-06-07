@@ -3,6 +3,8 @@ package org.ftt.familytasktracking.dtos;
 import jakarta.validation.constraints.NotEmpty;
 import org.ftt.familytasktracking.enums.TaskState;
 
+import java.time.LocalDateTime;
+
 public record TaskRequestDto(
         @NotEmpty
         String name,
@@ -11,7 +13,7 @@ public record TaskRequestDto(
         TaskState taskState,
         Boolean scheduled,
         String cronExpression,
-        Long intervalMillis,
+        LocalDateTime expirationAt,
         String assigneeUuid
 ) {
 }

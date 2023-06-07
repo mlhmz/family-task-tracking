@@ -2,7 +2,7 @@ import { Reward, RewardRequest } from "@/types/reward";
 
 import { isReward, isRewards } from "./guards";
 
-export async function getRewards({ query }: { query?: string }) {
+export async function getRewards(query?: string) {
   const request = new URLSearchParams({
     query: query ?? "",
   });

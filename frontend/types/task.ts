@@ -1,4 +1,3 @@
-import { SchedulerMode } from "@/types/scheduler-mode";
 import { TaskState } from "@/types/task-state";
 
 export interface Task {
@@ -22,5 +21,6 @@ export interface TaskRequest {
   taskState?: TaskState;
   scheduled?: boolean;
   cronExpression?: string;
+  expirationAt?: string;
   assigneeUuid?: string;
 }

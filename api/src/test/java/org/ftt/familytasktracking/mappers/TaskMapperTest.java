@@ -51,9 +51,10 @@ class TaskMapperTest {
 
     @Test
     void mapTaskDtoToTask() {
+        LocalDateTime expiredAt = LocalDateTime.now();
         TaskRequestDto dto = new TaskRequestDto("Task 1", "Test Description", 5,
                 TaskState.UNDONE,
-                false, "* * * * *", 500L, UUID.randomUUID().toString());
+                false, "* * * * *", expiredAt, UUID.randomUUID().toString());
         Task task = taskMapper.mapTaskDtoToTask(dto);
         assertThat(task.getName()).isEqualTo(dto.name());
         assertThat(task.getDescription()).isEqualTo(dto.description());
@@ -61,6 +62,7 @@ class TaskMapperTest {
         assertThat(task.getAssignee()).isNotNull();
         assertThat(task.getScheduled()).isEqualTo(dto.scheduled());
         assertThat(task.getCronExpression()).isEqualTo(dto.cronExpression());
+        assertThat(task.getExpirationAt()).isEqualTo(expiredAt);
         assertThat(task.getAssignee().getUuid()).hasToString(dto.assigneeUuid());
     }
 }

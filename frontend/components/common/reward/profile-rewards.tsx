@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 export default function ProfileRewards({ profileUuid }: { profileUuid: string }) {
   const { data } = useQuery({
     queryKey: ["rewards", { redeemedBy: profileUuid }],
-    queryFn: () => getRewards({ query: "redeemedBy.uuid:" + profileUuid }),
+    queryFn: () => getRewards(`redeemedBy.uuid:${profileUuid}`),
     initialData: [],
   });
 

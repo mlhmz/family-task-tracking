@@ -25,6 +25,8 @@ import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
+import TaskCreateForm from "./task-create-form";
+
 async function getTasks({ query }: { query: string[] }) {
   const request = new URLSearchParams({
     query: query.join(","),
@@ -61,6 +63,7 @@ export default function TaskDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [hasOpenDeleteConfirmation, setHasOpenDeleteConfirmation] = useState(false);
+  const [hasOpenCreationDialog, setHasOpenCreationDialog] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const { data: profile } = useContext(ProfileContext);
   const { register, handleSubmit } = useZodForm({ schema });
@@ -170,11 +173,19 @@ export default function TaskDataTable() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Link href="/tasks/create">
-                      <Button variant="ghost">
-                        <Icons.taskPlus />
-                      </Button>
-                    </Link>
+                    <Dialog
+                      open={hasOpenCreationDialog}
+                      onOpenChange={() => setHasOpenCreationDialog(!hasOpenCreationDialog)}>
+                      <DialogTrigger>
+                        <Button variant="ghost">
+                          <Icons.taskPlus />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Create a task</DialogHeader>
+                        <TaskCreateForm handleCloseDialog={() => setHasOpenCreationDialog(false)} />
+                      </DialogContent>
+                    </Dialog>
                   </TooltipTrigger>
                   <TooltipContent>Create task</TooltipContent>
                 </Tooltip>

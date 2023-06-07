@@ -6,14 +6,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useZodForm } from "@/app/hooks/use-zod-form";
-import { Icons } from "@/components/icons";
+import { PermissionType } from "@/types/permission-type";
+import { Profile, ProfileRequest } from "@/types/profile";
+import { editProfileByUuid } from "@/lib/profile-requests";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { editProfileByUuid } from "@/lib/profile-requests";
-import { PermissionType } from "@/types/permission-type";
-import { Profile, ProfileRequest } from "@/types/profile";
+import { Icons } from "@/components/icons";
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const schema = z.object({
   name: z.string().min(1).max(255),
