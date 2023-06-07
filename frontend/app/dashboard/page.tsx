@@ -1,14 +1,25 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useContext } from "react";
+
+import { PermissionType } from "@/types/permission-type";
+
+import { ProfileContext } from "../profile-context";
+import PrivilegedDashboard from "./privileged-dashboard";
+import UnprivilegedDashboard from "./unprivileged-dashboard";
+import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 
 const Page = () => {
-  const session = useSession();
+  const { data: profile, isLoading } = useContext(ProfileContext);
   return (
-    <>
-      <h1>Dashboard</h1>
-      <pre></pre>
-    </>
+    <div className="container">
+      <h1 className="my-5 text-2xl font-extrabold leading-tight tracking-tighter md:text-4xl lg:text-5xl">
+        Dashboard
+      </h1>
+      {isLoading && <DashboardSkeleton />}
+      {profile && profile.permissionType === PermissionType.Member && <UnprivilegedDashboard />}
+      {profile && profile.permissionType === PermissionType.Admin && <PrivilegedDashboard />}
+    </div>
   );
 };
 
