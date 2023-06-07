@@ -1,10 +1,13 @@
 "use client";
 
 import { useContext, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
+import { deleteTask } from "@/lib/task-requests";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,9 +30,6 @@ import { ProfileContext } from "@/app/profile-context";
 
 import TaskEditForm from "./task-edit-form";
 import TaskInfo from "./task-info";
-import { useRouter } from "next/navigation";
-import { deleteTask } from "@/lib/task-requests";
-import { toast } from "sonner";
 
 export default function TaskDetailPage({ params }: { params: { uuid: string } }) {
   const { data: task } = useTask(params.uuid);
