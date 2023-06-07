@@ -6,29 +6,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { PermissionType } from "@/types/permission-type";
-import { Profile, ProfileRequest } from "@/types/profile";
-import { isProfile } from "@/lib/guards";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Icons } from "@/components/icons";
-import { useZodForm } from "@/app/hooks/use-zod-form";
-
-async function editProfile(request: ProfileRequest, uuid?: string) {
-  const response = await fetch(`/api/v1/admin/profiles/${uuid}`, {
-    method: "PUT",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const profile = await response.json();
-  if (!isProfile(profile)) throw new Error("Problem fetching data");
-  return profile;
-}
+import { editProfileByUuid } from "@/lib/profile-requests";
+import { PermissionType } from "@/types/permission-type";
+import { Profile, ProfileRequest } from "@/types/profile";
 
 const schema = z.object({
   name: z.string().min(1).max(255),
@@ -52,7 +37,7 @@ export default function ProfilePrivilegedEditForm({
     },
   });
   const { mutate, isLoading } = useMutation({
-    mutationFn: (data: ProfileRequest) => editProfile(data, initialData?.uuid),
+    mutationFn: (data: ProfileRequest) => editProfileByUuid(data, initialData?.uuid),
     onSuccess: () => {
       queryClient.invalidateQueries(["profile", { uuid: initialData?.uuid ?? "undefined" }]);
       queryClient.invalidateQueries(["profiles"]);

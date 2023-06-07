@@ -22,7 +22,7 @@ export default function ProfileInfoPage({ params }: { params: any }) {
     return <ProfileSkeleton />;
   }
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
+    <div className="m-auto my-5 flex flex-col gap-5 md:w-1/3">
       <ProfileInfo data={selectedProfile} />
       {profileInstance.permissionType === PermissionType.Admin && (
         <Dialog open={open} onOpenChange={setOpen}>

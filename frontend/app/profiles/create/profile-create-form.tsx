@@ -14,22 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
-
-async function createProfile(request: ProfileRequest) {
-  const response = await fetch("/api/v1/admin/profiles", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-
-  const profile = await response.json();
-  if (!isProfile(profile)) throw new Error("Problem fetching data");
-  return profile;
-}
+import { createProfile } from "@/lib/profile-requests";
 
 const schema = z.object({
   name: z.string().min(1).max(255),

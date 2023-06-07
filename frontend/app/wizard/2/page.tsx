@@ -14,23 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
-
-async function authProfile(profile?: Profile) {
-  const request = { profileUuid: profile ? profile.uuid : "" };
-  const response = await fetch("/api/v1/profiles/auth", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem authenticating profile");
-  }
-  const authResponse = (await response.json()) as ProfileAuthResponse;
-  if (!isProfileAuthResponse(authResponse)) throw new Error("Problem authenticating profile");
-  return authResponse;
-}
+import { authProfile } from "@/lib/profile-requests";
 
 async function createProfile(profileRequest: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
@@ -75,7 +59,7 @@ export default function SecondWizardPage() {
 
   useQuery({
     queryKey: ["profile-auth"],
-    queryFn: () => authProfile(data),
+    queryFn: () => authProfile({ profileUuid: data?.uuid ?? "" }),
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
       queryClient.invalidateQueries(["profiles"]);
