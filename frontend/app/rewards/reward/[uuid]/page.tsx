@@ -8,9 +8,20 @@ import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
 import { deleteReward, getRewardByUuid } from "@/lib/reward-requests";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
-import RewardProfileInfoSkeleton from "@/components/ui/skeleton/reward-profile-info-skeleton";
+import InfoPageSkeleton from "@/components/ui/skeleton/info-page-skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Icons } from "@/components/icons";
 import { ProfileContext } from "@/app/profile-context";
@@ -39,7 +50,7 @@ export default function RewardInfoPage({ params }: { params: { uuid: string } })
   };
 
   if (!reward?.uuid || !profileInstance?.uuid) {
-    return <RewardProfileInfoSkeleton />;
+    return <InfoPageSkeleton />;
   }
   return (
     <div className="mx-2 mt-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
@@ -96,9 +107,25 @@ export default function RewardInfoPage({ params }: { params: { uuid: string } })
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button variant="ghost" onClick={onDelete}>
-                      {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost">
+                          {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Reward</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this reward?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={onDelete}>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TooltipTrigger>
                   <TooltipContent>Delete Reward</TooltipContent>
                 </Tooltip>
