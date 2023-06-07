@@ -11,6 +11,8 @@ export interface Task {
   updatedAt?: string;
   expirationAt?: string;
   doneAt?: string;
+  scheduled?: boolean;
+  cronExpression?: string;
   nextTaskCreationAt?: string;
   taskState?: TaskState;
   assigneeUuid?: string;
