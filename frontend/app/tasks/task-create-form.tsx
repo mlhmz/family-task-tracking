@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { TaskRequest } from "@/types/task";
-import { TaskState, getTranslatedTaskStateValue } from "@/types/task-state";
+import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 import { isTask } from "@/lib/guards";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -68,8 +69,8 @@ const schema = z.object({
   scheduling: schedulingSchema,
 });
 
-export default function TaskCreateForm() {
-  const { register, handleSubmit, formState, setValue, getValues } = useZodForm({
+export default function TaskCreateForm({ handleCloseDialog }: { handleCloseDialog: Dispatch<void> }) {
+  const { register, handleSubmit, formState, setValue } = useZodForm({
     schema,
     defaultValues: {
       task: { points: 0 },
@@ -82,10 +83,7 @@ export default function TaskCreateForm() {
   });
   const { mutate, error, isLoading } = useMutation({
     mutationFn: createTask,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(["tasks"]);
-      router.push(`/tasks/task/${data.uuid}`);
-    },
+    onSuccess: () => queryClient.invalidateQueries(["tasks"]),
   });
   const [isSchedulingActivated, setIsSchedulingActivated] = useState(false);
   const queryClient = useQueryClient();
@@ -101,7 +99,7 @@ export default function TaskCreateForm() {
       return "";
     }
 
-    const {hours, days, months} = scheduling;
+    const { hours, days, months } = scheduling;
 
     let hoursExpression = "*";
     // When the days or the months are activated, but the hours are not, their value
@@ -138,7 +136,20 @@ export default function TaskCreateForm() {
       scheduled: formData.scheduling.activated,
       cronExpression: buildCronExpressionFromInput(formData.scheduling),
     } satisfies TaskRequest;
-    mutate({ ...task });
+    mutate(
+      { ...task },
+      {
+        onSuccess: (task) => {
+          toast.success(`The reward '${task.name}' was created!`, {
+            action: {
+              label: "View",
+              onClick: () => router.push(`/tasks/task/${task.uuid}`),
+            },
+          });
+          handleCloseDialog();
+        },
+      },
+    );
   };
 
   return (
