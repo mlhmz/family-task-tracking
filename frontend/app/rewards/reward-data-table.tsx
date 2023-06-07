@@ -48,7 +48,7 @@ export default function RewardDataTable() {
   });
   const { data, isLoading: isSearchLoading } = useQuery({
     queryKey: ["rewards", searchQuery],
-    queryFn: () => getRewards({ query: searchQuery.query }),
+    queryFn: () => getRewards(searchQuery.query),
     initialData: [],
   });
 
