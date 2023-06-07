@@ -12,7 +12,7 @@ import { z } from "zod";
 import { PermissionType } from "@/types/permission-type";
 import { Task } from "@/types/task";
 import { getTranslatedTaskStateValue } from "@/types/task-state";
-import { isTask } from "@/lib/guards";
+import { deleteTask, getTasks } from "@/lib/task-requests";
 import { formatISODateToReadable } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,30 +26,6 @@ import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
 import TaskCreateForm from "./task-create-form";
-
-async function getTasks({ query }: { query: string[] }) {
-  const request = new URLSearchParams({
-    query: query.join(","),
-  });
-  const response = await fetch(`/api/v1/tasks${"?" + request}`);
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const tasks = (await response.json()) as Task[];
-  return tasks.filter(isTask);
-}
-
-async function deleteTask(uuid: string) {
-  const response = await fetch(`/api/v1/admin/tasks/${uuid}`, { method: "DELETE" });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  return response;
-}
 
 interface SearchQuery {
   name?: string;
@@ -73,7 +49,7 @@ export default function TaskDataTable() {
   });
   const { data, isLoading: isSearchLoading } = useQuery({
     queryKey: ["tasks", searchQuery],
-    queryFn: () => getTasks({ query: searchQuery.query }),
+    queryFn: () => getTasks(searchQuery.query),
     initialData: [],
   });
   const queryClient = useQueryClient();
