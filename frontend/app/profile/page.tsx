@@ -14,8 +14,8 @@ import ProfilePasswordEditForm from "./profile-password-edit-form";
 
 export default function Profile() {
   const { data } = useContext(ProfileContext);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [openPasswordChangeDialog, setOpenPasswordChangeDialog] = useState(false);
+  const [hasOpenEditDialog, setHasOpenEditDialog] = useState(false);
+  const [hasOpenPasswordDialog, setHasOpenPasswordDialog] = useState(false);
 
   if (!data || !data.uuid) {
     return <ProfileSkeleton />;
@@ -24,22 +24,22 @@ export default function Profile() {
     <div className="m-auto my-5 flex flex-col gap-5 md:w-1/3">
       <ProfileInfo data={data} />
       <div className="flex flex-row gap-2">
-        <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+        <Dialog open={hasOpenEditDialog} onOpenChange={setHasOpenEditDialog}>
           <DialogTrigger asChild>
             <Button className="w-1/2">Edit profile</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>Edit Profile</DialogHeader>
-            <ProfileEditForm initialData={data} closeDialog={() => setOpenEditDialog(!openEditDialog)} />
+            <ProfileEditForm initialData={data} closeDialog={() => setHasOpenEditDialog(!hasOpenEditDialog)} />
           </DialogContent>
         </Dialog>
-        <Dialog open={openPasswordChangeDialog} onOpenChange={setOpenPasswordChangeDialog}>
+        <Dialog open={hasOpenPasswordDialog} onOpenChange={setHasOpenPasswordDialog}>
           <DialogTrigger asChild>
             <Button className="w-1/2">Edit PIN</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>Edit your password</DialogHeader>
-            <ProfilePasswordEditForm onPasswordChangeSuccess={() => setOpenPasswordChangeDialog(false)} />
+            <ProfilePasswordEditForm onPasswordChangeSuccess={() => setHasOpenPasswordDialog(false)} />
           </DialogContent>
         </Dialog>
       </div>
