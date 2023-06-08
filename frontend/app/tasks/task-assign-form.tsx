@@ -90,7 +90,7 @@ export default function TaskAssignForm({
                 {profiles?.map(
                   (profile) =>
                     profile.uuid && (
-                      <SelectItem value={profile?.uuid} key={profile?.uuid} className="cursor-pointer">
+                      <SelectItem value={profile.uuid} key={profile.uuid} className="cursor-pointer">
                         <div className="ml-2 flex gap-5 py-2">
                           <Avatar
                             size={32}
