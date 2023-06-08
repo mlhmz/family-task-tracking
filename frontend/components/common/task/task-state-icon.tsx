@@ -14,7 +14,7 @@ export const TaskStateIcon = ({ taskState }: { taskState?: TaskState }) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="cursor-default">
+        <TooltipTrigger>
           <p>{iconsMap[taskState]}</p>
         </TooltipTrigger>
         <TooltipContent>{getTranslatedTaskStateValue(taskState)}</TooltipContent>
