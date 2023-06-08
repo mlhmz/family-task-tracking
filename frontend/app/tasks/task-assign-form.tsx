@@ -7,29 +7,14 @@ import Avatar from "boring-avatars";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { TaskRequest } from "@/types/task";
-import { isTask } from "@/lib/guards";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Icons } from "@/components/icons";
+import { TaskRequest } from "@/types/task";
 
+import { updateTaskAssignee } from "@/lib/task-requests";
 import { useProfiles } from "../hooks/fetch/use-profiles";
 import { useZodForm } from "../hooks/use-zod-form";
-
-async function updateTaskAssignee(request: TaskRequest, uuid?: string) {
-  const response = await fetch(`/api/v1/admin/tasks/${uuid}/assignee`, {
-    method: "PATCH",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const task = await response.json();
-  if (!isTask(task)) throw new Error("Problem fetching data");
-  return task;
-}
 
 const schema = z.object({
   assigneeUuid: z.string().uuid().or(z.string().max(0)),

@@ -74,3 +74,18 @@ export async function updateTask({ request, uuid }: updateTaskParams) {
   if (!isTask(task)) throw new Error("Problem fetching data");
   return task;
 }
+
+export async function updateTaskAssignee(request: TaskRequest, uuid?: string) {
+  const response = await fetch(`/api/v1/admin/tasks/${uuid}/assignee`, {
+    method: "PATCH",
+    body: JSON.stringify(request),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.message) throw new Error(error.message);
+    throw new Error("Problem fetching data");
+  }
+  const task = await response.json();
+  if (!isTask(task)) throw new Error("Problem fetching data");
+  return task;
+}
