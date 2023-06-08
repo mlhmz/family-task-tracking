@@ -37,14 +37,16 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
     private final ProfileService profileService;
+    private final ProfileAuthService profileAuthService;
     private final HouseholdService householdService;
 
     public TaskServiceImpl(TaskMapper taskMapper, TaskRepository taskRepository, ProfileService profileService,
-                           HouseholdService householdService) {
+                           HouseholdService householdService, ProfileAuthService profileAuthService) {
         this.taskMapper = taskMapper;
         this.taskRepository = taskRepository;
         this.profileService = profileService;
         this.householdService = householdService;
+        this.profileAuthService = profileAuthService;
         addUpdateHooksToArrayList();
     }
 
@@ -103,10 +105,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskModel updateTaskByUuidAndJwt(@NonNull TaskModel updateTaskModel, @NonNull UUID uuid, @NonNull Jwt jwt,
-                                            boolean safe) {
-        throwBadRequestOnInvalidCronExpression(updateTaskModel.toResponseDto().cronExpression());
+                                            UUID sessionId, boolean safe) {
         Task updateTask = updateTaskModel.toEntity();
         Task targetTask = this.getTaskByUuidAndJwt(uuid, jwt).toEntity();
+        throwBadRequestOnSafeAndAssigneeNotProfileInstance(jwt, sessionId, safe, targetTask);
         updateTargetTask(updateTask, targetTask, safe);
         executeUpdateHooks(updateTask, targetTask, safe);
         return buildModelFromTaskEntity(
@@ -137,6 +139,20 @@ public class TaskServiceImpl implements TaskService {
     private void throwBadRequestOnInvalidCronExpression(String cronExpression) {
         if (StringUtils.isNotEmpty(cronExpression) && !CronExpression.isValidExpression(cronExpression)) {
             throw new WebRtException(HttpStatus.BAD_REQUEST, "The given scheduling expression is invalid.");
+        }
+    }
+
+    private void throwBadRequestOnSafeAndAssigneeNotProfileInstance(Jwt jwt, UUID sessionId, boolean safe,
+                                                                    Task targetTask) {
+        if (safe) {
+            throwBadRequestOnAssigneeNotProfileInstace(jwt, sessionId, targetTask);
+        }
+    }
+
+    private void throwBadRequestOnAssigneeNotProfileInstace(Jwt jwt, UUID sessionId, Task targetTask) {
+        Profile profileInstance = this.profileAuthService.getProfileBySession(sessionId, jwt).toEntity();
+        if (profileInstance.getUuid().equals(targetTask.getUuid())) {
+            throw new WebRtException(HttpStatus.BAD_REQUEST, "You can't edit tasks, that you're not assigned to.");
         }
     }
 
