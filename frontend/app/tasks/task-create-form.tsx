@@ -7,9 +7,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { TaskRequest } from "@/types/task";
+import { createOrEditTaskSchema, schedulingSchema, TaskRequest } from "@/types/task";
 import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
-import { isTask } from "@/lib/guards";
+import { createTask } from "@/lib/task-requests";
+import { buildCronExpressionFromInput } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,54 +19,8 @@ import { Switch } from "@/components/ui/switch";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
-async function createTask(request: TaskRequest) {
-  const response = await fetch("/api/v1/admin/tasks", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-
-  const task = await response.json();
-  if (!isTask(task)) throw new Error("Problem fetching data");
-  return task;
-}
-
-const hours = z.object({
-  activated: z.boolean().default(false),
-  value: z.number().min(0).max(24),
-});
-
-const days = z.object({
-  activated: z.boolean().default(false),
-  value: z.number().min(0).max(31),
-});
-
-const months = z.object({
-  activated: z.boolean().default(false),
-  value: z.number().min(0).max(12),
-});
-
-const schedulingSchema = z.object({
-  hours: hours,
-  days: days,
-  months: months,
-  activated: z.boolean(),
-});
-
-const taskSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().min(1).max(255).optional(),
-  points: z.number().optional(),
-  taskState: z.enum([TaskState.Done, TaskState.Undone, TaskState.Finished, TaskState.Reviewed]).optional(),
-  expirationAt: z.string().optional(),
-});
-
 const schema = z.object({
-  task: taskSchema,
+  task: createOrEditTaskSchema,
   scheduling: schedulingSchema,
 });
 
@@ -89,47 +44,6 @@ export default function TaskCreateForm({ handleCloseDialog }: { handleCloseDialo
   const [isSchedulingActivated, setIsSchedulingActivated] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
-
-  /**
-   * Builds a cron expression from the user input that is submitted by the Scheduling-Section.
-   * If a section is scheduled it will be set with "* /value" in order to schedule it every (value)
-   * So * /3 in days context means, schedule every 3 days.
-   */
-  const buildCronExpressionFromInput = (scheduling: z.infer<typeof schedulingSchema>): string => {
-    if (!scheduling.activated) {
-      return "";
-    }
-
-    const { hours, days, months } = scheduling;
-
-    let hoursExpression = "*";
-    // When the days or the months are activated, but the hours are not, their value
-    // has to be, in terms of a cron expression, '0' instead of '*'.
-    // If it would be a '*' the cron expression would reschedule every hour on the certain day.
-    // That is not the functionality we want.
-    if (!hours.activated && (days.activated || months.activated)) {
-      hoursExpression = "0";
-    } else if (hours.activated && hours.value !== 0) {
-      // We'll just check here if hours is activated and will set a */${value}
-      hoursExpression = `*/${scheduling.hours.value}`;
-    }
-
-    let daysExpression = "*";
-    // Same thing like in hours applies here, with the only difference, that only months lays over
-    // days in the expression.
-    if (!days.activated && months.activated) {
-      daysExpression = "0";
-    } else if (days.activated && days.value !== 0) {
-      daysExpression = `*/${scheduling.days.value}`;
-    }
-
-    let monthsExpression = "*";
-    if (months.activated && months.value !== 0) {
-      monthsExpression = `*/${scheduling.months.value}`;
-    }
-
-    return `0 ${hoursExpression} ${daysExpression} ${monthsExpression} *`;
-  };
 
   const onSubmit = (formData: z.infer<typeof schema>) => {
     const task = {
