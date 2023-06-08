@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.ftt.familytasktracking.config.ApplicationConfigProperties;
 import org.ftt.familytasktracking.dtos.ProfileResponseDto;
 import org.ftt.familytasktracking.dtos.TaskRequestDto;
 import org.ftt.familytasktracking.dtos.TaskResponseDto;
@@ -103,10 +104,11 @@ public class TaskController {
     )
     @PutMapping("/{id}")
     public TaskResponseDto safeUpdateTaskByUuidAndJwt(@PathVariable(value = "id") UUID uuid,
+                                                      @RequestHeader(ApplicationConfigProperties.SESSION_ID_KEY) UUID sessionId,
                                                       @AuthenticationPrincipal Jwt jwt,
                                                       @RequestBody TaskRequestDto dto) {
         TaskModel model = this.taskService.buildModelFromTaskRequestDto(dto);
-        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, true).toResponseDto();
+        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, sessionId, true).toResponseDto();
     }
 
     private List<TaskResponseDto> mapModelCollectionToDtoCollection(List<TaskModel> models) {

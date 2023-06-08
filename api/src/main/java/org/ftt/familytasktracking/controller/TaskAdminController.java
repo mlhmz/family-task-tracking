@@ -80,7 +80,7 @@ public class TaskAdminController {
                                                   @AuthenticationPrincipal Jwt jwt,
                                                   @RequestBody TaskRequestDto dto) {
         TaskModel model = this.taskService.buildModelFromTaskRequestDto(dto);
-        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, false).toResponseDto();
+        return this.taskService.updateTaskByUuidAndJwt(model, uuid, jwt, null, false).toResponseDto();
     }
 
     @Operation(summary = "Updates a Assignee for a Task by it's UUID and it's Authorization-Token")

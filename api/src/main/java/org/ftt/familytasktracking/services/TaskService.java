@@ -46,14 +46,17 @@ public interface TaskService {
 
     /**
      * Updates a Task by its uuid, jwt and a updateTask payload
+     * <p>
+     * If the update is executed in safe mode, only the current assigned profile can execute it.
      *
      * @param updateTask Update-Payload as {@link TaskModel}
      * @param uuid       {@link UUID} of the Task to update
      * @param jwt        {@link Jwt} of the Task
+     * @param sessionId  Session ID of the current Profile instance
      * @param safe       Flag that is executing an update for unprivileged users if toggled
      * @return Updated Task as {@link TaskModel}
      */
-    TaskModel updateTaskByUuidAndJwt(@NonNull TaskModel updateTask, @NonNull UUID uuid, @NonNull Jwt jwt, boolean safe);
+    TaskModel updateTaskByUuidAndJwt(@NonNull TaskModel updateTask, @NonNull UUID uuid, @NonNull Jwt jwt, UUID sessionId, boolean safe);
 
     /**
      * Deletes a Task by its uuid and jwt
