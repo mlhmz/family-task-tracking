@@ -5,13 +5,13 @@ import Link from "next/link";
 
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Avatar from "boring-avatars";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { PermissionType } from "@/types/permission-type";
 import { Task } from "@/types/task";
 import { getTranslatedTaskStateValue } from "@/types/task-state";
+import { isTask } from "@/lib/guards";
 import { deleteTask, getTasks } from "@/lib/task-requests";
 import { formatISODateToReadable } from "@/lib/utils";
 import {
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -38,32 +38,7 @@ import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
 import AssignTaskButton from "./assign-task-button";
-import TaskAssignForm from "./task-assign-form";
 import TaskCreateForm from "./task-create-form";
-
-async function getTasks({ query }: { query: string[] }) {
-  const request = new URLSearchParams({
-    query: query.join(","),
-  });
-  const response = await fetch(`/api/v1/tasks${"?" + request}`);
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const tasks = (await response.json()) as Task[];
-  return tasks.filter(isTask);
-}
-
-async function deleteTask(uuid: string) {
-  const response = await fetch(`/api/v1/admin/tasks/${uuid}`, { method: "DELETE" });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  return response;
-}
 
 interface SearchQuery {
   name?: string;
