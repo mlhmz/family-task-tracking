@@ -1,5 +1,5 @@
 import { Tooltip } from "@radix-ui/react-tooltip";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
@@ -8,6 +8,7 @@ import { TaskState } from "@/types/task-state";
 import { isTask } from "@/lib/guards";
 import { Button } from "@/components/ui/button";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TaskStateIcon } from "@/components/common/task/task-state-icon";
 import { Icons } from "@/components/icons";
 
 import { useProfile } from "../hooks/fetch/use-profile";
@@ -25,7 +26,7 @@ async function updateTaskState(redeemPayload: RedeemPayload, uuid?: string) {
     if (error.message) throw new Error(error.message);
     throw new Error("Problem fetching data");
   }
-  const content = await response.json()
+  const content = await response.json();
   if (!isTask(content)) throw new Error("Problem fetching data");
   return content;
 }
@@ -37,8 +38,13 @@ interface RedeemPayload {
 
 export default function RedeemTaskButton({ task }: { task: Task }) {
   const { data: currentProfile } = useProfile();
+  const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation({
     mutationFn: (redeemPayload: RedeemPayload) => updateTaskState(redeemPayload, task.uuid),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["task", { uuid: task.uuid }]);
+      queryClient.invalidateQueries(["tasks"]);
+    },
   });
   const privilegedStates = [TaskState.Finished, TaskState.Reviewed];
 
@@ -59,14 +65,9 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
 
   const getIconByStatus = () => {
     if (task.taskState === TaskState.Undone) {
-      return <Icons.checkCircle />;
-    } else if (
-      task.taskState === TaskState.Done &&
-      currentProfile?.permissionType === PermissionType.Member
-    ) {
-      return <Icons.x />;
+      return <TaskStateIcon taskState={TaskState.Done} />;
     } else if (task.taskState === TaskState.Done && currentProfile?.permissionType === PermissionType.Admin) {
-      return <Icons.checkCircle />;
+      return <TaskStateIcon taskState={TaskState.Finished} />;
     } else {
       return <Icons.x />;
     }
@@ -82,34 +83,26 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
           },
           onError: (error) =>
             toast.error(
-              `Error redeeming reward: ${error instanceof Error ? error.message : "Unknown error"}`,
+              `Error completing task: ${error instanceof Error ? error.message : "Unknown error"}`,
             ),
         },
       );
-    } else if (
-      task.taskState === TaskState.Done &&
-      currentProfile?.permissionType === PermissionType.Member
-    ) {
-      mutate({ taskState: TaskState.Undone, safe: true });
     } else if (task.taskState === TaskState.Done && currentProfile?.permissionType === PermissionType.Admin) {
       mutate({ taskState: TaskState.Reviewed, safe: false });
     }
   };
 
-  const isRedeemButtonForPrivileged = () => {
-    return (
-      privilegedStates.some((state) => task.taskState === state) || task.assigneeUuid !== currentProfile?.uuid
-    );
-  };
-
-  if (!isRedeemButtonForPrivileged() && currentProfile?.permissionType !== PermissionType.Admin) {
+  if (
+    (task.taskState !== TaskState.Undone && currentProfile?.permissionType !== PermissionType.Admin) ||
+    task.taskState === TaskState.Finished
+  ) {
     return <></>;
   }
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <Button variant="ghost" onClick={redeem}>
+          <Button variant="ghost" className="cursor-pointer" onClick={redeem}>
             {isLoading ? <Icons.spinner className="animate-spin" /> : getIconByStatus()}
           </Button>
         </TooltipTrigger>
