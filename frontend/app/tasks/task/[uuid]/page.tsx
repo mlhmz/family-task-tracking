@@ -1,13 +1,15 @@
 "use client";
 
-import { useContext, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useContext, useMemo, useState } from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { PermissionType } from "@/types/permission-type";
-import { deleteTask } from "@/lib/task-requests";
+import { useTask } from "@/app/hooks/fetch/use-task";
+import { ProfileContext } from "@/app/profile-context";
+import { TaskStateIcon } from "@/components/common/task/task-state-icon";
+import { Icons } from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,11 +25,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import InfoPageSkeleton from "@/components/ui/skeleton/info-page-skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { TaskStateIcon } from "@/components/common/task/task-state-icon";
-import { Icons } from "@/components/icons";
-import { useTask } from "@/app/hooks/fetch/use-task";
-import { ProfileContext } from "@/app/profile-context";
+import { deleteTask } from "@/lib/task-requests";
+import { PermissionType } from "@/types/permission-type";
 
+import AssignTaskButton from "../../assign-task-button";
 import TaskEditForm from "./task-edit-form";
 import TaskInfo from "./task-info";
 
@@ -62,6 +63,7 @@ export default function TaskDetailPage({ params }: { params: { uuid: string } })
         <div id="actions" className="col-start-2">
           {isAdmin && (
             <>
+              <AssignTaskButton task={task} />
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>

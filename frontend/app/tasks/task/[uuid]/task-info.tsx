@@ -15,6 +15,13 @@ export default function TaskInfo({ task }: { task: Task }) {
         </div>
       </div>
       <Separator />
+      {task.assigneeUuid && (
+        <div className="flex w-full flex-col gap-5">
+          <h3 className="font-bold">Assignee</h3>
+          <p>{task.assigneeUuid}</p>
+          <Separator />
+        </div>
+      )}
       <div className="flex w-full flex-col gap-5">
         <h3 className="font-bold">Description</h3>
         <p>{task.description}</p>

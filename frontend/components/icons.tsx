@@ -21,6 +21,7 @@ import {
   UserPlus,
   X,
   type Icon as LucideIcon,
+  UserCircle,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -38,6 +39,7 @@ export const Icons = {
   checkCheck: CheckCheck,
   trash: Trash,
   userPlus: UserPlus,
+  userCircle: UserCircle,
   taskPlus: FilePlus,
   search: Search,
   filter: Filter,

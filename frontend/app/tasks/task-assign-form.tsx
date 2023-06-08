@@ -16,7 +16,7 @@ import { Icons } from "@/components/icons";
 import { useProfiles } from "../hooks/fetch/use-profiles";
 import { useZodForm } from "../hooks/use-zod-form";
 
-async function updateTaskAssignee(request: TaskRequest, uuid: string) {
+async function updateTaskAssignee(request: TaskRequest, uuid?: string) {
   const response = await fetch(`/api/v1/admin/tasks/${uuid}/assignee`, {
     method: "PATCH",
     body: JSON.stringify(request),
@@ -39,10 +39,10 @@ export default function TaskAssignForm({
   taskUuid,
   handleAssignSuccess,
 }: {
-  taskUuid: string;
+  taskUuid?: string;
   handleAssignSuccess: Dispatch<void>;
 }) {
-  const { handleSubmit, setValue } = useZodForm({ schema });
+  const { handleSubmit, setValue } = useZodForm({ schema, defaultValues: { assigneeUuid: "" } });
   const { data: profiles } = useProfiles();
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation({
@@ -66,6 +66,7 @@ export default function TaskAssignForm({
       },
     );
 
+  if (!taskUuid) return <></>;
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -78,12 +79,18 @@ export default function TaskAssignForm({
               <SelectValue placeholder="Select a Assignee..." />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value={""} className="cursor-pointer">
+                <div className="ml-2 flex gap-5 py-2">
+                  <Icons.userCircle className="h-auto w-[32px]" />
+                  <p className="flex items-center">None</p>
+                </div>
+              </SelectItem>
               <>
                 {profiles?.map(
                   (profile) =>
                     profile.uuid && (
-                      <SelectItem value={profile?.uuid} key={profile?.uuid}>
-                        <div className="flex flex-row gap-5">
+                      <SelectItem value={profile?.uuid} key={profile?.uuid} className="cursor-pointer">
+                        <div className="ml-2 flex gap-5 py-2">
                           <Avatar
                             size={32}
                             name={profile?.uuid}
