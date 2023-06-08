@@ -1,15 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useContext, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { useTask } from "@/app/hooks/fetch/use-task";
-import { ProfileContext } from "@/app/profile-context";
-import { TaskStateIcon } from "@/components/common/task/task-state-icon";
-import { Icons } from "@/components/icons";
+import { PermissionType } from "@/types/permission-type";
+import { deleteTask } from "@/lib/task-requests";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,8 +23,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import InfoPageSkeleton from "@/components/ui/skeleton/info-page-skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { deleteTask } from "@/lib/task-requests";
-import { PermissionType } from "@/types/permission-type";
+import { TaskStateIcon } from "@/components/common/task/task-state-icon";
+import { Icons } from "@/components/icons";
+import { useTask } from "@/app/hooks/fetch/use-task";
+import { ProfileContext } from "@/app/profile-context";
 
 import AssignTaskButton from "../../assign-task-button";
 import TaskEditForm from "./task-edit-form";

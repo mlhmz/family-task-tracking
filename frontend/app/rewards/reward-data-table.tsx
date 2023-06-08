@@ -27,6 +27,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import ProfileShowcase from "@/components/common/profile/profile-showcase";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
@@ -37,7 +38,6 @@ import RedeemRewardButton from "./redeem-reward-button";
 import RewardCreateForm from "./reward-create-form";
 import RewardEditForm from "./reward-edit-form";
 import RewardFilterMenu from "./reward-filter-menu";
-import ProfileShowcase from "@/components/common/profile/profile-showcase";
 
 const schema = z.object({
   name: z.string().optional(),

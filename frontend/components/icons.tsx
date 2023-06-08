@@ -18,10 +18,10 @@ import {
   SunMedium,
   Trash,
   Twitter,
+  UserCircle,
   UserPlus,
   X,
   type Icon as LucideIcon,
-  UserCircle,
 } from "lucide-react";
 
 export type Icon = LucideIcon;

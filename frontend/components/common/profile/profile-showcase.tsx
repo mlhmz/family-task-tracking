@@ -1,15 +1,15 @@
+import { useContext, useMemo } from "react";
 import Link from "next/link";
 
 import Avatar from "boring-avatars";
 
-import { ProfilesContext } from "@/app/profiles-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useContext, useMemo } from "react";
+import { ProfilesContext } from "@/app/profiles-context";
 
 interface ProfileShowcaseProps {
-  profileUuid: string,
-  pictureSize?: number,
-  subtitle?: boolean
+  profileUuid: string;
+  pictureSize?: number;
+  subtitle?: boolean;
 }
 
 export default function ProfileShowcase({ profileUuid, pictureSize, subtitle }: ProfileShowcaseProps) {
