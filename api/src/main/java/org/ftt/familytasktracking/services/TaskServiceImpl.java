@@ -170,8 +170,12 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto setAssigneeForTask(TaskModel updateTaskModel, UUID targetTaskUuid, Jwt jwt) {
         Task updateTask = updateTaskModel.toEntity();
         Task targetTask = this.getTaskByUuidAndJwt(targetTaskUuid, jwt).toEntity();
-        this.taskMapper.updateTaskAssignee(updateTask, targetTask);
-        this.profileService.existsByProfile(targetTask.getAssignee());
+        if (updateTask.getAssignee().getUuid() != null) {
+            this.taskMapper.updateTaskAssignee(updateTask, targetTask);
+            this.profileService.existsByProfile(targetTask.getAssignee());
+        } else {
+            targetTask.setAssignee(null);
+        }
         this.taskRepository.save(targetTask);
         return this.taskMapper.mapTaskToTaskDto(targetTask);
     }

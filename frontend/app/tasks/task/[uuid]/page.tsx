@@ -28,6 +28,7 @@ import { Icons } from "@/components/icons";
 import { useTask } from "@/app/hooks/fetch/use-task";
 import { ProfileContext } from "@/app/profile-context";
 
+import AssignTaskButton from "../../assign-task-button";
 import TaskEditForm from "./task-edit-form";
 import TaskInfo from "./task-info";
 
@@ -62,6 +63,7 @@ export default function TaskDetailPage({ params }: { params: { uuid: string } })
         <div id="actions" className="col-start-2">
           {isAdmin && (
             <>
+              <AssignTaskButton task={task} />
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>

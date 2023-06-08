@@ -27,6 +27,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import ProfileShowcase from "@/components/common/profile/profile-showcase";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
@@ -34,7 +35,6 @@ import { ProfileContext } from "@/app/profile-context";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../../components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
 import RedeemRewardButton from "./redeem-reward-button";
-import RedeemedByShowcase from "./redeemed-by-showcase";
 import RewardCreateForm from "./reward-create-form";
 import RewardEditForm from "./reward-edit-form";
 import RewardFilterMenu from "./reward-filter-menu";
@@ -246,7 +246,7 @@ export default function RewardDataTable() {
                 </TableCell>
                 <TableCell className="text-center">{formatISODateToReadable(reward.redeemedAt)}</TableCell>
                 <TableCell>
-                  <>{reward?.redeemedBy && <RedeemedByShowcase redeemedByUuid={reward.redeemedBy} />}</>
+                  <>{reward?.redeemedBy && <ProfileShowcase profileUuid={reward.redeemedBy} />}</>
                 </TableCell>
                 <TableCell className="flex flex-col items-center gap-2">
                   <div>

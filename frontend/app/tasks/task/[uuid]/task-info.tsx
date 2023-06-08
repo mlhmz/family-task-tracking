@@ -1,9 +1,19 @@
+import { useContext, useMemo } from "react";
+
 import { Task } from "@/types/task";
 import { formatISODateToReadable } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import InfoPageSkeleton from "@/components/ui/skeleton/info-page-skeleton";
+import ProfileShowcase from "@/components/common/profile/profile-showcase";
+import { ProfilesContext } from "@/app/profiles-context";
 
 export default function TaskInfo({ task }: { task: Task }) {
+  const { data: profiles } = useContext(ProfilesContext);
+  const assignee = useMemo(
+    () => profiles.find((profile) => profile.uuid === task.assigneeUuid),
+    [task, profiles],
+  );
+
   if (!task) return <InfoPageSkeleton />;
   return (
     <div className="flex flex-col items-center gap-5">
@@ -15,6 +25,15 @@ export default function TaskInfo({ task }: { task: Task }) {
         </div>
       </div>
       <Separator />
+      {task.assigneeUuid && (
+        <div className="flex w-full flex-col items-start gap-5">
+          <h3 className="font-bold">Assignee</h3>
+          <div>
+            <ProfileShowcase profileUuid={task.assigneeUuid} pictureSize={64} subtitle />
+          </div>
+          <Separator />
+        </div>
+      )}
       <div className="flex w-full flex-col gap-5">
         <h3 className="font-bold">Description</h3>
         <p>{task.description}</p>
