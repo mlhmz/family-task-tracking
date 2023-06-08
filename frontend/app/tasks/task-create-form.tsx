@@ -55,7 +55,7 @@ export default function TaskCreateForm({ handleCloseDialog }: { handleCloseDialo
       { ...task },
       {
         onSuccess: (task) => {
-          toast.success(`The reward '${task.name}' was created!`, {
+          toast.success(`The task '${task.name}' was created!`, {
             action: {
               label: "View",
               onClick: () => router.push(`/tasks/task/${task.uuid}`),
