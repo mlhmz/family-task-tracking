@@ -31,6 +31,7 @@ import { ProfileContext } from "@/app/profile-context";
 import AssignTaskButton from "../../assign-task-button";
 import TaskEditForm from "./task-edit-form";
 import TaskInfo from "./task-info";
+import RedeemTaskButton from "../../redeem-task-button";
 
 export default function TaskDetailPage({ params }: { params: { uuid: string } }) {
   const { data: task } = useTask(params.uuid);
@@ -63,6 +64,7 @@ export default function TaskDetailPage({ params }: { params: { uuid: string } })
         <div id="actions" className="col-start-2">
           {isAdmin && (
             <>
+              <RedeemTaskButton task={task} />
               <AssignTaskButton task={task} />
               <TooltipProvider>
                 <Tooltip>

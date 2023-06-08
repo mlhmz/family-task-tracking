@@ -73,7 +73,8 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
     }
   };
 
-  const redeem = () => {
+  const redeem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
     if (task.taskState === TaskState.Undone) {
       mutate(
         { taskState: TaskState.Done, safe: true },
@@ -82,13 +83,20 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
             toast.success("Task completed successfully!");
           },
           onError: (error) =>
-            toast.error(
-              `Error completing task: ${error instanceof Error ? error.message : "Unknown error"}`,
-            ),
+            toast.error(`Error completing task: ${error instanceof Error ? error.message : "Unknown error"}`),
         },
       );
     } else if (task.taskState === TaskState.Done && currentProfile?.permissionType === PermissionType.Admin) {
-      mutate({ taskState: TaskState.Reviewed, safe: false });
+      mutate(
+        { taskState: TaskState.Reviewed, safe: false },
+        {
+          onSuccess: () => {
+            toast.success("Task reviewed successfully!");
+          },
+          onError: (error) =>
+            toast.error(`Error reviewing task: ${error instanceof Error ? error.message : "Unknown error"}`),
+        },
+      );
     }
   };
 
@@ -96,13 +104,13 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
     (task.taskState !== TaskState.Undone && currentProfile?.permissionType !== PermissionType.Admin) ||
     task.taskState === TaskState.Finished
   ) {
-    return <></>;
+    return <Button className="cursor-default- h-[40px] w-[56px] opacity-0" variant="ghost"></Button>;
   }
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <Button variant="ghost" className="cursor-pointer" onClick={redeem}>
+          <Button variant="ghost" className="cursor-pointer" onClick={(event) => redeem(event)}>
             {isLoading ? <Icons.spinner className="animate-spin" /> : getIconByStatus()}
           </Button>
         </TooltipTrigger>
