@@ -33,7 +33,7 @@ public interface TaskMapper {
      * @param taskRequestDto {@link TaskRequestDto} to map
      * @return Mapped {@link Task}
      */
-    @Mapping(source = "assigneeUuid", target = "assignee.uuid")
+    @Mapping(source = "assigneeUuid", target = "assignee.uuid", conditionExpression = "java(taskRequestDto.assigneeUuid() != null && !taskRequestDto.assigneeUuid().isEmpty())")
     Task mapTaskDtoToTask(TaskRequestDto taskRequestDto);
 
     @Mapping(target = "assignee", ignore = true)
