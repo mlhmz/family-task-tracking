@@ -11,6 +11,17 @@ import { PermissionType } from "@/types/permission-type";
 import { Reward } from "@/types/reward";
 import { deleteReward, getRewards } from "@/lib/reward-requests";
 import { formatISODateToReadable } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -81,99 +92,111 @@ export default function RewardDataTable() {
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
-  const sendToastByDeletionResponses = (responses: Response[]) => {
-    if (responses.some((response) => !response.ok)) {
-      const failedDeletions = responses.filter((response) => !response.ok).length;
-      const allRequestedDeletions = responses.length;
-      toast.error(
-        `${failedDeletions} from ${allRequestedDeletions} couldn't be deleted, please try to delete the remaining rewards again.`,
-      );
-    } else {
-      toast.success(`${responses.length} rewards were successfully deleted.`);
-    }
+  const resetAfterDelete = () => {
+    setSelectedRewards([]);
+    queryClient.invalidateQueries(["rewards", searchQuery]);
   };
 
   const deleteEverySelectedReward = () => {
+    if (selectedRewards.length === 0) {
+      toast(`Please select at least one reward.`);
+      return;
+    }
     const deletePromises = selectedRewards.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
-    Promise.all(deletePromises).then((responses) => {
-      sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["rewards", searchQuery]);
+    toast.promise(Promise.all(deletePromises), {
+      loading: `Deleting ${selectedRewards.length} reward(s)...`,
+      success: () => {
+        resetAfterDelete();
+        return `${selectedRewards.length} reward(s) were successfully deleted.`;
+      },
+      error: (responses: Response[]) => {
+        resetAfterDelete();
+        const failedDeletions = responses.filter((response) => !response.ok).length;
+        const allRequestedDeletions = responses.length;
+        return `${failedDeletions} from ${allRequestedDeletions} reward(s) couldn't be deleted, please try again.`;
+      },
     });
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSearchSubmit)}>
-        <div className="my-2 flex gap-2">
+      <div className="my-2 flex gap-2">
+        <form onSubmit={handleSubmit(onSearchSubmit)} className="grow">
           <Input placeholder="Search by Name..." {...register("name")} />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost">
-                  {isSearchLoading ? (
-                    <Icons.spinner className="animate-spin text-primary" />
-                  ) : (
-                    <Icons.search />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Trigger search</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
-                  <Icons.filter />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Show filter menu</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          {profile?.permissionType === PermissionType.Admin && (
-            <>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button variant="ghost">
-                          <Icons.packagePlus />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>Create a Reward</DialogHeader>
-                        <RewardCreateForm
-                          handleCloseDialog={() => {
-                            setIsCreateDialogOpen(false);
-                          }}
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  </TooltipTrigger>
-                  <TooltipContent>Create reward</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="ghost" onClick={deleteEverySelectedReward}>
-                      {isDeleteLoading ? (
-                        <Icons.spinner className="animate-spin text-primary" />
-                      ) : (
-                        <Icons.trash />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete reward(s)</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </>
-          )}
-        </div>
-      </form>
+        </form>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="ghost">
+                {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Trigger search</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                <Icons.filter />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Show filter menu</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        {profile?.permissionType === PermissionType.Admin && (
+          <>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost">
+                        <Icons.packagePlus />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>Create a Reward</DialogHeader>
+                      <RewardCreateForm
+                        handleCloseDialog={() => {
+                          setIsCreateDialogOpen(false);
+                        }}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </TooltipTrigger>
+                <TooltipContent>Create reward</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost">
+                        {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete reward(s)</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete the selected reward(s)?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={deleteEverySelectedReward}>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TooltipTrigger>
+                <TooltipContent>Delete reward(s)</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </>
+        )}
+      </div>
       {showFilterMenu && (
         <Card className="my-2">
           <CardHeader>Filter</CardHeader>

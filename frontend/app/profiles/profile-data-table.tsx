@@ -12,6 +12,17 @@ import { PermissionType } from "@/types/permission-type";
 import { Profile } from "@/types/profile";
 import { deleteProfile, getProfiles } from "@/lib/profile-requests";
 import { formatISODateToReadable } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
@@ -94,85 +105,111 @@ export default function ProfileDataTable() {
     }
   };
 
+  const resetAfterDelete = () => {
+    setSelectedProfiles([]);
+    queryClient.invalidateQueries(["profiles", searchQuery]);
+  };
+
   const deleteEverySelectedProfile = () => {
+    if (selectedProfiles.length === 0) {
+      toast(`Please select at least one profile.`);
+      return;
+    }
     const deletePromises = selectedProfiles.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
-    Promise.all(deletePromises).then((responses) => {
-      sendToastByDeletionResponses(responses);
-      queryClient.invalidateQueries(["profiles", searchQuery]);
+    toast.promise(Promise.all(deletePromises), {
+      loading: `Deleting ${selectedProfiles.length} profile(s)...`,
+      success: () => {
+        resetAfterDelete();
+        return `${selectedProfiles.length} profile(s) were successfully deleted.`;
+      },
+      error: (responses: Response[]) => {
+        resetAfterDelete();
+        const failedDeletions = responses.filter((response) => !response.ok).length;
+        const allRequestedDeletions = responses.length;
+        return `${failedDeletions} from ${allRequestedDeletions} profile(s) couldn't be deleted, please try again.`;
+      },
     });
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSearchSubmit)}>
-        <div className="my-2 flex gap-2">
+      <div className="my-2 flex gap-2">
+        <form onSubmit={handleSubmit(onSearchSubmit)} className="grow">
           <Input placeholder="Search by Name..." {...register("name")} />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost">
-                  {isSearchLoading ? (
-                    <Icons.spinner className="animate-spin text-primary" />
-                  ) : (
-                    <Icons.search />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Trigger search</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost" onClick={() => setHasOpenFilterMenu(!hasOpenFilterMenu)}>
-                  <Icons.filter />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Show filter menu</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          {profile?.permissionType === PermissionType.Admin && (
-            <>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Dialog
-                      open={hasOpenCreateDialog}
-                      onOpenChange={(value: boolean) => setHasOpenCreateDialog(value)}>
-                      <DialogTrigger>
-                        <Button variant="ghost">
-                          <Icons.userPlus />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>Create a Profile</DialogHeader>
-                        <ProfileCreateForm
-                          handleCloseDialog={() => setHasOpenCreateDialog(!hasOpenCreateDialog)}
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  </TooltipTrigger>
-                  <TooltipContent>Create profile</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="ghost" onClick={deleteEverySelectedProfile}>
-                      {isDeleteLoading ? (
-                        <Icons.spinner className="animate-spin text-primary" />
-                      ) : (
-                        <Icons.trash />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete profile(s)</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </>
-          )}
-        </div>
-      </form>
+        </form>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="ghost">
+                {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Trigger search</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="ghost" onClick={() => setHasOpenFilterMenu(!hasOpenFilterMenu)}>
+                <Icons.filter />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Show filter menu</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        {profile?.permissionType === PermissionType.Admin && (
+          <>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Dialog
+                    open={hasOpenCreateDialog}
+                    onOpenChange={(value: boolean) => setHasOpenCreateDialog(value)}>
+                    <DialogTrigger>
+                      <Button variant="ghost">
+                        <Icons.userPlus />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>Create a Profile</DialogHeader>
+                      <ProfileCreateForm
+                        handleCloseDialog={() => setHasOpenCreateDialog(!hasOpenCreateDialog)}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </TooltipTrigger>
+                <TooltipContent>Create profile</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost">
+                        {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete profile(s)</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete the selected profile(s)?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={deleteEverySelectedProfile}>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TooltipTrigger>
+                <TooltipContent>Delete profile(s)</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </>
+        )}
+      </div>
       {hasOpenFilterMenu && (
         <ProfileFilterMenu
           sendQuery={(query) => {
