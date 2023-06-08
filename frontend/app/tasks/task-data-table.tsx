@@ -27,16 +27,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import ProfileShowcase from "@/components/common/profile/profile-showcase";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
+import AssignTaskButton from "./assign-task-button";
+import TaskAssignForm from "./task-assign-form";
 import TaskCreateForm from "./task-create-form";
 
 async function getTasks({ query }: { query: string[] }) {
@@ -74,7 +76,6 @@ const schema = z.object({
 export default function TaskDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [hasOpenCreationDialog, setHasOpenCreationDialog] = useState(false);
   const [hasOpenDeleteConfirmation, setHasOpenDeleteConfirmation] = useState(false);
   const [hasOpenCreationDialog, setHasOpenCreationDialog] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
@@ -208,27 +209,6 @@ export default function TaskDataTable() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  {/* use alert dialog */}
-                  {/* <Dialog
-                    open={hasOpenDeleteConfirmation}
-                    onOpenChange={(value: boolean) => setHasOpenDeleteConfirmation(value)}>
-                    <DialogTrigger>
-                      <Button variant="ghost">
-                        <Icons.trash />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>Delete Confirmation</DialogHeader>
-                      <p>Are you sure, that you want to delete {selectedTasks.length} Task(s)?</p>
-                      <Button onClick={deleteEverySelectedTask}>
-                        {isDeleteLoading ? (
-                          <Icons.spinner className="animate-spin text-secondary" />
-                        ) : (
-                          <>Delete</>
-                        )}
-                      </Button>
-                    </DialogContent>
-                  </Dialog> */}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="ghost">
@@ -265,12 +245,13 @@ export default function TaskDataTable() {
                   <Checkbox checked={isEveryTaskChecked()} onCheckedChange={onEveryTaskCheckedChange} />
                 </div>
               </TableHead>
-              <TableHead className="w-[60px]">&nbsp;</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Points</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Updated At</TableHead>
-              <TableHead className="text-center">State</TableHead>
+              <TableHead>State</TableHead>
+              <TableHead className="text-center">Assignee</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -282,24 +263,25 @@ export default function TaskDataTable() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Link
-                    className="inline cursor-pointer rounded-full bg-secondary hover:brightness-90"
-                    href={`/tasks/task/${task.uuid}`}>
-                    <Avatar
-                      size={32}
-                      name={task.uuid}
-                      variant="beam"
-                      colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-                    />
-                  </Link>
-                </TableCell>
-                <TableCell>
                   <p>{task.name}</p>
                 </TableCell>
                 <TableCell>{task.points}</TableCell>
                 <TableCell>{task.createdAt && formatISODateToReadable(task.createdAt)}</TableCell>
                 <TableCell>{task.updatedAt && formatISODateToReadable(task.updatedAt)}</TableCell>
                 <TableCell>{task.taskState && getTranslatedTaskStateValue(task.taskState)}</TableCell>
+                <TableCell>
+                  {task.assigneeUuid && <ProfileShowcase profileUuid={task.assigneeUuid} />}
+                </TableCell>
+                <TableCell>
+                  <div className="m-auto flex items-center justify-center gap-1">
+                    <Button variant="ghost">
+                      <Link href={`/tasks/task/${task.uuid}`}>
+                        <Icons.externalLink />
+                      </Link>
+                    </Button>
+                    <AssignTaskButton task={task} />
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

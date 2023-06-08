@@ -32,7 +32,7 @@ async function updateTaskAssignee(request: TaskRequest, uuid?: string) {
 }
 
 const schema = z.object({
-  assigneeUuid: z.string().uuid(),
+  assigneeUuid: z.string().uuid().or(z.string().max(0)),
 });
 
 export default function TaskAssignForm({
@@ -48,7 +48,8 @@ export default function TaskAssignForm({
   const { mutate, isLoading } = useMutation({
     mutationFn: (data: TaskRequest) => updateTaskAssignee(data, taskUuid),
     onSuccess: () => {
-      queryClient.invalidateQueries(["tasks", { uuid: taskUuid }]);
+      queryClient.invalidateQueries(["task", { uuid: taskUuid }]);
+      queryClient.invalidateQueries(["tasks"]);
     },
   });
 
