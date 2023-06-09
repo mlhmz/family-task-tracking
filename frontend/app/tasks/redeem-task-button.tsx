@@ -14,9 +14,9 @@ import { Icons } from "@/components/icons";
 import { useProfile } from "../hooks/fetch/use-profile";
 
 async function updateTaskState(redeemPayload: RedeemPayload, uuid?: string) {
-  const request: TaskRequest = {
+  const request = {
     taskState: redeemPayload.taskState,
-  };
+  } satisfies TaskRequest;
   const response = await fetch(`/api/v1/${!redeemPayload.safe ? "admin/" : ""}tasks/${uuid}`, {
     method: "PUT",
     body: JSON.stringify(request),
@@ -46,7 +46,6 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
       queryClient.invalidateQueries(["tasks"]);
     },
   });
-  const privilegedStates = [TaskState.Finished, TaskState.Reviewed];
 
   const getTooltipContentByStatus = () => {
     if (task.taskState === TaskState.Undone) {
