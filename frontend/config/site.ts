@@ -9,18 +9,22 @@ export const siteConfig = {
     {
       title: "Dashboard",
       href: "/dashboard",
+      privilegedOnly: false,
     },
     {
       title: "Tasks",
       href: "/tasks",
+      privilegedOnly: true,
     },
     {
       title: "Profiles",
       href: "/profiles",
+      privilegedOnly: true,
     },
     {
       title: "Rewards",
       href: "/rewards",
+      privilegedOnly: true,
     },
   ],
   links: {
