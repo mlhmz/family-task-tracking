@@ -1,9 +1,8 @@
 "use client";
 
-import { ReactNode, useCallback, useContext, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { ReactNode, useCallback, useContext, useEffect } from "react";
 
-import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
 
