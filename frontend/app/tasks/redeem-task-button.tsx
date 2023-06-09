@@ -21,6 +21,8 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
     mutationFn: (taskStateUpdateRequest: TaskStateUpdateRequest) => updateTaskState(taskStateUpdateRequest, task.uuid),
     onSuccess: () => {
       queryClient.invalidateQueries(["task", { uuid: task.uuid }]);
+      queryClient.invalidateQueries(["profile"]);
+      queryClient.invalidateQueries(["profiles"]);
       queryClient.invalidateQueries(["tasks"]);
     },
   });
