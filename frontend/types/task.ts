@@ -29,6 +29,11 @@ export interface TaskRequest {
   assigneeUuid?: string;
 }
 
+export interface TaskStateUpdateRequest {
+  taskState: TaskState;
+  safe: boolean;
+}
+
 export const hourSchema = z.object({
   activated: z.boolean().default(false),
   value: z.number().min(0).max(24),
