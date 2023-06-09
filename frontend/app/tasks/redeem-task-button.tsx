@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PermissionType } from "@/types/permission-type";
-import { Task, TaskRequest } from "@/types/task";
+import { Task, TaskRequest, TaskStateUpdateRequest } from "@/types/task";
 import { TaskState } from "@/types/task-state";
 import { isTask } from "@/lib/guards";
 import { Button } from "@/components/ui/button";
@@ -12,35 +12,13 @@ import { TaskStateIcon } from "@/components/common/task/task-state-icon";
 import { Icons } from "@/components/icons";
 
 import { useProfile } from "../hooks/fetch/use-profile";
-
-async function updateTaskState(redeemPayload: RedeemPayload, uuid?: string) {
-  const request = {
-    taskState: redeemPayload.taskState,
-  } satisfies TaskRequest;
-  const response = await fetch(`/api/v1/${!redeemPayload.safe ? "admin/" : ""}tasks/${uuid}`, {
-    method: "PUT",
-    body: JSON.stringify(request),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    if (error.message) throw new Error(error.message);
-    throw new Error("Problem fetching data");
-  }
-  const content = await response.json();
-  if (!isTask(content)) throw new Error("Problem fetching data");
-  return content;
-}
-
-interface RedeemPayload {
-  taskState: TaskState;
-  safe: boolean;
-}
+import { updateTaskState } from "@/lib/task-requests";
 
 export default function RedeemTaskButton({ task }: { task: Task }) {
   const { data: currentProfile } = useProfile();
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation({
-    mutationFn: (redeemPayload: RedeemPayload) => updateTaskState(redeemPayload, task.uuid),
+    mutationFn: (taskStateUpdateRequest: TaskStateUpdateRequest) => updateTaskState(taskStateUpdateRequest, task.uuid),
     onSuccess: () => {
       queryClient.invalidateQueries(["task", { uuid: task.uuid }]);
       queryClient.invalidateQueries(["tasks"]);
