@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 
 import { useSession } from "next-auth/react";
 
-import { NavItem } from "@/types/nav";
-import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
+import { useProfile } from "@/app/hooks/fetch/use-profile";
 import { Icons } from "@/components/icons";
+import { cn } from "@/lib/utils";
+import { NavItem } from "@/types/nav";
+import { PermissionType } from "@/types/permission-type";
 
 const Home = ({ appName }: { appName: string }) => {
   return (
@@ -26,6 +27,7 @@ interface MainNavProps {
 
 export const MainNav = ({ appName, items }: MainNavProps) => {
   const { status } = useSession();
+  const { data: profile } = useProfile();
   const pathname = usePathname();
   const isWizard = pathname.match("/wizard.*");
 
@@ -42,21 +44,23 @@ export const MainNav = ({ appName, items }: MainNavProps) => {
       )}
       {status === "authenticated" && !isWizard && items?.length ? (
         <nav className="hidden gap-6 md:flex">
-          {items?.map(
-            (item, index) =>
-              item.href && (
-                <Link
-                  key={index}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center text-lg font-semibold text-muted-foreground sm:text-sm",
-                    item.disabled && "cursor-not-allowed opacity-80",
-                    pathname === item.href && "text-secondary-foreground",
-                  )}>
-                  {item.title}
-                </Link>
-              ),
-          )}
+          {items
+            ?.filter((item) => !item.privilegedOnly || profile?.permissionType === PermissionType.Admin)
+            .map(
+              (item, index) =>
+                item.href && (
+                  <Link
+                    key={index}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center text-lg font-semibold text-muted-foreground sm:text-sm",
+                      item.disabled && "cursor-not-allowed opacity-80",
+                      pathname === item.href && "text-secondary-foreground",
+                    )}>
+                    {item.title}
+                  </Link>
+                ),
+            )}
         </nav>
       ) : null}
     </div>
