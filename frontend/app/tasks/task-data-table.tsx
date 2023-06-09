@@ -41,6 +41,7 @@ import RedeemTaskButton from "./redeem-task-button";
 
 import AssignTaskButton from "./assign-task-button";
 import TaskCreateForm from "./task-create-form";
+import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 
 interface SearchQuery {
   name?: string;
@@ -133,6 +134,9 @@ export default function TaskDataTable() {
     });
   };
 
+  if (!profile || profile.permissionType !== PermissionType.Admin) {
+    return <DataTableSkeleton />
+  }
   return (
     <div>
       <div className="my-2 flex gap-2">

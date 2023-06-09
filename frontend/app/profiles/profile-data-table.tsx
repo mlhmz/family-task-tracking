@@ -35,6 +35,7 @@ import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "../profile-context";
 import ProfileCreateForm from "./profile-create-form";
 import ProfileFilterMenu from "./profile-filter-menu";
+import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 
 const schema = z.object({
   name: z.string().optional(),
@@ -131,6 +132,9 @@ export default function ProfileDataTable() {
     });
   };
 
+  if (!profile || profile.permissionType !== PermissionType.Admin) {
+    return <DataTableSkeleton />
+  }
   return (
     <div>
       <div className="my-2 flex gap-2">
