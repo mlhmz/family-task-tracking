@@ -38,6 +38,7 @@ import RedeemRewardButton from "./redeem-reward-button";
 import RewardCreateForm from "./reward-create-form";
 import RewardEditForm from "./reward-edit-form";
 import RewardFilterMenu from "./reward-filter-menu";
+import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 
 const schema = z.object({
   name: z.string().optional(),
@@ -118,6 +119,9 @@ export default function RewardDataTable() {
     });
   };
 
+  if (!profile || profile.permissionType !== PermissionType.Admin) {
+    return <DataTableSkeleton />
+  }
   return (
     <div>
       <div className="my-2 flex gap-2">
