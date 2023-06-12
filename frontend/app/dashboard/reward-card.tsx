@@ -3,13 +3,17 @@
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { Reward } from "@/types/reward";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { ProfilesContext } from "../profiles-context";
+import RedeemRewardButton from "../rewards/redeem-reward-button";
 
 export const RewardCard = ({ reward }: { reward: Reward }) => {
+  const queryClient = useQueryClient();
   const [redeemer, setRedeemer] = useState("");
   const { data: profiles } = useContext(ProfilesContext);
 
@@ -29,7 +33,7 @@ export const RewardCard = ({ reward }: { reward: Reward }) => {
           <CardTitle>
             {reward.name && reward.name?.length > 32 ? reward.name.substring(0, 32) + "..." : reward.name}
           </CardTitle>
-          <CardDescription>Redeemed by: {redeemer}</CardDescription>
+          <CardDescription>{redeemer ? `Redeemed by: ${redeemer}` : "Available"}</CardDescription>
         </CardHeader>
         <CardContent>
           <p>
@@ -38,8 +42,12 @@ export const RewardCard = ({ reward }: { reward: Reward }) => {
               : reward.description}
           </p>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-between">
           <Badge>{reward.cost} Points</Badge>
+          <RedeemRewardButton
+            reward={reward}
+            handleInvalidateOnSuccess={() => queryClient.invalidateQueries(["rewards"])}
+          />
         </CardFooter>
       </Link>
     </Card>
