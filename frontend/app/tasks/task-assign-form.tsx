@@ -7,12 +7,12 @@ import Avatar from "boring-avatars";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Icons } from "@/components/icons";
+import { TaskRequest } from "@/types/task";
+import { updateTaskAssignee } from "@/lib/task-requests";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TaskRequest } from "@/types/task";
+import { Icons } from "@/components/icons";
 
-import { updateTaskAssignee } from "@/lib/task-requests";
 import { useProfiles } from "../hooks/fetch/use-profiles";
 import { useZodForm } from "../hooks/use-zod-form";
 
