@@ -7,10 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Task } from "@/types/task";
 import { TaskState } from "@/types/task-state";
 import { isTasks } from "@/lib/guards";
+import { getRewards } from "@/lib/reward-requests";
 import { DashboardSkeleton } from "@/components/ui/skeleton/dashboard-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ProfileContext } from "../profile-context";
+import { RewardCard } from "./reward-card";
 import { TaskCard } from "./task-card";
 
 async function getTasks(uuid?: string) {
@@ -50,6 +52,10 @@ const UnprivilegedDashboard = () => {
     queryFn: () => getTasks(profile?.uuid),
     enabled: !!profile?.uuid,
   });
+  const { data: rewards, isLoading: isRewardsLoading } = useQuery({
+    queryKey: ["rewards", "not_redeemed"],
+    queryFn: () => getRewards("redeemed:false"),
+  });
 
   useEffect(() => {
     if (!tasks) return;
@@ -74,6 +80,7 @@ const UnprivilegedDashboard = () => {
         <TabsTrigger value="reviewed">In review</TabsTrigger>
         <TabsTrigger value="finished">Finished</TabsTrigger>
         <TabsTrigger value="expiringSoon">Expiring soon</TabsTrigger>
+        <TabsTrigger value="rewards">Rewards</TabsTrigger>
       </TabsList>
       <TabsContent value="allTasks">
         <div className="flex w-full flex-wrap gap-4">
@@ -115,6 +122,13 @@ const UnprivilegedDashboard = () => {
         <div className="flex w-full flex-wrap gap-4">
           {filteredTasks.expiringSoon?.map((task) => (
             <TaskCard key={task.uuid} task={task} />
+          ))}
+        </div>
+      </TabsContent>
+      <TabsContent value="rewards">
+        <div className="flex w-full flex-wrap gap-4">
+          {rewards?.map((reward) => (
+            <RewardCard key={reward.uuid} reward={reward} />
           ))}
         </div>
       </TabsContent>
