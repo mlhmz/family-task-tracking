@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Icons } from "@/components/icons";
@@ -35,7 +36,6 @@ import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "../profile-context";
 import ProfileCreateForm from "./profile-create-form";
 import ProfileFilterMenu from "./profile-filter-menu";
-import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 
 const schema = z.object({
   name: z.string().optional(),
@@ -133,7 +133,7 @@ export default function ProfileDataTable() {
   };
 
   if (!profile || profile.permissionType !== PermissionType.Admin) {
-    return <DataTableSkeleton />
+    return <DataTableSkeleton />;
   }
   return (
     <div>

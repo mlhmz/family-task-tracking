@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 
 import { useSession } from "next-auth/react";
 
-import { useProfile } from "@/app/hooks/fetch/use-profile";
-import { Icons } from "@/components/icons";
-import { cn } from "@/lib/utils";
 import { NavItem } from "@/types/nav";
 import { PermissionType } from "@/types/permission-type";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
+import { useProfile } from "@/app/hooks/fetch/use-profile";
 
 const Home = ({ appName }: { appName: string }) => {
   return (

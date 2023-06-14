@@ -6,19 +6,20 @@ import { PermissionType } from "@/types/permission-type";
 import { Task, TaskRequest, TaskStateUpdateRequest } from "@/types/task";
 import { TaskState } from "@/types/task-state";
 import { isTask } from "@/lib/guards";
+import { updateTaskState } from "@/lib/task-requests";
 import { Button } from "@/components/ui/button";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaskStateIcon } from "@/components/common/task/task-state-icon";
 import { Icons } from "@/components/icons";
 
 import { useProfile } from "../hooks/fetch/use-profile";
-import { updateTaskState } from "@/lib/task-requests";
 
 export default function RedeemTaskButton({ task }: { task: Task }) {
   const { data: currentProfile } = useProfile();
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation({
-    mutationFn: (taskStateUpdateRequest: TaskStateUpdateRequest) => updateTaskState(taskStateUpdateRequest, task.uuid),
+    mutationFn: (taskStateUpdateRequest: TaskStateUpdateRequest) =>
+      updateTaskState(taskStateUpdateRequest, task.uuid),
     onSuccess: () => {
       queryClient.invalidateQueries(["task", { uuid: task.uuid }]);
       queryClient.invalidateQueries(["profile"]);
