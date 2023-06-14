@@ -124,82 +124,84 @@ export default function RewardDataTable() {
   }
   return (
     <div>
-      <div className="my-2 flex gap-2">
+      <div className="my-2 flex flex-col gap-2 md:flex-row">
         <form onSubmit={handleSubmit(onSearchSubmit)} className="grow">
           <Input placeholder="Search by Name..." {...register("name")} />
         </form>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button variant="ghost">
-                {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Trigger search</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
-                <Icons.filter />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Show filter menu</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        {profile?.permissionType === PermissionType.Admin && (
-          <>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="ghost">
-                        <Icons.packagePlus />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>Create a Reward</DialogHeader>
-                      <RewardCreateForm
-                        handleCloseDialog={() => {
-                          setIsCreateDialogOpen(false);
-                        }}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </TooltipTrigger>
-                <TooltipContent>Create reward</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost">
-                        {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete reward(s)</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete the selected reward(s)?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={deleteEverySelectedReward}>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TooltipTrigger>
-                <TooltipContent>Delete reward(s)</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </>
-        )}
+        <div className="flex justify-end">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Trigger search</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                  <Icons.filter />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Show filter menu</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {profile?.permissionType === PermissionType.Admin && (
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost">
+                          <Icons.packagePlus />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Create a Reward</DialogHeader>
+                        <RewardCreateForm
+                          handleCloseDialog={() => {
+                            setIsCreateDialogOpen(false);
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </TooltipTrigger>
+                  <TooltipContent>Create reward</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost">
+                          {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete reward(s)</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete the selected reward(s)?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={deleteEverySelectedReward}>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete reward(s)</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
+        </div>
       </div>
       {showFilterMenu && (
         <Card className="my-2">

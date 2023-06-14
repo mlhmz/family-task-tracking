@@ -37,6 +37,7 @@ import { PermissionType } from "@/types/permission-type";
 import { Task } from "@/types/task";
 import { getTranslatedTaskStateValue } from "@/types/task-state";
 
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import AssignTaskButton from "./assign-task-button";
 import RedeemTaskButton from "./redeem-task-button";
 import TaskCreateForm from "./task-create-form";
@@ -137,84 +138,95 @@ export default function TaskDataTable() {
   }
   return (
     <div>
-      <div className="my-2 flex gap-2">
+      <div className="my-2 flex flex-col gap-2 md:flex-row">
         <form onSubmit={handleSubmit(onSearchSubmit)} className="grow">
           <Input placeholder="Search by Name..." {...register("name")} />
         </form>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button variant="ghost">
-                {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Trigger search</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
-                <Icons.filter />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Show filter menu</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {profile?.permissionType === PermissionType.Admin && (
-          <>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Dialog
-                    open={hasOpenCreationDialog}
-                    onOpenChange={() => setHasOpenCreationDialog(!hasOpenCreationDialog)}>
-                    <DialogTrigger>
-                      <Button variant="ghost">
-                        <Icons.taskPlus />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>Create a task</DialogHeader>
-                      <TaskCreateForm handleCloseDialog={() => setHasOpenCreationDialog(false)} />
-                    </DialogContent>
-                  </Dialog>
-                </TooltipTrigger>
-                <TooltipContent>Create task</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost">
-                        {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete task(s)</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete the selected task(s)?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={deleteEverySelectedTask}>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TooltipTrigger>
-                <TooltipContent>Delete task(s)</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </>
-        )}
+        <div className="flex justify-end">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  {isSearchLoading ? (
+                    <Icons.spinner className="animate-spin text-primary" />
+                  ) : (
+                    <Icons.search />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Trigger search</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                  <Icons.filter />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Show filter menu</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {profile?.permissionType === PermissionType.Admin && (
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Dialog
+                      open={hasOpenCreationDialog}
+                      onOpenChange={() => setHasOpenCreationDialog(!hasOpenCreationDialog)}>
+                      <DialogTrigger>
+                        <Button variant="ghost">
+                          <Icons.taskPlus />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>Create a task</DialogHeader>
+                        <TaskCreateForm handleCloseDialog={() => setHasOpenCreationDialog(false)} />
+                      </DialogContent>
+                    </Dialog>
+                  </TooltipTrigger>
+                  <TooltipContent>Create task</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost">
+                          {isDeleteLoading ? <Icons.spinner className="animate-spin" /> : <Icons.trash />}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete task(s)</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete the selected task(s)?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={deleteEverySelectedTask}>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete task(s)</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
+        </div>
       </div>
-      {showFilterMenu && <TaskFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />}
+      {showFilterMenu && (
+        <Card className="my-2">
+          <CardHeader>Filter</CardHeader>
+          <CardContent>
+            <TaskFilterMenu sendQuery={(query) => setSearchQuery({ query: [query] })} />
+          </CardContent>
+        </Card>
+      )}
       <div className="rounded-md outline outline-1 outline-border">
         <Table>
           <TableHeader>
