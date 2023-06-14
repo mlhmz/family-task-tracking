@@ -55,7 +55,9 @@ export default function TaskDetailPage({ params }: { params: { uuid: string } })
 
   return (
     <div className="mx-2 mt-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
-      <h1 className="text-2xl font-bold">Task</h1>
+      <h1 className="my-5 text-2xl font-extrabold leading-tight tracking-tighter md:text-4xl lg:text-5xl">
+        Task
+      </h1>
       <div className="grid grid-cols-1 grid-rows-1">
         <div id="title" className="flex flex-row items-center justify-start gap-3">
           <h2 className="col-start-1 justify-self-start text-2xl">{task?.name}</h2>
