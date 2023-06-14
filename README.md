@@ -1,4 +1,7 @@
 # Family Task Tracking
+[![Java CI with Gradle](https://github.com/mlhmz/family-task-tracking/actions/workflows/gradle.yml/badge.svg)](https://github.com/mlhmz/family-task-tracking/actions/workflows/gradle.yml)
+[![Node Clean Install Lint](https://github.com/mlhmz/family-task-tracking/actions/workflows/node.yml/badge.svg)](https://github.com/mlhmz/family-task-tracking/actions/workflows/node.yml)
+[![Node Docker Image CI/CD](https://github.com/mlhmz/family-task-tracking/actions/workflows/docker-node.yml/badge.svg)](https://github.com/mlhmz/family-task-tracking/actions/workflows/docker-node.yml)
 
 ## Links
 
