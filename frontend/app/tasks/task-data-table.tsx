@@ -1,19 +1,18 @@
 "use client";
 
-import { useContext, useState } from "react";
 import Link from "next/link";
+import { useContext, useState } from "react";
 
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { PermissionType } from "@/types/permission-type";
-import { Task } from "@/types/task";
-import { getTranslatedTaskStateValue } from "@/types/task-state";
-import { isTask } from "@/lib/guards";
-import { deleteTask, getTasks } from "@/lib/task-requests";
-import { formatISODateToReadable } from "@/lib/utils";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { ProfileContext } from "@/app/profile-context";
+import TaskFilterMenu from "@/app/tasks/task-filter-menu";
+import ProfileShowcase from "@/components/common/profile/profile-showcase";
+import { Icons } from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,13 +31,12 @@ import { Input } from "@/components/ui/input";
 import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import ProfileShowcase from "@/components/common/profile/profile-showcase";
-import { Icons } from "@/components/icons";
-import { useZodForm } from "@/app/hooks/use-zod-form";
-import { ProfileContext } from "@/app/profile-context";
-import TaskFilterMenu from "@/app/tasks/task-filter-menu";
+import { deleteTask, getTasks } from "@/lib/task-requests";
+import { formatISODateToReadable } from "@/lib/utils";
+import { PermissionType } from "@/types/permission-type";
+import { Task } from "@/types/task";
+import { getTranslatedTaskStateValue } from "@/types/task-state";
 
-import RedeemRewardButton from "../rewards/redeem-reward-button";
 import AssignTaskButton from "./assign-task-button";
 import RedeemTaskButton from "./redeem-task-button";
 import TaskCreateForm from "./task-create-form";

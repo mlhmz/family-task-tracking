@@ -54,7 +54,7 @@ export default function TaskDetailPage({ params }: { params: { uuid: string } })
   if (!task) return <InfoPageSkeleton />;
 
   return (
-    <div className="mx-2 mt-5 flex flex-col gap-5 lg:mx-auto lg:w-1/3">
+    <div className="container flex flex-col">
       <h1 className="my-5 text-2xl font-extrabold leading-tight tracking-tighter md:text-4xl lg:text-5xl">
         Task
       </h1>
