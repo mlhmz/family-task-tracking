@@ -51,17 +51,19 @@ export default function ThirdWizardPage() {
     return <WizardSkeleton />;
   }
   return (
-    <div className="m-auto my-5 w-1/3 ">
+    <div className="my-5 flex flex-col items-center gap-5">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         <h1 className="m-auto text-6xl">🔐</h1>
-        <h3>Step 3</h3>
-        <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
+        <div className="w-72">
+          <h3>Step 3</h3>
+          <h2 className="text-2xl font-bold">Define a pin for your profile</h2>
+        </div>
         <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
-          <Input placeholder="PIN" type="password" {...register("password")} />
-          <Progress className="m-auto h-2 w-1/2" value={75}></Progress>
+          <Input placeholder="PIN" type="password" className="w-72" {...register("password")} />
           {formState.errors.password && (
             <p className="text-destructive">{formState.errors.password.message}</p>
-          )}
+            )}
+          <Progress className="m-auto h-2 w-72" value={75}></Progress>
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
