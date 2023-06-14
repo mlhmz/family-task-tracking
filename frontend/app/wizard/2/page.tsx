@@ -6,15 +6,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useZodForm } from "@/app/hooks/use-zod-form";
-import { Icons } from "@/components/icons";
+import { PermissionType } from "@/types/permission-type";
+import { ProfileRequest } from "@/types/profile";
+import { isProfile } from "@/lib/guards";
+import { authProfile } from "@/lib/profile-requests";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { isProfile } from "@/lib/guards";
-import { authProfile } from "@/lib/profile-requests";
-import { PermissionType } from "@/types/permission-type";
-import { ProfileRequest } from "@/types/profile";
+import { Icons } from "@/components/icons";
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 async function createProfile(profileRequest: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
@@ -84,15 +84,17 @@ export default function SecondWizardPage() {
     );
 
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
+    <div className="my-5 flex flex-col items-center gap-5">
       <h1 className="m-auto text-6xl">👻</h1>
-      <h3>Step 2</h3>
-      <h2 className="text-2xl font-bold">Create an administrator profile</h2>
+      <div className="w-72">
+        <h3>Step 2</h3>
+        <h2 className="text-2xl font-bold">Create an administrator profile</h2>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
-          <Input placeholder="Administrator Name" {...register("name")} />
+          <Input placeholder="Administrator Name" className="w-72" {...register("name")} />
           {formState.errors.name && <p className="text-destructive">{formState.errors.name.message}</p>}
-          <Progress className="m-auto h-2 w-1/2" value={50}></Progress>
+          <Progress className="m-auto h-2 w-72" value={50}></Progress>
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>

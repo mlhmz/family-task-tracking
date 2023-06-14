@@ -61,17 +61,19 @@ export default function FirstWizardPage() {
     });
 
   return (
-    <div className="m-auto my-5 flex w-1/3 flex-col gap-5">
+    <div className="my-5 flex flex-col items-center gap-5">
       <h1 className="m-auto text-6xl">✨</h1>
-      <h3>Step 1</h3>
-      <h2 className="text-2xl font-bold">Create a Household</h2>
+      <div className="w-72">
+        <h3>Step 1</h3>
+        <h2 className="text-2xl font-bold">Create a Household</h2>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset className="flex flex-col items-center gap-3" disabled={isLoading}>
-          <Input placeholder="Household Name" {...register("householdName")} />
+          <Input placeholder="Household Name" className="w-72" {...register("householdName")} />
           {formState.errors.householdName && (
             <p className="text-destructive">{formState.errors.householdName.message}</p>
           )}
-          <Progress className="m-auto h-2 w-1/2" value={25}></Progress>
+          <Progress className="m-auto h-2 w-72" value={25}></Progress>
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
           </Button>
