@@ -6,15 +6,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { PermissionType } from "@/types/permission-type";
-import { Profile, ProfileAuthResponse, ProfileRequest } from "@/types/profile";
-import { isProfile, isProfileAuthResponse } from "@/lib/guards";
-import { authProfile } from "@/lib/profile-requests";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Icons } from "@/components/icons";
-import { useZodForm } from "@/app/hooks/use-zod-form";
+import { isProfile } from "@/lib/guards";
+import { authProfile } from "@/lib/profile-requests";
+import { PermissionType } from "@/types/permission-type";
+import { ProfileRequest } from "@/types/profile";
 
 async function createProfile(profileRequest: ProfileRequest) {
   const response = await fetch("/api/v1/admin/profiles", {
@@ -63,6 +63,7 @@ export default function SecondWizardPage() {
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
       queryClient.invalidateQueries(["profiles"]);
+      router.push("/wizard/3");
     },
     onError: (error) => {
       toast.error(
@@ -78,7 +79,6 @@ export default function SecondWizardPage() {
       {
         onSuccess: () => {
           toast.success("Admin profile created!");
-          router.push("/wizard/3");
         },
       },
     );
