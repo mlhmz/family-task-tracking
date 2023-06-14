@@ -70,80 +70,84 @@ export default function ProfileFilterMenu({ sendQuery }: { sendQuery: Dispatch<s
   };
 
   return (
-    <div className="my-3 flex flex-col gap-3 rounded-md p-3 outline outline-1 outline-border">
-      <h1 className="text-lg font-bold">Filter</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset className="flex flex-col gap-5">
-          <div id="points" className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <div className="grid place-items-center">
-                <Checkbox onCheckedChange={(value: boolean) => setValue("pointsQuery.activated", value)} />
-              </div>
-              <h2>Points</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Select
-                defaultValue=":"
-                onValueChange={(value) => {
-                  setValue("pointsQuery.operator", value);
-                }}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Operator" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value=":">equals</SelectItem>
-                  <SelectItem value=">">greater than</SelectItem>
-                  <SelectItem value="<">lower than</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input placeholder="Value" {...register("pointsQuery.value")} />
-            </div>
+    <div className="my-3 flex flex-col gap-3">
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex gap-2">
+          <div className="grid place-items-center">
+            <Checkbox onCheckedChange={(value: boolean) => setValue("pointsQuery.activated", value)} />
           </div>
-          <div id="createdAt" className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <div className="grid place-items-center">
-                <Checkbox onCheckedChange={(value: boolean) => setValue("createdAtQuery.activated", value)} />
-              </div>
-              <h2>Created At</h2>
-            </div>
-            <div className="flex gap-3">
-              <p>From: </p>
+          <h2>Points</h2>
+        </div>
+        <fieldset id="points-fieldset">
+          <div className="grid grid-cols-2 gap-2">
+            <Select
+              defaultValue=":"
+              onValueChange={(value) => {
+                setValue("pointsQuery.operator", value);
+              }}>
+              <SelectTrigger>
+                <SelectValue placeholder="Operator" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value=":">equals</SelectItem>
+                <SelectItem value=">">greater than</SelectItem>
+                <SelectItem value="<">lower than</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input placeholder="Value" {...register("pointsQuery.value")} />
+          </div>
+        </fieldset>
+
+        <div className="flex gap-2">
+          <div className="grid place-items-center">
+            <Checkbox onCheckedChange={(value: boolean) => setValue("createdAtQuery.activated", value)} />
+          </div>
+          <h2>Created At</h2>
+        </div>
+        <fieldset id="created-at-fieldset">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-row items-center justify-center gap-2">
               <Input type="datetime-local" {...register("createdAtQuery.from")} />
-              <p>To: </p>
+              <p>-</p>
+            </div>
+            <div>
               <Input type="datetime-local" {...register("createdAtQuery.to")} />
             </div>
           </div>
-          <div id="updatedAt" className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <div className="grid place-items-center">
-                <Checkbox onCheckedChange={(value: boolean) => setValue("updatedAtQuery.activated", value)} />
-              </div>
-              <h2>Updated At</h2>
-            </div>
-            <div className="flex gap-3">
-              <p>From: </p>
+        </fieldset>
+
+        <div className="flex gap-2">
+          <div className="grid place-items-center">
+            <Checkbox onCheckedChange={(value: boolean) => setValue("updatedAtQuery.activated", value)} />
+          </div>
+          <h2>Updated At</h2>
+        </div>
+        <fieldset id="updated-at-fieldset">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-row items-center justify-center gap-2">
               <Input type="datetime-local" {...register("updatedAtQuery.from")} />
-              <p>To: </p>
+              <p>-</p>
+            </div>
+            <div>
               <Input type="datetime-local" {...register("updatedAtQuery.to")} />
             </div>
           </div>
-          <div id="privileged" className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <div className="grid place-items-center">
-                <Checkbox
-                  onCheckedChange={(value: boolean) => setValue("privilegedQuery.activated", value)}
-                />
-              </div>
-              <h2>Privileged</h2>
-            </div>
-            <div className="flex gap-3">
-              <p className="grid place-items-center text-sm font-bold">Unprivileged</p>
-              <Switch onCheckedChange={(value: boolean) => setValue("privilegedQuery.toggled", value)} />
-              <p className="grid place-items-center text-sm font-bold">Privileged</p>
-            </div>
-          </div>
-          <Button type="submit">Apply filter</Button>
         </fieldset>
+
+        <div className="flex gap-2">
+          <div className="grid place-items-center">
+            <Checkbox onCheckedChange={(value: boolean) => setValue("privilegedQuery.activated", value)} />
+          </div>
+          <h2>Privileged</h2>
+        </div>
+        <fieldset id="privileged-fieldset">
+          <div className="flex gap-3">
+            <p className="grid place-items-center text-sm font-bold">Unprivileged</p>
+            <Switch onCheckedChange={(value: boolean) => setValue("privilegedQuery.toggled", value)} />
+            <p className="grid place-items-center text-sm font-bold">Privileged</p>
+          </div>
+        </fieldset>
+        <Button type="submit">Apply filter</Button>
       </form>
     </div>
   );
