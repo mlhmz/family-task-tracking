@@ -58,7 +58,7 @@ const PrivilegedDashboard = () => {
 
   return (
     <Tabs defaultValue="review" className="w-full">
-      <TabsList>
+      <TabsList className="h-auto flex-col items-start p-2 sm:h-10 sm:flex-row sm:items-center sm:p-1">
         <TabsTrigger value="review">Ready for review</TabsTrigger>
         <TabsTrigger value="expiringSoon">Expiring soon</TabsTrigger>
         <TabsTrigger value="rewards">Redeemed rewards</TabsTrigger>

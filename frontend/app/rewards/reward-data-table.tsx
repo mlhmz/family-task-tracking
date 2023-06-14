@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import ProfileShowcase from "@/components/common/profile/profile-showcase";
 import { Icons } from "@/components/icons";
@@ -38,7 +39,6 @@ import RedeemRewardButton from "./redeem-reward-button";
 import RewardCreateForm from "./reward-create-form";
 import RewardEditForm from "./reward-edit-form";
 import RewardFilterMenu from "./reward-filter-menu";
-import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 
 const schema = z.object({
   name: z.string().optional(),
@@ -120,7 +120,7 @@ export default function RewardDataTable() {
   };
 
   if (!profile || profile.permissionType !== PermissionType.Admin) {
-    return <DataTableSkeleton />
+    return <DataTableSkeleton />;
   }
   return (
     <div>

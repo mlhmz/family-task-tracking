@@ -73,8 +73,8 @@ const UnprivilegedDashboard = () => {
 
   return (
     <Tabs defaultValue="allTasks" className="w-full">
-      <TabsList>
-        <TabsTrigger value="allTasks">All</TabsTrigger>
+      <TabsList className="h-auto flex-col items-start p-2 sm:h-10 sm:flex-row sm:items-center sm:p-1">
+        <TabsTrigger value="allTasks">All Tasks</TabsTrigger>
         <TabsTrigger value="undone">To Do</TabsTrigger>
         <TabsTrigger value="done">Done</TabsTrigger>
         <TabsTrigger value="reviewed">In review</TabsTrigger>

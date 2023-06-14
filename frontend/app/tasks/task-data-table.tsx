@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ProfileShowcase from "@/components/common/profile/profile-showcase";
@@ -36,12 +37,11 @@ import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 import { ProfileContext } from "@/app/profile-context";
 import TaskFilterMenu from "@/app/tasks/task-filter-menu";
-import RedeemRewardButton from "../rewards/redeem-reward-button";
-import RedeemTaskButton from "./redeem-task-button";
 
+import RedeemRewardButton from "../rewards/redeem-reward-button";
 import AssignTaskButton from "./assign-task-button";
+import RedeemTaskButton from "./redeem-task-button";
 import TaskCreateForm from "./task-create-form";
-import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 
 interface SearchQuery {
   name?: string;
@@ -135,7 +135,7 @@ export default function TaskDataTable() {
   };
 
   if (!profile || profile.permissionType !== PermissionType.Admin) {
-    return <DataTableSkeleton />
+    return <DataTableSkeleton />;
   }
   return (
     <div>
