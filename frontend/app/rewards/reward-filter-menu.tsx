@@ -100,6 +100,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Cost</h2>
         </div>
+
         <fieldset id="cost" className="flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-2">
             <Select
@@ -119,6 +120,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             <Input placeholder="Value" {...register("costQuery.value")} />
           </div>
         </fieldset>
+
         <div className="flex gap-2">
           <div className="grid place-items-center">
             <Checkbox
@@ -128,6 +130,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Created At</h2>
         </div>
+
         <fieldset id="createdAt" className="flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-row items-center justify-center gap-2">
@@ -139,6 +142,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             </div>
           </div>
         </fieldset>
+
         <div className="flex gap-2">
           <div className="grid place-items-center">
             <Checkbox
@@ -148,6 +152,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Updated At</h2>
         </div>
+        
         <fieldset id="updatedAt" className="flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-row items-center justify-center gap-2">
@@ -159,6 +164,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             </div>
           </div>
         </fieldset>
+
         <div className="flex gap-2">
           <div className="grid place-items-center">
             <Checkbox
@@ -175,6 +181,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             <p className="grid place-items-center text-sm font-bold">Redeemed</p>
           </div>
         </fieldset>
+
         <div className="flex gap-2">
           <div className="grid place-items-center">
             <Checkbox
@@ -195,6 +202,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
             </div>
           </div>
         </fieldset>
+
         <div className="flex gap-2">
           <div className="grid place-items-center">
             <Checkbox
