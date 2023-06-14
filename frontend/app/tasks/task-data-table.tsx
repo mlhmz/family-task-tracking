@@ -53,7 +53,6 @@ const schema = z.object({
 export default function TaskDataTable() {
   const [searchQuery, setSearchQuery] = useState({ query: [""] });
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [hasOpenDeleteConfirmation, setHasOpenDeleteConfirmation] = useState(false);
   const [hasOpenCreationDialog, setHasOpenCreationDialog] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const { data: profile } = useContext(ProfileContext);
@@ -264,7 +263,7 @@ export default function TaskDataTable() {
                   {task.assigneeUuid && <ProfileShowcase profileUuid={task.assigneeUuid} />}
                 </TableCell>
                 <TableCell>
-                  <div className="m-auto flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center">
                     <Button variant="ghost">
                       <Link href={`/tasks/task/${task.uuid}`}>
                         <Icons.externalLink />

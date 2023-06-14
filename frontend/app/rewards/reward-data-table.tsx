@@ -133,7 +133,11 @@ export default function RewardDataTable() {
             <Tooltip>
               <TooltipTrigger>
                 <Button variant="ghost">
-                  {isSearchLoading ? <Icons.spinner className="animate-spin text-primary" /> : <Icons.search />}
+                  {isSearchLoading ? (
+                    <Icons.spinner className="animate-spin text-primary" />
+                  ) : (
+                    <Icons.search />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Trigger search</TooltipContent>
@@ -254,8 +258,8 @@ export default function RewardDataTable() {
                 <TableCell>
                   <>{reward?.redeemedBy && <ProfileShowcase profileUuid={reward.redeemedBy} />}</>
                 </TableCell>
-                <TableCell className="flex flex-col items-center gap-2">
-                  <div>
+                <TableCell>
+                  <div className="flex items-center justify-center">
                     <RedeemRewardButton
                       reward={reward}
                       handleInvalidateOnSuccess={() =>
