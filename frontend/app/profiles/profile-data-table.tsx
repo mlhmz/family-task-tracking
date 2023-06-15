@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Avatar from "boring-avatars";
 import { toast } from "sonner";
@@ -51,6 +52,7 @@ export default function ProfileDataTable() {
   const [selectedProfiles, setSelectedProfiles] = useState<Profile[]>([]);
   const { register, handleSubmit } = useZodForm({ schema });
   const queryClient = useQueryClient();
+  const [parent, enableAnimations] = useAutoAnimate();
   const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteProfile,
     onSuccess: () => queryClient.invalidateQueries(["profiles", searchQuery]),
@@ -95,21 +97,12 @@ export default function ProfileDataTable() {
     formData.name && setSearchQuery({ query: `name:${formData.name}` });
   };
 
-  const sendToastByDeletionResponses = (responses: Response[]) => {
-    if (responses.some((response) => !response.ok)) {
-      const failedDeletions = responses.filter((response) => !response.ok).length;
-      const allRequestedDeletions = responses.length;
-      toast.error(
-        `${failedDeletions} from ${allRequestedDeletions} profiles couldn't be deleted, please try to delete the remaining profiles again.`,
-      );
-    } else {
-      toast.success(`${responses.length} profiles were successfully deleted.`);
-    }
-  };
-
   const resetAfterDelete = () => {
     setSelectedProfiles([]);
     queryClient.invalidateQueries(["profiles", searchQuery]);
+    // Wait for the deletion to take effect before re-enabling animations
+    // The delete animation shows scrollbars for a split second, which is not ideal
+    setTimeout(() => enableAnimations(true), 2000);
   };
 
   const deleteEverySelectedProfile = () => {
@@ -117,6 +110,7 @@ export default function ProfileDataTable() {
       toast(`Please select at least one profile.`);
       return;
     }
+    enableAnimations(false);
     const deletePromises = selectedProfiles.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
     toast.promise(Promise.all(deletePromises), {
       loading: `Deleting ${selectedProfiles.length} profile(s)...`,
@@ -251,7 +245,7 @@ export default function ProfileDataTable() {
               <TableHead className="text-center">Privileged</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody ref={parent}>
             {data.map((profile) => (
               <TableRow key={profile.uuid}>
                 <TableCell>
