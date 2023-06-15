@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Task } from "@/types/task";
@@ -35,6 +36,9 @@ interface FilteredTasks {
 
 const PrivilegedDashboard = () => {
   const [filteredTasks, setFilteredTasks] = useState<FilteredTasks>({ inReview: [], expiringSoon: [] });
+  const [inReviewParent] = useAutoAnimate();
+  const [expiringSoonParent] = useAutoAnimate();
+  const [rewardsParent] = useAutoAnimate();
   const { data: tasks, isLoading: isTasksLoading } = useQuery({
     queryKey: ["tasks"],
     queryFn: () => getTasks(),
@@ -64,21 +68,21 @@ const PrivilegedDashboard = () => {
         <TabsTrigger value="rewards">Redeemed rewards</TabsTrigger>
       </TabsList>
       <TabsContent value="review">
-        <div className="flex w-full flex-wrap gap-4">
+        <div className="flex w-full flex-wrap gap-4" ref={inReviewParent}>
           {filteredTasks.inReview?.map((task) => (
             <TaskCard key={task.uuid} task={task} />
           ))}
         </div>
       </TabsContent>
       <TabsContent value="expiringSoon">
-        <div className="flex w-full flex-wrap gap-4">
+        <div className="flex w-full flex-wrap gap-4" ref={expiringSoonParent}>
           {filteredTasks.expiringSoon?.map((task) => (
             <TaskCard key={task.uuid} task={task} />
           ))}
         </div>
       </TabsContent>
       <TabsContent value="rewards">
-        <div className="flex w-full flex-wrap gap-4">
+        <div className="flex w-full flex-wrap gap-4" ref={rewardsParent}>
           {rewards?.map((reward) => (
             <RewardCard key={reward.uuid} reward={reward} />
           ))}
