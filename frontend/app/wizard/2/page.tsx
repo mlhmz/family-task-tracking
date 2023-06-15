@@ -61,8 +61,7 @@ export default function SecondWizardPage() {
     queryKey: ["profile-auth"],
     queryFn: () => authProfile({ profileUuid: data?.uuid ?? "" }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["profile"]);
-      queryClient.invalidateQueries(["profiles"]);
+      queryClient.invalidateQueries();
       router.push("/wizard/3");
     },
     onError: (error) => {
