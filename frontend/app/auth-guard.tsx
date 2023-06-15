@@ -26,7 +26,7 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
       }
     });
     return true;
-  }, [profiles]);
+  }, [profiles, queryClient]);
 
   useEffect(() => {
     if (!pathName.match("/wizard.*")) {
