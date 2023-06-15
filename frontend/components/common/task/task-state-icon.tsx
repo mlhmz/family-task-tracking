@@ -2,7 +2,7 @@ import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Icons } from "@/components/icons";
 
-const iconsMap = {
+export const iconsMap = {
   [TaskState.Undone]: <Icons.goal className="m-auto" />,
   [TaskState.Done]: <Icons.check className="m-auto" />,
   [TaskState.Reviewed]: <Icons.checkCheck className="m-auto" />,

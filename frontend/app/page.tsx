@@ -12,7 +12,7 @@ export default function IndexPage() {
           to make household chores bearable.
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
-          Revolutionize your home management: Embrace the future of chore tracking for families and transform 
+          Revolutionize your home management: Embrace the future of chore tracking for families and transform
           mundane tasks into enjoyable moments.
         </p>
       </div>

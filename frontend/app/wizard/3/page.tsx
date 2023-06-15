@@ -62,7 +62,7 @@ export default function ThirdWizardPage() {
           <Input placeholder="PIN" type="password" className="w-72" {...register("password")} />
           {formState.errors.password && (
             <p className="text-destructive">{formState.errors.password.message}</p>
-            )}
+          )}
           <Progress className="m-auto h-2 w-72" value={75}></Progress>
           <Button size={"sm"} type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Next</>}
