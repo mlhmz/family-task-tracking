@@ -2,6 +2,7 @@
 
 import { useContext, useEffect, useState } from "react";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Task } from "@/types/task";
@@ -39,6 +40,9 @@ interface FilteredTasks {
 }
 
 const UnprivilegedDashboard = () => {
+  const [allTasksParent] = useAutoAnimate();
+  const [undoneParent] = useAutoAnimate();
+
   const { data: profile } = useContext(ProfileContext);
   const [filteredTasks, setFilteredTasks] = useState<FilteredTasks>({
     undone: [],
@@ -83,7 +87,7 @@ const UnprivilegedDashboard = () => {
         <TabsTrigger value="rewards">Rewards</TabsTrigger>
       </TabsList>
       <TabsContent value="allTasks">
-        <div className="flex w-full flex-wrap gap-4">
+        <div className="flex w-full flex-wrap gap-4" ref={allTasksParent}>
           {tasks?.map((task) => (
             <TaskCard key={task.uuid} task={task} />
           ))}
@@ -91,7 +95,7 @@ const UnprivilegedDashboard = () => {
       </TabsContent>
       <TabsContent value="undone">
         {" "}
-        <div className="flex w-full flex-wrap gap-4">
+        <div className="flex w-full flex-wrap gap-4" ref={undoneParent}>
           {filteredTasks.undone?.map((task) => (
             <TaskCard key={task.uuid} task={task} />
           ))}

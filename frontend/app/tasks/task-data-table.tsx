@@ -1,18 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useContext, useState } from "react";
+import Link from "next/link";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useZodForm } from "@/app/hooks/use-zod-form";
-import { ProfileContext } from "@/app/profile-context";
-import TaskFilterMenu from "@/app/tasks/task-filter-menu";
-import ProfileShowcase from "@/components/common/profile/profile-showcase";
-import { Icons } from "@/components/icons";
+import { PermissionType } from "@/types/permission-type";
+import { Task } from "@/types/task";
+import { getTranslatedTaskStateValue } from "@/types/task-state";
+import { deleteTask, getTasks } from "@/lib/task-requests";
+import { formatISODateToReadable } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,19 +26,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import DataTableSkeleton from "@/components/ui/skeleton/data-table-skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { deleteTask, getTasks } from "@/lib/task-requests";
-import { formatISODateToReadable } from "@/lib/utils";
-import { PermissionType } from "@/types/permission-type";
-import { Task } from "@/types/task";
-import { getTranslatedTaskStateValue } from "@/types/task-state";
+import ProfileShowcase from "@/components/common/profile/profile-showcase";
+import { Icons } from "@/components/icons";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { ProfileContext } from "@/app/profile-context";
+import TaskFilterMenu from "@/app/tasks/task-filter-menu";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import AssignTaskButton from "./assign-task-button";
 import RedeemTaskButton from "./redeem-task-button";
 import TaskCreateForm from "./task-create-form";
@@ -57,6 +58,7 @@ export default function TaskDataTable() {
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const { data: profile } = useContext(ProfileContext);
   const { register, handleSubmit } = useZodForm({ schema });
+  const [parent, enableAnimations] = useAutoAnimate();
   const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteTask,
     onSuccess: () => queryClient.invalidateQueries(["tasks"]),
@@ -109,6 +111,9 @@ export default function TaskDataTable() {
   const resetAfterDelete = () => {
     setSelectedTasks([]);
     queryClient.invalidateQueries(["tasks", searchQuery]);
+    // Wait for the deletion to take effect before re-enabling animations
+    // The delete animation shows scrollbars for a split second, which is not ideal
+    setTimeout(() => enableAnimations(true), 2000);
   };
 
   const deleteEverySelectedTask = () => {
@@ -116,6 +121,7 @@ export default function TaskDataTable() {
       toast(`Please select at least one task.`);
       return;
     }
+    enableAnimations(false);
     const deletePromises = selectedTasks.map((task) => mutateAsyncDelete(task.uuid ?? ""));
     toast.promise(Promise.all(deletePromises), {
       loading: `Deleting ${selectedTasks.length} task(s)...`,

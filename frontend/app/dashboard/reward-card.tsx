@@ -44,10 +44,12 @@ export const RewardCard = ({ reward }: { reward: Reward }) => {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Badge>{reward.cost} Points</Badge>
-          <RedeemRewardButton
-            reward={reward}
-            handleInvalidateOnSuccess={() => queryClient.invalidateQueries(["rewards"])}
-          />
+          {!reward.redeemed && (
+            <RedeemRewardButton
+              reward={reward}
+              handleInvalidateOnSuccess={() => queryClient.invalidateQueries(["rewards"])}
+            />
+          )}
         </CardFooter>
       </Link>
     </Card>

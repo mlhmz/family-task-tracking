@@ -152,7 +152,7 @@ export default function RewardFilterMenu({ sendQuery }: { sendQuery: Dispatch<st
           </div>
           <h2>Updated At</h2>
         </div>
-        
+
         <fieldset id="updatedAt" className="flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-row items-center justify-center gap-2">

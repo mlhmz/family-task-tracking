@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { Tooltip } from "@radix-ui/react-tooltip";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -9,10 +11,14 @@ import { isTask } from "@/lib/guards";
 import { updateTaskState } from "@/lib/task-requests";
 import { Button } from "@/components/ui/button";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { TaskStateIcon } from "@/components/common/task/task-state-icon";
+import { iconsMap } from "@/components/common/task/task-state-icon";
 import { Icons } from "@/components/icons";
 
 import { useProfile } from "../hooks/fetch/use-profile";
+
+const GhostButton = () => {
+  return <Button className="cursor-default- h-[40px] w-[56px] opacity-0" variant="ghost"></Button>;
+};
 
 export default function RedeemTaskButton({ task }: { task: Task }) {
   const { data: currentProfile } = useProfile();
@@ -28,7 +34,7 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
     },
   });
 
-  const getTooltipContentByStatus = () => {
+  const tooltipContent = useMemo(() => {
     if (task.taskState === TaskState.Undone) {
       return <>Complete Task</>;
     } else if (
@@ -41,17 +47,21 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
     } else {
       return <>Not available</>;
     }
-  };
+  }, [task, currentProfile]);
 
-  const getIconByStatus = () => {
+  const taskStateIcon = useMemo(() => {
     if (task.taskState === TaskState.Undone) {
-      return <TaskStateIcon taskState={TaskState.Done} />;
+      return iconsMap[TaskState.Done];
     } else if (task.taskState === TaskState.Done && currentProfile?.permissionType === PermissionType.Admin) {
-      return <TaskStateIcon taskState={TaskState.Finished} />;
+      return iconsMap[TaskState.Finished];
     } else {
-      return <Icons.x />;
+      return <GhostButton />;
     }
-  };
+  }, [task, currentProfile]);
+
+  const taskHasAssignee = useMemo(() => {
+    return isTask(task) && task.assigneeUuid !== null;
+  }, [task]);
 
   const redeem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
@@ -67,6 +77,10 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
         },
       );
     } else if (task.taskState === TaskState.Done && currentProfile?.permissionType === PermissionType.Admin) {
+      if (!taskHasAssignee) {
+        toast.error("Task has no assignee!");
+        return;
+      }
       mutate(
         { taskState: TaskState.Reviewed, safe: false },
         {
@@ -82,19 +96,20 @@ export default function RedeemTaskButton({ task }: { task: Task }) {
 
   if (
     (task.taskState !== TaskState.Undone && currentProfile?.permissionType !== PermissionType.Admin) ||
-    task.taskState === TaskState.Finished
+    task.taskState === TaskState.Finished ||
+    task.taskState === TaskState.Reviewed
   ) {
-    return <Button className="cursor-default- h-[40px] w-[56px] opacity-0" variant="ghost"></Button>;
+    return <GhostButton />;
   }
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
           <Button variant="ghost" className="cursor-pointer" onClick={(event) => redeem(event)}>
-            {isLoading ? <Icons.spinner className="animate-spin" /> : getIconByStatus()}
+            {isLoading ? <Icons.spinner className="animate-spin" /> : taskStateIcon}
           </Button>
         </TooltipTrigger>
-        <TooltipContent>{getTooltipContentByStatus()}</TooltipContent>
+        <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

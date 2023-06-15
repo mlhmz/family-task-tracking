@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -55,6 +56,7 @@ export default function RewardDataTable() {
   const { register, handleSubmit } = useZodForm({ schema });
   const { data: profile } = useContext(ProfileContext);
   const queryClient = useQueryClient();
+  const [parent, enableAnimations] = useAutoAnimate();
   const { mutateAsync: mutateAsyncDelete, isLoading: isDeleteLoading } = useMutation({
     mutationFn: deleteReward,
   });
@@ -96,6 +98,9 @@ export default function RewardDataTable() {
   const resetAfterDelete = () => {
     setSelectedRewards([]);
     queryClient.invalidateQueries(["rewards", searchQuery]);
+    // Wait for the deletion to take effect before re-enabling animations
+    // The delete animation shows scrollbars for a split second, which is not ideal
+    setTimeout(() => enableAnimations(true), 2000);
   };
 
   const deleteEverySelectedReward = () => {
@@ -103,6 +108,7 @@ export default function RewardDataTable() {
       toast(`Please select at least one reward.`);
       return;
     }
+    enableAnimations(false);
     const deletePromises = selectedRewards.map((reward) => mutateAsyncDelete(reward.uuid ?? ""));
     toast.promise(Promise.all(deletePromises), {
       loading: `Deleting ${selectedRewards.length} reward(s)...`,
@@ -239,7 +245,7 @@ export default function RewardDataTable() {
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody ref={parent}>
             {data.map((reward) => (
               <TableRow key={reward.uuid} className="table-">
                 <TableCell>
@@ -260,12 +266,14 @@ export default function RewardDataTable() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center">
-                    <RedeemRewardButton
-                      reward={reward}
-                      handleInvalidateOnSuccess={() =>
-                        queryClient.invalidateQueries(["rewards", searchQuery])
-                      }
-                    />
+                    {!reward.redeemedBy && (
+                      <RedeemRewardButton
+                        reward={reward}
+                        handleInvalidateOnSuccess={() =>
+                          queryClient.invalidateQueries(["rewards", searchQuery])
+                        }
+                      />
+                    )}
                     {profile?.permissionType === PermissionType.Admin && (
                       <TooltipProvider>
                         <Tooltip>
