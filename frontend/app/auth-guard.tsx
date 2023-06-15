@@ -3,6 +3,8 @@
 import { ReactNode, useCallback, useContext, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { PermissionType } from "@/types/permission-type";
 
 import { HouseholdContext } from "./household-context";
@@ -15,11 +17,14 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   const profiles = useContext(ProfilesContext);
   const router = useRouter();
   const pathName = usePathname();
+  const queryClient = useQueryClient();
 
   const isAnyAdminProfileAvailable = useCallback(() => {
-    if (profiles.isFetched && !profiles.isError) {
-      return profiles.data?.some((profile) => profile.permissionType === PermissionType.Admin);
-    }
+    queryClient.invalidateQueries(["profiles"]).then(() => {
+      if (profiles.isFetched && !profiles.isError) {
+        return profiles.data?.some((profile) => profile.permissionType === PermissionType.Admin);
+      }
+    });
     return true;
   }, [profiles]);
 
