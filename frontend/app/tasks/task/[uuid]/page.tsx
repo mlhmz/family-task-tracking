@@ -64,9 +64,9 @@ export default function TaskDetailPage({ params }: { params: { uuid: string } })
           <TaskStateIcon taskState={task?.taskState} />
         </div>
         <div id="actions" className="col-start-2">
+          <RedeemTaskButton task={task} />
           {isAdmin && (
             <>
-              <RedeemTaskButton task={task} />
               <AssignTaskButton task={task} />
               <TooltipProvider>
                 <Tooltip>
