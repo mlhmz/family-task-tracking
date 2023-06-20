@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { useContext } from "react";
+import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Task } from "@/types/task";
 import { getTranslatedTaskStateValue } from "@/types/task-state";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { ProfileContext } from "../profile-context";
 import RedeemTaskButton from "../tasks/redeem-task-button";

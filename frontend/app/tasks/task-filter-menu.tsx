@@ -2,9 +2,9 @@
 
 import { Dispatch, useContext } from "react";
 
+import Avatar from "boring-avatars";
 import { z } from "zod";
 
-import { PermissionType } from "@/types/permission-type";
 import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useZodForm } from "@/app/hooks/use-zod-form";
 
-import { ProfileContext } from "../profile-context";
+import { ProfilesContext } from "../profiles-context";
 
 const stringQuery = z.object({
   activated: z.boolean().optional(),
@@ -31,17 +31,22 @@ const dateQuery = z.object({
   to: z.string().optional(),
 });
 
+const uuidQuery = z.object({
+  activated: z.boolean().optional(),
+  value: z.string().optional(),
+});
+
 const schema = z.object({
   pointsQuery: numberQuery.optional(),
   createdAtQuery: dateQuery.optional(),
   updatedAtQuery: dateQuery.optional(),
   taskStateQuery: stringQuery.optional(),
+  assigneeQuery: uuidQuery.optional(),
 });
 
 type QueryResults = z.infer<typeof schema>;
 
 export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<string> }) {
-  const { data: profile } = useContext(ProfileContext);
   /**
    * According to this issue https://github.com/radix-ui/primitives/issues/1851
    * radix ui primitive checkboxes don't have any event handlers.
@@ -55,10 +60,18 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
       createdAtQuery: { activated: false },
       updatedAtQuery: { activated: false },
       taskStateQuery: { activated: false, value: "" },
+      assigneeQuery: { activated: false, value: "" },
     },
   });
+  const { data } = useContext(ProfilesContext);
 
-  const onSubmit = ({ pointsQuery, createdAtQuery, updatedAtQuery, taskStateQuery }: QueryResults) => {
+  const onSubmit = ({
+    pointsQuery,
+    createdAtQuery,
+    updatedAtQuery,
+    taskStateQuery,
+    assigneeQuery,
+  }: QueryResults) => {
     const queries: string[] = [];
 
     if (pointsQuery?.activated) {
@@ -77,8 +90,8 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
       queries.push(`taskState:${taskStateQuery.value}`);
     }
 
-    if (profile?.permissionType !== PermissionType.Admin && profile?.uuid) {
-      queries.push(`assignee.uuid:${profile.uuid}`);
+    if (assigneeQuery?.activated) {
+      queries.push(`assignee.uuid:${assigneeQuery.value}`);
     }
 
     console.log(queries);
@@ -186,6 +199,45 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
           </div>
         </fieldset>
 
+        <div className="flex gap-2">
+          <div className="grid place-items-center">
+            <Checkbox
+              onCheckedChange={(value: boolean) => setValue("assigneeQuery.activated", value)}
+              disabled={false}
+            />
+          </div>
+          <h2>Assignee</h2>
+        </div>
+        <fieldset id="assignee" className="flex flex-col gap-2">
+          <Select
+            onValueChange={(value) => {
+              setValue("assigneeQuery.value", value);
+            }}>
+            <SelectTrigger>
+              <SelectValue placeholder="Assignee" />
+            </SelectTrigger>
+            <SelectContent>
+              <>
+                {data?.map(
+                  (profile) =>
+                    profile.uuid && (
+                      <SelectItem value={profile?.uuid} key={profile?.uuid}>
+                        <div className="flex flex-row gap-5">
+                          <Avatar
+                            size={32}
+                            name={profile?.uuid}
+                            variant="beam"
+                            colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                          />
+                          <p className="flex items-center">{profile?.name}</p>
+                        </div>
+                      </SelectItem>
+                    ),
+                )}
+              </>
+            </SelectContent>
+          </Select>
+        </fieldset>
         <Button type="submit">Apply filter</Button>
       </form>
     </div>

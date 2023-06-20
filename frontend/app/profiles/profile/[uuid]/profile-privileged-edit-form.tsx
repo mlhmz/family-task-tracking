@@ -67,9 +67,18 @@ export default function ProfilePrivilegedEditForm({
     <div>
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
-          <Input placeholder="Name" {...register("name")} />
-          {formState.errors.name && <p className="text-destructive ">{formState.errors.name.message}</p>}
-          <Input placeholder="Points" type="number" {...register("points", { valueAsNumber: true })} />
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="name">
+              Name
+            </label>
+            <Input placeholder="Name" {...register("name")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="points">
+              Points
+            </label>
+            <Input placeholder="Points" type="number" {...register("points", { valueAsNumber: true })} />
+          </div>
           <input disabled={true} className="hidden" {...register("permissionType")} />
           <div className="flex gap-2">
             <Switch
@@ -82,6 +91,7 @@ export default function ProfilePrivilegedEditForm({
           <Button type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Save</>}
           </Button>
+          {formState.errors.name && <p className="text-destructive ">{formState.errors.name.message}</p>}
         </fieldset>
       </form>
     </div>
