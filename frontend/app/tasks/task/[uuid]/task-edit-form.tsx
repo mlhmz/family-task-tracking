@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Icons } from "@/components/icons";
 import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface TaskEditFormProps {
   task: Task;
@@ -107,50 +108,60 @@ export default function TaskEditForm({ task, handleCloseDialog }: TaskEditFormPr
           </div>
 
           {isSchedulingActivated && (
-            <Card>
-              <CardHeader>Scheduling</CardHeader>
+            <Card className="w-full">
               <CardContent>
-                <div className="flex flex-row gap-5">
-                  <div className="flex flex-col items-center gap-2">
-                    <p>Every</p>
-                    <Input
-                      type="number"
-                      placeholder="0..24"
-                      max={24}
-                      {...register("scheduling.hours.value", { valueAsNumber: true })}
-                    />
-                    <p>Hours</p>
-                    <Switch
-                      onCheckedChange={(value: boolean) => setValue("scheduling.hours.activated", value)}
-                    />
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <p>Every</p>
-                    <Input
-                      type="number"
-                      placeholder="1..31"
-                      max={31}
-                      {...register("scheduling.days.value", { valueAsNumber: true })}
-                    />
-                    <p>Days</p>
-                    <Switch
-                      onCheckedChange={(value: boolean) => setValue("scheduling.days.activated", value)}
-                    />
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <p>Every</p>
-                    <Input
-                      type="number"
-                      placeholder="1..12"
-                      max={12}
-                      {...register("scheduling.months.value", { valueAsNumber: true })}
-                    />
-                    <p>Months</p>
-                    <Switch
-                      onCheckedChange={(value: boolean) => setValue("scheduling.months.activated", value)}
-                    />
-                  </div>
-                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="item">
+                    <AccordionTrigger>Scheduling</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="flex flex-row gap-5">
+                        <div className="flex flex-col items-center gap-2">
+                          <p>Every</p>
+                          <Input
+                            type="number"
+                            placeholder="0..24"
+                            max={24}
+                            {...register("scheduling.hours.value", { valueAsNumber: true })}
+                          />
+                          <p>Hours</p>
+                          <Switch
+                            onCheckedChange={(value: boolean) =>
+                              setValue("scheduling.hours.activated", value)
+                            }
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                          <p>Every</p>
+                          <Input
+                            type="number"
+                            placeholder="1..31"
+                            max={31}
+                            {...register("scheduling.days.value", { valueAsNumber: true })}
+                          />
+                          <p>Days</p>
+                          <Switch
+                            onCheckedChange={(value: boolean) => setValue("scheduling.days.activated", value)}
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                          <p>Every</p>
+                          <Input
+                            type="number"
+                            placeholder="1..12"
+                            max={12}
+                            {...register("scheduling.months.value", { valueAsNumber: true })}
+                          />
+                          <p>Months</p>
+                          <Switch
+                            onCheckedChange={(value: boolean) =>
+                              setValue("scheduling.months.activated", value)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </CardContent>
             </Card>
           )}

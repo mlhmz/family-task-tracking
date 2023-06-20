@@ -1,23 +1,25 @@
 "use client";
 
-import { Dispatch, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Dispatch, useState } from "react";
 
+import { AccordionContent, AccordionTrigger } from "@/components/ui/accordion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { createOrEditTaskSchema, schedulingSchema, TaskRequest } from "@/types/task";
-import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
-import { createTask } from "@/lib/task-requests";
-import { buildCronExpressionFromInput } from "@/lib/utils";
+import { useZodForm } from "@/app/hooks/use-zod-form";
+import { Icons } from "@/components/icons";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Icons } from "@/components/icons";
-import { useZodForm } from "@/app/hooks/use-zod-form";
+import { createTask } from "@/lib/task-requests";
+import { buildCronExpressionFromInput } from "@/lib/utils";
+import { createOrEditTaskSchema, schedulingSchema, TaskRequest } from "@/types/task";
+import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 
 const schema = z.object({
   task: createOrEditTaskSchema,
@@ -102,50 +104,60 @@ export default function TaskCreateForm({ handleCloseDialog }: { handleCloseDialo
           </div>
 
           {isSchedulingActivated && (
-            <Card>
-              <CardHeader>Scheduling</CardHeader>
+            <Card className="w-full">
               <CardContent>
-                <div className="flex flex-row gap-5">
-                  <div className="flex flex-col items-center gap-2">
-                    <p>Every</p>
-                    <Input
-                      type="number"
-                      placeholder="0..24"
-                      max={24}
-                      {...register("scheduling.hours.value", { valueAsNumber: true })}
-                    />
-                    <p>Hours</p>
-                    <Switch
-                      onCheckedChange={(value: boolean) => setValue("scheduling.hours.activated", value)}
-                    />
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <p>Every</p>
-                    <Input
-                      type="number"
-                      placeholder="1..31"
-                      max={31}
-                      {...register("scheduling.days.value", { valueAsNumber: true })}
-                    />
-                    <p>Days</p>
-                    <Switch
-                      onCheckedChange={(value: boolean) => setValue("scheduling.days.activated", value)}
-                    />
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <p>Every</p>
-                    <Input
-                      type="number"
-                      placeholder="1..12"
-                      max={12}
-                      {...register("scheduling.months.value", { valueAsNumber: true })}
-                    />
-                    <p>Months</p>
-                    <Switch
-                      onCheckedChange={(value: boolean) => setValue("scheduling.months.activated", value)}
-                    />
-                  </div>
-                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="item">
+                    <AccordionTrigger>Scheduling</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="flex flex-row gap-5">
+                        <div className="flex flex-col items-center gap-2">
+                          <p>Every</p>
+                          <Input
+                            type="number"
+                            placeholder="0..24"
+                            max={24}
+                            {...register("scheduling.hours.value", { valueAsNumber: true })}
+                          />
+                          <p>Hours</p>
+                          <Switch
+                            onCheckedChange={(value: boolean) =>
+                              setValue("scheduling.hours.activated", value)
+                            }
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                          <p>Every</p>
+                          <Input
+                            type="number"
+                            placeholder="1..31"
+                            max={31}
+                            {...register("scheduling.days.value", { valueAsNumber: true })}
+                          />
+                          <p>Days</p>
+                          <Switch
+                            onCheckedChange={(value: boolean) => setValue("scheduling.days.activated", value)}
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                          <p>Every</p>
+                          <Input
+                            type="number"
+                            placeholder="1..12"
+                            max={12}
+                            {...register("scheduling.months.value", { valueAsNumber: true })}
+                          />
+                          <p>Months</p>
+                          <Switch
+                            onCheckedChange={(value: boolean) =>
+                              setValue("scheduling.months.activated", value)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </CardContent>
             </Card>
           )}
