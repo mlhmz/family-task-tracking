@@ -76,26 +76,41 @@ export default function TaskEditForm({ task, handleCloseDialog }: TaskEditFormPr
   return (
     <div>
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
-          <Input placeholder="Name" {...register("task.name")} />
-          <Input placeholder="Description" {...register("task.description")} />
-          <Input placeholder="Points" type="number" {...register("task.points", { valueAsNumber: true })} />
-          <Input placeholder="Expiration At" type="datetime-local" {...register("task.expirationAt")} />
+        <fieldset disabled={isLoading} className="flex flex-col items-center gap-3 md:gap-10">
+        <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-name">Name</label>
+            <Input placeholder="Name" {...register("task.name")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-description">Description</label>
+            <Input placeholder="Description" {...register("task.description")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-points">Points</label>
+            <Input placeholder="Points" type="number" {...register("task.points", { valueAsNumber: true })} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-expiration-at">Expiration At</label>
+            <Input placeholder="Expiration At" type="datetime-local" {...register("task.expirationAt")} />
+          </div>
 
-          <Select
-            defaultValue={TaskState.Undone}
-            onValueChange={(value) => setValue("task.taskState", value as TaskState)}>
-            <SelectTrigger>
-              <SelectValue placeholder="State" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(TaskState).map((taskState) => (
-                <SelectItem key={taskState} value={taskState}>
-                  {getTranslatedTaskStateValue(taskState)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-state">State</label>
+            <Select
+              defaultValue={TaskState.Undone}
+              onValueChange={(value) => setValue("task.taskState", value as TaskState)}>
+              <SelectTrigger>
+                <SelectValue placeholder="State" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(TaskState).map((taskState) => (
+                  <SelectItem key={taskState} value={taskState}>
+                    {getTranslatedTaskStateValue(taskState)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="flex gap-2">
             <Switch

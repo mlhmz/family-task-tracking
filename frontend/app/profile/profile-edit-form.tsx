@@ -57,7 +57,10 @@ export default function ProfileEditForm({
     <div>
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
-          <Input placeholder="Name" {...register("name")} />
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="name">Name</label>
+            <Input placeholder="Name" {...register("name")} />
+          </div>
           <Button type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Save</>}
           </Button>

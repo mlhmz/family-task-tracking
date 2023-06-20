@@ -1,25 +1,24 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Dispatch, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { AccordionContent, AccordionTrigger } from "@/components/ui/accordion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useZodForm } from "@/app/hooks/use-zod-form";
-import { Icons } from "@/components/icons";
-import { Accordion, AccordionItem } from "@/components/ui/accordion";
+import { createOrEditTaskSchema, schedulingSchema, TaskRequest } from "@/types/task";
+import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
+import { createTask } from "@/lib/task-requests";
+import { buildCronExpressionFromInput } from "@/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { createTask } from "@/lib/task-requests";
-import { buildCronExpressionFromInput } from "@/lib/utils";
-import { createOrEditTaskSchema, schedulingSchema, TaskRequest } from "@/types/task";
-import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
+import { Icons } from "@/components/icons";
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
 const schema = z.object({
   task: createOrEditTaskSchema,
@@ -72,26 +71,41 @@ export default function TaskCreateForm({ handleCloseDialog }: { handleCloseDialo
   return (
     <div>
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
-          <Input placeholder="Name" {...register("task.name")} />
-          <Input placeholder="Description" {...register("task.description")} />
-          <Input placeholder="Points" type="number" {...register("task.points", { valueAsNumber: true })} />
-          <Input placeholder="Expiration At" type="datetime-local" {...register("task.expirationAt")} />
+        <fieldset disabled={isLoading} className="flex flex-col items-center gap-3 md:gap-10">
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-name">Name</label>
+            <Input placeholder="Name" {...register("task.name")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-description">Description</label>
+            <Input placeholder="Description" {...register("task.description")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-points">Points</label>
+            <Input placeholder="Points" type="number" {...register("task.points", { valueAsNumber: true })} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-expiration-at">Expiration At</label>
+            <Input placeholder="Expiration At" type="datetime-local" {...register("task.expirationAt")} />
+          </div>
 
-          <Select
-            defaultValue={TaskState.Undone}
-            onValueChange={(value) => setValue("task.taskState", value as TaskState)}>
-            <SelectTrigger>
-              <SelectValue placeholder="State" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(TaskState).map((taskState) => (
-                <SelectItem key={taskState} value={taskState}>
-                  {getTranslatedTaskStateValue(taskState)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="task-state">State</label>
+            <Select
+              defaultValue={TaskState.Undone}
+              onValueChange={(value) => setValue("task.taskState", value as TaskState)}>
+              <SelectTrigger>
+                <SelectValue placeholder="State" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(TaskState).map((taskState) => (
+                  <SelectItem key={taskState} value={taskState}>
+                    {getTranslatedTaskStateValue(taskState)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="flex gap-2">
             <Switch

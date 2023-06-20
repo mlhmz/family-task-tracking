@@ -49,9 +49,18 @@ export default function RewardCreateForm({ handleCloseDialog }: { handleCloseDia
     <div>
       <form className="my-10 flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
-          <Input placeholder="Name" {...register("name")} />
-          <Input placeholder="Description" {...register("description")} />
-          <Input placeholder="Cost" type="number" {...register("cost", { valueAsNumber: true })} />
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="name">Name</label>
+            <Input placeholder="Name" {...register("name")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="description">Description</label>
+            <Input placeholder="Description" {...register("description")} />
+          </div>
+          <div className="flex w-full flex-col gap-2">
+            <label className="ml-1" htmlFor="cost">Cost</label>
+            <Input placeholder="Cost" type="number" {...register("cost", { valueAsNumber: true })} />
+          </div>
           <Button type="submit">
             {isLoading ? <Icons.spinner className="animate-spin text-secondary" /> : <>Save</>}
           </Button>
