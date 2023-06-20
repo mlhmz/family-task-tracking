@@ -58,7 +58,9 @@ export default function ProfileEditForm({
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading} className="flex flex-col items-center gap-10">
           <div className="flex w-full flex-col gap-2">
-            <label className="ml-1" htmlFor="name">Name</label>
+            <label className="ml-1" htmlFor="name">
+              Name
+            </label>
             <Input placeholder="Name" {...register("name")} />
           </div>
           <Button type="submit">

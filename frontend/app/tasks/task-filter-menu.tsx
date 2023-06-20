@@ -2,16 +2,16 @@
 
 import { Dispatch, useContext } from "react";
 
+import Avatar from "boring-avatars";
 import { z } from "zod";
 
-import { useZodForm } from "@/app/hooks/use-zod-form";
+import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getTranslatedTaskStateValue, TaskState } from "@/types/task-state";
+import { useZodForm } from "@/app/hooks/use-zod-form";
 
-import Avatar from "boring-avatars";
 import { ProfilesContext } from "../profiles-context";
 
 const stringQuery = z.object({
@@ -65,7 +65,13 @@ export default function TaskFilterMenu({ sendQuery }: { sendQuery: Dispatch<stri
   });
   const { data } = useContext(ProfilesContext);
 
-  const onSubmit = ({ pointsQuery, createdAtQuery, updatedAtQuery, taskStateQuery, assigneeQuery }: QueryResults) => {
+  const onSubmit = ({
+    pointsQuery,
+    createdAtQuery,
+    updatedAtQuery,
+    taskStateQuery,
+    assigneeQuery,
+  }: QueryResults) => {
     const queries: string[] = [];
 
     if (pointsQuery?.activated) {

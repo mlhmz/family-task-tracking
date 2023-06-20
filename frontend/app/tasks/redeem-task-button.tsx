@@ -4,15 +4,15 @@ import { Tooltip } from "@radix-ui/react-tooltip";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { iconsMap } from "@/components/common/task/task-state-icon";
-import { Icons } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { isTask } from "@/lib/guards";
-import { updateTaskState } from "@/lib/task-requests";
 import { PermissionType } from "@/types/permission-type";
 import { Task, TaskStateUpdateRequest } from "@/types/task";
 import { TaskState } from "@/types/task-state";
+import { isTask } from "@/lib/guards";
+import { updateTaskState } from "@/lib/task-requests";
+import { Button } from "@/components/ui/button";
+import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { iconsMap } from "@/components/common/task/task-state-icon";
+import { Icons } from "@/components/icons";
 
 import { useProfile } from "../hooks/fetch/use-profile";
 
