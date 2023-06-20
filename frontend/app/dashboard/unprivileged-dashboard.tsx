@@ -34,7 +34,6 @@ async function getTasks(uuid?: string) {
 interface FilteredTasks {
   undone: Task[];
   done: Task[];
-  reviewed: Task[];
   finished: Task[];
   expiringSoon: Task[];
 }
@@ -47,7 +46,6 @@ const UnprivilegedDashboard = () => {
   const [filteredTasks, setFilteredTasks] = useState<FilteredTasks>({
     undone: [],
     done: [],
-    reviewed: [],
     finished: [],
     expiringSoon: [],
   });
@@ -67,10 +65,9 @@ const UnprivilegedDashboard = () => {
     const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
     const undone = tasks.filter((task) => task.taskState === TaskState.Undone);
     const done = tasks.filter((task) => task.taskState === TaskState.Done);
-    const reviewed = tasks.filter((task) => task.taskState === TaskState.Reviewed);
     const finished = tasks.filter((task) => task.taskState === TaskState.Finished);
     const expiringSoon = tasks.filter((task) => task.expirationAt && new Date(task.expirationAt) < in24Hours);
-    setFilteredTasks({ undone, done, reviewed, finished, expiringSoon });
+    setFilteredTasks({ undone, done, finished, expiringSoon });
   }, [tasks]);
 
   if (isTasksLoading) return <DashboardSkeleton />;
@@ -81,7 +78,6 @@ const UnprivilegedDashboard = () => {
         <TabsTrigger value="allTasks">All Tasks</TabsTrigger>
         <TabsTrigger value="undone">To Do</TabsTrigger>
         <TabsTrigger value="done">Done</TabsTrigger>
-        <TabsTrigger value="reviewed">In review</TabsTrigger>
         <TabsTrigger value="finished">Finished</TabsTrigger>
         <TabsTrigger value="expiringSoon">Expiring soon</TabsTrigger>
         <TabsTrigger value="rewards">Rewards</TabsTrigger>
@@ -104,13 +100,6 @@ const UnprivilegedDashboard = () => {
       <TabsContent value="done">
         <div className="flex w-full flex-wrap gap-4">
           {filteredTasks.done?.map((task) => (
-            <TaskCard key={task.uuid} task={task} />
-          ))}
-        </div>
-      </TabsContent>
-      <TabsContent value="reviewed">
-        <div className="flex w-full flex-wrap gap-4">
-          {filteredTasks.reviewed?.map((task) => (
             <TaskCard key={task.uuid} task={task} />
           ))}
         </div>
