@@ -50,6 +50,12 @@ export default function TaskInfo({ task }: { task: Task }) {
             <h1 className="text-sm font-bold">Updated At</h1>
             <p>{formatISODateToReadable(task.updatedAt)}</p>
           </div>
+          {task.expirationAt && (
+            <div className="flex flex-col items-center">
+              <h1 className="text-sm font-bold">Expires At</h1>
+              <p>{formatISODateToReadable(task.expirationAt)}</p>
+            </div>
+          )}
           {task.doneAt && (
             <div className="flex flex-col items-center">
               <h1 className="text-sm font-bold">Completed at</h1>
