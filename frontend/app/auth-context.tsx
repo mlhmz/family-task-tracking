@@ -1,13 +1,18 @@
 "use client";
 
-import { Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import { useEffect } from "react";
+import { AuthProvider } from "react-oidc-context";
 
 export interface AuthContextProps {
   children: React.ReactNode;
-  session: Session;
 }
 
-export default function AuthContext({ children, session }: AuthContextProps) {
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+const oidcConfig = {
+  authority: "https://keycloak.questie.xyz/realms/ftt",
+  client_id: "ftt-client",
+  redirect_uri: "/",
+}
+
+export default function AuthContext({ children }: AuthContextProps) {
+  return <AuthProvider {...oidcConfig}>{children}</AuthProvider>;
 }

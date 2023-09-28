@@ -1,20 +1,19 @@
 "use client";
 
-import { useContext } from "react";
 import Link from "next/link";
+import { useContext } from "react";
 
 import Avatar from "boring-avatars";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { Toaster } from "sonner";
 
-import { siteConfig } from "@/config/site";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { ProfileContext } from "@/app/profile-context";
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useLogoutProfile } from "@/app/hooks/use-logout-profile";
-import { ProfileContext } from "@/app/profile-context";
+import { buttonVariants } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 
+import { AuthButton } from "./auth-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,14 +24,7 @@ import {
 } from "./ui/dropdown-menu";
 
 export function SiteHeader({ appName }: { appName: string }) {
-  const { status } = useSession();
   const { data, isSuccess } = useContext(ProfileContext);
-  const { logoutProfile } = useLogoutProfile();
-
-  const handleLogout = () => {
-    signOut();
-    logoutProfile();
-  };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -52,16 +44,7 @@ export function SiteHeader({ appName }: { appName: string }) {
               </div>
             </Link>
             <ThemeToggle />
-            {status === "authenticated" && (
-              <Button size={"sm"} variant={"ghost"} onClick={handleLogout}>
-                Sign Out
-              </Button>
-            )}
-            {status === "unauthenticated" && (
-              <Button size={"sm"} variant={"ghost"} onClick={() => signIn()}>
-                Sign In
-              </Button>
-            )}
+            <AuthButton />
             {isSuccess && data.uuid && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
