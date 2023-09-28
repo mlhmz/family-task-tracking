@@ -1,5 +1,4 @@
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Session } from "next-auth";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -12,17 +11,16 @@ import QueryClientProvider from "./query-client";
 
 interface ProvidersProps {
   children: React.ReactNode;
-  session: Session;
 }
 
-export const Providers = ({ session, children }: ProvidersProps) => {
+export const Providers = ({ children }: ProvidersProps) => {
   return (
     <>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <QueryClientProvider>
           <ReactQueryDevtools initialIsOpen={false} />
           <div className="relative flex min-h-screen flex-col">
-            <AuthContext session={session}>
+            <AuthContext>
               <HouseholdContextProvider>
                 <ProfileContextProvider>
                   <ProfilesContextProvider>
