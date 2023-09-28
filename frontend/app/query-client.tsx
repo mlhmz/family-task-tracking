@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
       if (query.state.data !== undefined) {
-        console.log(
+        console.error(
           `Something went wrong: ${error instanceof Error ? error.message : "Unknown server error"}`,
         );
       }
