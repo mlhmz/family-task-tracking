@@ -8,13 +8,9 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
-    LOCAL_AUTH_URL: z.string().min(1),
-    NEXTAUTH_URL: z.string().min(1),
-    NEXTAUTH_SECRET: z.string().min(1),
     BACKEND_API_URL: z.string().min(1),
     KEYCLOAK_CLIENT_ID: z.string().min(1),
     KEYCLOAK_ISSUER: z.string().min(1),
-    KEYCLOAK_CLIENT_SECRET: z.string().min(1),
   },
   /*
    * Environment variables available on the client (and server).
@@ -32,13 +28,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    LOCAL_AUTH_URL: process.env.LOCAL_AUTH_URL,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     BACKEND_API_URL: process.env.BACKEND_API_URL,
     KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID,
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
-    KEYCLOAK_CLIENT_SECRET: process.env.KEYCLOAK_CLIENT_SECRET,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME
   },
   skipValidation: process.env.NODE_ENV === "production",
