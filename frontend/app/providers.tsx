@@ -14,11 +14,11 @@ interface ProvidersProps {
   children: React.ReactNode;
 }
 
-const oidcConfig: AuthProviderProps = {
+const oidcConfig = {
   authority: process.env.KEYCLOAK_ISSUER ?? "",
   client_id: process.env.KEYCLOAK_CLIENT_ID ?? "",
   redirect_uri: "/",
-};
+} satisfies AuthProviderProps;
 
 export const Providers = ({ children }: ProvidersProps) => {
   return (
