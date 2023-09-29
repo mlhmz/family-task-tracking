@@ -1,16 +1,16 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 import { getProfiles } from "@/lib/profile-requests";
+import { useAuth } from "react-oidc-context";
 
 export const useProfiles = () => {
-  const { status } = useSession();
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: ["profiles"],
     queryFn: () => getProfiles({}),
-    enabled: status === "authenticated",
+    enabled: isAuthenticated,
     initialData: [],
   });
 };

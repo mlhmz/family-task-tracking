@@ -61,9 +61,7 @@ services:
       - '8443:8443'
     command: start-dev
   api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
+    image: mlhmz/family-task-tracking:main
     restart: unless-stopped
     environment:
       DB_HOST: dev-db
@@ -89,18 +87,14 @@ services:
     command:
       - fixtures
   frontend:
-    image: frontend:latest
+    image: mlhmz/family-task-tracking-frontend:latest
     restart: unless-stopped
     ports:
       - '3000:3000'
     environment:
-      LOCAL_AUTH_URL: http://localhost:3000
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: NONE
-      BACKEND_API_URL: https://fttapi.mlhmz.xyz/api/v1
-      KEYCLOAK_CLIENT_ID: ftt-next
-      KEYCLOAK_ISSUER: https://keycloak.mlhmz.xyz/realms/ftt
-      KEYCLOAK_CLIENT_SECRET: SECRET
+      BACKEND_API_URL: https://api.questie.xyz/api/v1
+      KEYCLOAK_CLIENT_ID: ftt-client
+      KEYCLOAK_ISSUER: https://keycloak.questie.xyz/realms/ftt
 
 volumes:
   kc-db-data:

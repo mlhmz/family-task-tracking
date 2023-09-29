@@ -4,8 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useSession } from "next-auth/react";
-
 import { NavItem } from "@/types/nav";
 import { PermissionType } from "@/types/permission-type";
 import { cn } from "@/lib/utils";
@@ -13,6 +11,7 @@ import { Icons } from "@/components/icons";
 import { useProfile } from "@/app/hooks/fetch/use-profile";
 
 import { MobileNav } from "./mobile-nav";
+import { useAuth } from "react-oidc-context";
 
 const Home = ({ appName }: { appName: string }) => {
   return (
@@ -30,7 +29,7 @@ interface MainNavProps {
 
 export const MainNav = ({ appName, items }: MainNavProps) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { status } = useSession();
+  const { isAuthenticated } = useAuth();
   const { data: profile } = useProfile();
   const pathname = usePathname();
   const isWizard = pathname.match("/wizard.*");
@@ -51,7 +50,7 @@ export const MainNav = ({ appName, items }: MainNavProps) => {
           <Home appName={appName} />
         </Link>
       )}
-      {status === "authenticated" && !isWizard && filteredItems?.length ? (
+      {isAuthenticated && !isWizard && filteredItems?.length ? (
         <nav className="hidden gap-6 md:flex">
           {filteredItems?.map(
             (item, index) =>

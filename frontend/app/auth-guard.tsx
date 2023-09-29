@@ -10,6 +10,9 @@ import { PermissionType } from "@/types/permission-type";
 import { HouseholdContext } from "./household-context";
 import { ProfileContext } from "./profile-context";
 import { ProfilesContext } from "./profiles-context";
+import { useAuth } from "react-oidc-context";
+import { useCookie } from "react-use";
+import { toast } from "sonner";
 
 export default function AuthGuard({ children }: { children: ReactNode }) {
   const household = useContext(HouseholdContext);
@@ -18,6 +21,19 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathName = usePathname();
   const queryClient = useQueryClient();
+  const { isAuthenticated, user, error } = useAuth();
+  const [_, setToken] = useCookie("token");
+
+  // Temporary solution because react-oidc-context is storing the cookie into the session store
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setToken(user.access_token)
+    }
+  }, [isAuthenticated, setToken, user])
+
+  useEffect(() => {
+    error && toast.error(`Error while authenticating: ${error.message}`)
+  }, [error])
 
   const isAnyAdminProfileAvailable = useCallback(() => {
     queryClient.invalidateQueries(["profiles"]).then(() => {

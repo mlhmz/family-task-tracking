@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 import { isHouseholdResponse } from "@/lib/guards";
+import { useAuth } from "react-oidc-context";
 
 async function fetchHousehold() {
   const response = await fetch("/api/v1/household");
@@ -22,11 +22,11 @@ async function fetchHousehold() {
 
 export const useHousehold = () => {
   const [isHouseholdEmpty, setIsHouseholdEmpty] = useState(false);
-  const { status } = useSession();
+  const { isAuthenticated } = useAuth();
   const { data, error } = useQuery({
     queryKey: ["household"],
     queryFn: fetchHousehold,
-    enabled: status === "authenticated",
+    enabled: isAuthenticated,
     retry: false,
   });
 
