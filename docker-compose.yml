@@ -93,8 +93,8 @@ services:
       - '3000:3000'
     environment:
       BACKEND_API_URL: https://api.questie.xyz/api/v1
-      KEYCLOAK_CLIENT_ID: ftt-client
-      KEYCLOAK_ISSUER: https://keycloak.questie.xyz/realms/ftt
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: ftt-client
+      NEXT_PUBLIC_KEYCLOAK_ISSUER: https://keycloak.questie.xyz/realms/ftt
 
 volumes:
   kc-db-data:

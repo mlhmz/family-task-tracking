@@ -9,16 +9,17 @@ import HouseholdContextProvider from "./household-context";
 import ProfileContextProvider from "./profile-context";
 import ProfilesContextProvider from "./profiles-context";
 import QueryClientProvider from "./query-client";
+import { env } from "@/env.mjs";
 
 interface ProvidersProps {
   children: React.ReactNode;
 }
 
-const oidcConfig: AuthProviderProps = {
-  authority: process.env.KEYCLOAK_ISSUER ?? "",
-  client_id: process.env.KEYCLOAK_CLIENT_ID ?? "",
+const oidcConfig = {
+  authority: env.NEXT_PUBLIC_KEYCLOAK_ISSUER,
+  client_id: env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID,
   redirect_uri: "/",
-};
+} satisfies AuthProviderProps;
 
 export const Providers = ({ children }: ProvidersProps) => {
   return (

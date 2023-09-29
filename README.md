@@ -141,9 +141,9 @@ services:
       NEXTAUTH_SECRET: NONE
       # API Url
       BACKEND_API_URL: # Can be external, can be internal with dockers internal url
-      KEYCLOAK_CLIENT_ID: # Keycloak Client
-      KEYCLOAK_ISSUER: # URL of the Keycloak Instance
-      KEYCLOAK_CLIENT_SECRET: # Keycloak Client Secret
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: # Keycloak Client
+      NEXT_PUBLIC_KEYCLOAKISSUER: # URL of the Keycloak Instance
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET: # Keycloak Client Secret
   # Watchtower for CD (optional)
   watchtower:
     image: containrrr/watchtower
