@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { ApiHandler } from "@/types/handlers";
+import { env } from "@/env.mjs";
 
 const handler: ApiHandler = async () => {
   return NextResponse.json({
-    authority: process.env.KEYCLOAK_ISSUER,
-    client_id: process.env.KEYCLOAK_CLIENT_ID,
+    authority: env.KEYCLOAK_ISSUER,
+    client_id: env.KEYCLOAK_CLIENT_ID,
   });
 };
 

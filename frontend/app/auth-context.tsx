@@ -5,20 +5,23 @@ import { useEffect, useState } from "react";
 import { AuthProvider } from "react-oidc-context";
 
 import { Icons } from "@/components/icons";
+import { z } from "zod";
 
 export interface AuthContextProps {
   children: React.ReactNode;
 }
 
-interface KeycloakConfig {
-  authority?: string;
-  client_id?: string;
-}
+const KeycloakConfigSchema = z.object({
+  authority: z.string().min(1),
+  client_id: z.string().min(1)
+});
+
+type KeycloakConfig = z.infer<typeof KeycloakConfigSchema>;
 
 async function getKeycloakConfig() {
-  const result = await fetch("/api/v1/auth/config");
+  const result = await fetch("/api/auth/config");
   const data = await result.json();
-  return data as KeycloakConfig;
+  return KeycloakConfigSchema.parse(data);
 }
 
 export default function AuthContext({ children }: AuthContextProps) {
