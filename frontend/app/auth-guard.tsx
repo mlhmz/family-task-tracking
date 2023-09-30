@@ -27,7 +27,7 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
   // Temporary solution because react-oidc-context is storing the cookie into the session store
   useEffect(() => {
     if (isAuthenticated && user) {
-      setToken(user.access_token)
+      setToken(user?.access_token)
     }
   }, [isAuthenticated, setToken, user])
 
