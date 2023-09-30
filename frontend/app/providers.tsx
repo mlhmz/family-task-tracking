@@ -2,7 +2,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
-import { AuthProviderProps } from "react-oidc-context";
 import AuthContext from "./auth-context";
 import AuthGuard from "./auth-guard";
 import HouseholdContextProvider from "./household-context";
@@ -14,12 +13,6 @@ interface ProvidersProps {
   children: React.ReactNode;
 }
 
-const oidcConfig: AuthProviderProps = {
-  authority: process.env.KEYCLOAK_ISSUER ?? "",
-  client_id: process.env.KEYCLOAK_CLIENT_ID ?? "",
-  redirect_uri: "/",
-};
-
 export const Providers = ({ children }: ProvidersProps) => {
   return (
     <>
@@ -27,7 +20,7 @@ export const Providers = ({ children }: ProvidersProps) => {
         <QueryClientProvider>
           <ReactQueryDevtools initialIsOpen={false} />
           <div className="relative flex min-h-screen flex-col">
-            <AuthContext props={oidcConfig}>
+            <AuthContext>
               <HouseholdContextProvider>
                 <ProfileContextProvider>
                   <ProfilesContextProvider>
