@@ -9,9 +9,10 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "staging" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "staging" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -42,7 +43,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Deploy with Docker
+      - name: Deploy with Docker to Prod
         uses: docker/build-push-action@v4.1.0
         if: github.ref == 'refs/heads/main'
         with:
@@ -50,3 +51,10 @@ jobs:
           push: true
           tags: mlhmz/family-task-tracking:latest
         
+      - name: Deploy with Docker to Staging
+        uses: docker/build-push-action@v4.1.0
+        if: github.ref == 'refs/heads/staging'
+        with:
+          context: api/
+          push: true
+          tags: mlhmz/family-task-tracking:staging
